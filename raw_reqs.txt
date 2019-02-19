@@ -1,0 +1,34 @@
+co bai tap cho 2 chu nhoc moi hoc Go. a huong dan dzum duoc hokI need a tool to track customers visit over the time:
+
+Users:
+Admin: administer the website
+Users who use the tool
+- Assistant
+- Directors
+- SM
+- PM
+
+Information needs to track every visit
+- Customer name
+- Visiting time
+- Project name
+- Family members (for customized gifts)
+- Lab name
+- Pre-approved visa done by TMA?
+o Yes: passport info
+o Who in HR created the pre-approved visa
+- Hotel stayed
+- Pickup from the airport
+- Weekend activities
+o Place
+o Participant
+- Restaurant ever come
+- Gift: list of gift
+- Vegetarian ? Yes, No
+- Special about food, eating
+- ….maybe more fields. These fields can be updated in a template file. We only need to update the template file to add more fields, update some field.
+
+Users can:
+- Query a customer to see a list of his/her previous visits.
+o Click on each visit will provide details about that visit above
+- Query a list of customer visiting TMA in a certain period of time for example: next week (Feb 25 to Mar 2)
