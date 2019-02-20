@@ -24,14 +24,12 @@ compose: docker
 	cd deployment/docker && docker-compose up
 docker: vet test build
 	mv $(PROJECT_NAME)-$(BUILD_VERSION).bin deployment/docker/$(PROJECT_NAME).bin; \
-	mkdir deployment/docker/web
-	cp -R web/dist deployment/docker/web/dist
-	cp web/index.html deployment/docker/web/index.html
-	cp -R web/assets deployment/docker/web/assets
+	cp -R web/dist deployment/docker/web/dist; \
+	ls deployment/docker/web/dist; \
 	cd deployment/docker; \
 	docker build -t $(DOCKER_IMAGE) .; \
 	rm -rf $(PROJECT_NAME).bin 2> /dev/null;\
-	rm -rf web 2> /dev/null;
+	rm -rf web/dist 2> /dev/null;
 docker_run:
 	docker run -p 8080:8080 $(DOCKER_IMAGE)
 build-web:

@@ -99,12 +99,8 @@ func Init(conns *InfraConns) (http.Handler, error) {
 		dir    string
 	}{
 		{
-			prefix: "/dist/",
-			dir:    "web/dist/",
-		},
-		{
-			prefix: "/assets/",
-			dir:    "web/assets/",
+			prefix: "/",
+			dir:    "web/",
 		},
 	}
 	for _, s := range static {
