@@ -8,12 +8,12 @@ import (
 	"os/signal"
 	"time"
 
-	"ofriends/internal/app/api"
-	"ofriends/internal/app/db"
-	"ofriends/internal/app/db/mongodb"
-	"ofriends/internal/pkg/config/env"
-	"ofriends/internal/pkg/glog"
-	"ofriends/internal/pkg/health"
+	"github.com/TheFlies/ofriends/internal/app/api"
+	"github.com/TheFlies/ofriends/internal/app/db"
+	"github.com/TheFlies/ofriends/internal/app/db/mongodb"
+	"github.com/TheFlies/ofriends/internal/pkg/config/env"
+	"github.com/TheFlies/ofriends/internal/pkg/glog"
+	"github.com/TheFlies/ofriends/internal/pkg/health"
 )
 
 type (

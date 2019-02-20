@@ -3,13 +3,13 @@ package api
 import (
 	"net/http"
 
-	"ofriends/internal/app/api/handler/friend"
-	"ofriends/internal/app/api/handler/index"
-	"ofriends/internal/app/db"
-	"ofriends/internal/app/friend"
-	"ofriends/internal/pkg/glog"
-	"ofriends/internal/pkg/health"
-	"ofriends/internal/pkg/middleware"
+	"github.com/TheFlies/ofriends/internal/app/api/handler/friend"
+	"github.com/TheFlies/ofriends/internal/app/api/handler/index"
+	"github.com/TheFlies/ofriends/internal/app/db"
+	"github.com/TheFlies/ofriends/internal/app/friend"
+	"github.com/TheFlies/ofriends/internal/pkg/glog"
+	"github.com/TheFlies/ofriends/internal/pkg/health"
+	"github.com/TheFlies/ofriends/internal/pkg/middleware"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"

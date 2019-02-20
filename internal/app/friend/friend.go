@@ -3,8 +3,8 @@ package friend
 import (
 	"context"
 
-	"ofriends/internal/app/types"
-	"ofriends/internal/pkg/glog"
+	"github.com/TheFlies/ofriends/internal/app/types"
+	"github.com/TheFlies/ofriends/internal/pkg/glog"
 )
 
 // Repository is an interface of a friend repository

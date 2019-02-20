@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	"ofriends/internal/pkg/glog"
+	"github.com/TheFlies/ofriends/internal/pkg/glog"
 )
 
 // Logging is a handler that log request information

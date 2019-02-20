@@ -4,9 +4,9 @@ import (
 	"context"
 	"net/http"
 
-	"ofriends/internal/app/types"
-	"ofriends/internal/pkg/glog"
-	"ofriends/internal/pkg/respond"
+	"github.com/TheFlies/ofriends/internal/app/types"
+	"github.com/TheFlies/ofriends/internal/pkg/glog"
+	"github.com/TheFlies/ofriends/internal/pkg/respond"
 
 	"github.com/gorilla/mux"
 )

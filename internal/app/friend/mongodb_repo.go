@@ -3,7 +3,7 @@ package friend
 import (
 	"context"
 
-	"ofriends/internal/app/types"
+	"github.com/TheFlies/ofriends/internal/app/types"
 
 	mgo "github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
