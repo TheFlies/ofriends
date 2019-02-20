@@ -85,8 +85,8 @@ func Init(conns *InfraConns) (http.Handler, error) {
 
 	for _, rt := range routes {
 		h := rt.handler
-		for _, mdw := range rt.middlewares {
-			h = mdw(h)
+		for i := len(rt.middlewares) - 1; i >= 0; i-- {
+			h = rt.middlewares[i](h)
 		}
 		r.Path(rt.path).Methods(rt.method).HandlerFunc(h)
 	}
