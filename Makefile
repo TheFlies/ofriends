@@ -36,10 +36,10 @@ docker_run:
 	docker run -p 8080:8080 $(DOCKER_IMAGE)
 build-web:
 	cd web; \
-	npm install; \
-	npm run build
+	yarn install; \
+	yarn build
 build-web-quick:
 	cd web; \
-	npm run build
+	yarn build
 run: build-web-quick
 	go run main.go

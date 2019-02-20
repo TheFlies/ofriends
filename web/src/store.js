@@ -8,13 +8,13 @@ export default new Vuex.Store({
     user: {
       userId: null,
       user: null,
-      userImage: null,
+      userImage: null
     }
   },
   mutations: {
+
   },
   actions: {
-  },
-  getters: {
+
   }
 })
