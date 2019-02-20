@@ -1,4 +1,7 @@
 # ofriends
+
+[![Join the chat at https://gitter.im/TheFlies/ofriends](https://badges.gitter.im/TheFlies/ofriends.svg)](https://gitter.im/TheFlies/ofriends?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Tool to track guests visit to my hotels over the time
 
 ## Prerequisites

@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/TheFlies/ofriends/internal/app/api/handler/friend"
@@ -46,7 +47,7 @@ func Init(conns *InfraConns) (http.Handler, error) {
 	case db.TypeMongoDB:
 		friendRepo = friend.NewMongoRepository(conns.Databases.MongoDB)
 	default:
-		panic("database type not supported: " + conns.Databases.Type)
+		return nil, fmt.Errorf("database type not supported: %s", conns.Databases.Type)
 	}
 
 	friendLogger := logger.WithField("package", "friend")
