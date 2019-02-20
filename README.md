@@ -1,6 +1,13 @@
 # ofriends
 Tool to track guests visit to my hotels over the time
 
+## Development
+```
+git clone https://github.com/TheFlies/ofriends.git
+
+# Run with Docker compose
+make compose
+```
 ## [ ] Votes for fields
 - Auth?
   + OAuth
