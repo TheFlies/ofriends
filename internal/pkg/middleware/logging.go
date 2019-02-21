@@ -17,7 +17,9 @@ func Logging(logger glog.Logger) func(inner http.Handler) http.Handler {
 				Infoc(r.Context(), "")
 			inner.ServeHTTP(w, r)
 			code := http.StatusOK
-			if mw, ok := w.(interface{ Status() int }); ok {
+			if mw, ok := w.(interface {
+				Status() int
+			}); ok {
 				code = mw.Status()
 			}
 			logger.WithField("method", r.Method).WithField("path", r.URL.Path).
