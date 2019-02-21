@@ -63,8 +63,8 @@ After this step, source code must be available at `$GOPATH/src/github.com/TheFli
   $ cd web
   $ yarn install   // Do this only once
   $ yarn serve
-  # Frontend service will start at port :8081 and connect to backend service at :8080.
-  # Open your browser then head to http://localhost:8081.
+  # Frontend service will start at port :3000 and connect to backend service at :8080.
+  # Open your browser then head to http://localhost:3000.
   ```
 
 #### 3. Start development environment with Docker
