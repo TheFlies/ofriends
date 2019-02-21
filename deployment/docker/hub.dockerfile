@@ -2,14 +2,13 @@
 FROM golang:alpine as gobuilder
 
 RUN mkdir -p /build/src/github.com/TheFlies/ofriends
-ENV GO_BUILD_ENV=CGO_ENABLED=0 GOOS=linux GOARCH=amd64
 ENV GOPATH=/build
 WORKDIR /build/src/github.com/TheFlies/ofriends
 ADD vendor ./vendor
 ADD internal ./internal
 ADD main.go .
 
-RUN go build -v -o ofriends .
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o ofriends .
 # build the web
 FROM node:alpine as webbuilder
 RUN mkdir /build
