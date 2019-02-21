@@ -57,19 +57,19 @@ func Init(conns *InfraConns) (http.Handler, error) {
 	indexWebHandler := indexhandler.New()
 	routes := []route{
 		// infra
-		route{
+		{
 			path:    "/readiness",
 			method:  get,
 			handler: health.Readiness().ServeHTTP,
 		},
 		// services
-		route{
+		{
 			path:    "/api/v1/friend/{id:[a-z0-9-\\-]+}",
 			method:  get,
 			handler: friendHandler.Get,
 		},
 		// web
-		route{
+		{
 			path:    "/",
 			method:  get,
 			handler: indexWebHandler.Index,
@@ -78,6 +78,7 @@ func Init(conns *InfraConns) (http.Handler, error) {
 
 	loggingMW := middleware.Logging(logger.WithField("package", "middleware"))
 	r := mux.NewRouter()
+	r.Use(middleware.EnableCORS)
 	r.Use(middleware.RequestID)
 	r.Use(middleware.StatusResponseWriter)
 	r.Use(loggingMW)

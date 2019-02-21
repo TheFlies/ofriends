@@ -26,8 +26,8 @@ test:
 integration_test:
 	go test -tags=integration $(GO_FILES) -cover -v
 
-compose: docker
-	cd deployment/docker && docker-compose up
+compose:
+	cd deployment/dev && docker-compose up
 
 docker: vet test build
 	mv $(PROJECT_NAME)-$(BUILD_VERSION).bin deployment/docker/$(PROJECT_NAME).bin; \
