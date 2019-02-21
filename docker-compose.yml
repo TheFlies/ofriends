@@ -1,0 +1,22 @@
+version: '2'
+
+services:
+  mongo:
+    image: mongo:3.0
+    hostname: mongo
+    ports:
+        - "27017:27017"
+    volumes:
+        - /opt/data/mongo_home:/data/db
+    restart: always
+  ofriends:
+    image: ofriends:test
+    hostname: ofriends
+    ports:
+        - "8080:8080"
+    environment:
+      DB_TYPE: mongodb
+      MONGODB_ADDRS: "mongo:27017"
+    depends_on: 
+      - mongo
+    restart: always
