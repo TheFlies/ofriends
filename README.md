@@ -72,10 +72,16 @@ After this step, source code must be available at `$GOPATH/src/github.com/TheFli
 Instead of manually start services like step 2. You can use Docker to start all services at once.
 
 ```shell
-$ make docker-compose
+$ cd /web && yarn install && cd ../   # Do this only once to install frontend modules first
+$ make compose
 ```
 
-// TODO: Update later
+After started, services will be available at `localhost` with ports as below:
+```
+MongoDB: 27017
+Backend: 8080 (hot-reload dashboard: 8082)
+Frontend: 8081
+```
 
 ## Notes
 
