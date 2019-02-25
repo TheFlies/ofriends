@@ -61,7 +61,7 @@ After this step, source code must be available at `$GOPATH/src/github.com/TheFli
 
   ```shell
   $ cd web
-  $ yarn install   // Do this only once
+  $ yarn install   # Do this only once
   $ yarn serve
   # Frontend service will start at port :8081 and connect to backend service at :8080.
   # Open your browser then head to http://localhost:8081.
@@ -72,7 +72,7 @@ After this step, source code must be available at `$GOPATH/src/github.com/TheFli
 Instead of manually start services like step 2. You can use Docker to start all services at once.
 
 ```shell
-$ cd /web && yarn install && cd ../   # Do this only once to install frontend modules first
+$ cd web && yarn install && cd ..   # Do this only once to install frontend modules first
 $ make compose
 ```
 
