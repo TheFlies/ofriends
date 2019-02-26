@@ -14,6 +14,7 @@ import (
 type (
 	service interface {
 		Get(ctx context.Context, id string) (*types.Friend, error)
+		GetAll(ctx context.Context) ([]types.Friend, error)
 	}
 
 	// Handler is friend web handler
@@ -39,4 +40,14 @@ func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	respond.JSON(w, http.StatusOK, friend)
+}
+
+// GetAll handle get friends HTTP Request
+func (h *Handler) GetAll(w http.ResponseWriter, r *http.Request) {
+	friends, err := h.srv.GetAll(r.Context())
+	if err != nil {
+		respond.Error(w, err, http.StatusInternalServerError)
+		return
+	}
+	respond.JSON(w, http.StatusOK, friends)
 }
