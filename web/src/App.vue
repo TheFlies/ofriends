@@ -1,32 +1,20 @@
 <template>
   <div id="app">
-    <Header>
-
-    </Header>
-    <img src="./assets/logo.png">
-    <div>
-      <p>
-        If Element is successfully added to this project, you'll see an
-        <code v-text="'<el-button>'"></code>
-        below
-      </p>
-      <el-button>el-button</el-button>
-    </div>
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  <Footer>
-  </Footer>
+    <Header/>
+    <Customers msg="Welcome to Your Vue.js App"/>
+    <Footer/>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Customers from './components/customer/Customers.vue'
 import Header from './components/common/Header.vue'
 import Footer from './components/common/Footer.vue'
 
 export default {
   name: 'app',
   components: {
-    HelloWorld,
+    Customers,
     Header,
     Footer
   }
@@ -38,7 +26,6 @@ export default {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
 }
 body {
@@ -48,4 +35,3 @@ body {
   box-sizing: border-box
 }
 </style>
-<style src="./styles/var.scss" lang="scss"></style>
