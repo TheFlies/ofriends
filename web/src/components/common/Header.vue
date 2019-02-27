@@ -11,4 +11,7 @@ export default {
 </script>
 
 <style lang="scss">
+.el-header {
+  background-color: $--primary-color
+}
 </style>

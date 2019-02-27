@@ -46,3 +46,4 @@ body {
   box-sizing: border-box
 }
 </style>
+<style src="./styles/var.scss" lang="scss"></style>
