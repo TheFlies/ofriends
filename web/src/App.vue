@@ -13,20 +13,22 @@
       <el-button>el-button</el-button>
     </div>
     <HelloWorld msg="Welcome to Your Vue.js App"/>
-  <el-footer>
-  </el-footer>
+  <Footer>
+  </Footer>
   </div>
 </template>
 
 <script>
 import HelloWorld from './components/HelloWorld.vue'
 import Header from './components/common/Header.vue'
+import Footer from './components/common/Footer.vue'
 
 export default {
   name: 'app',
   components: {
     HelloWorld,
-    Header
+    Header,
+    Footer
   }
 }
 </script>
