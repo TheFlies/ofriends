@@ -1,0 +1,40 @@
+// Keep predefine magic here
+
+@mixin flex {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flex {
+  @include flex;
+}
+
+@mixin inline-flex {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.inline-flex {
+  @include inline-flex;
+} 
+
+@mixin flex-item {
+  -webkit-flex: 1;
+  -moz-flex: 1;
+  -ms-flex: 1;
+  -o-flex: 1;
+  flex: 1;
+}
+.flex-item {
+  @include flex-item
+} 
