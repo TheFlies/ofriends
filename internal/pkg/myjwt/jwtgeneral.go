@@ -13,7 +13,7 @@ type (
 	}
 )
 
-func new(standard jwt.StandardClaims, uuseid string, usefullname string, useroole string) *Customeclaims {
+func New(standard jwt.StandardClaims, uuseid string, usefullname string, useroole string) *Customeclaims {
 	return &Customeclaims{
 		StandardClaims: jwt.StandardClaims{
 			Audience:  standard.Audience,
@@ -31,7 +31,7 @@ func new(standard jwt.StandardClaims, uuseid string, usefullname string, userool
 }
 
 func CreateToken(issuedAt int64, audience string, timeout int64, serectkey string, useid string, usefullname string, userole string) (string, error) {
-	payload := new(jwt.StandardClaims{
+	payload := New(jwt.StandardClaims{
 		IssuedAt:  issuedAt,
 		Audience:  audience,
 		ExpiresAt: timeout,
@@ -44,14 +44,22 @@ func CreateToken(issuedAt int64, audience string, timeout int64, serectkey strin
 	}
 	return ss, nil
 }
-
-func CheckToken(token string, serectkey string) (Customeclaims, bool) {
+func GetPayload(token string, serectkey string) Customeclaims {
 	reslt, _ := jwt.ParseWithClaims(token, &Customeclaims{}, func(token *jwt.Token) (i interface{}, e error) {
 		return []byte(serectkey), nil
 	})
+	payload, _ := reslt.Claims.(*Customeclaims)
+	return *payload
+}
+func CheckToken(token string, serectkey string) (Customeclaims, bool) {
+	reslt, err := jwt.ParseWithClaims(token, &Customeclaims{}, func(token *jwt.Token) (i interface{}, e error) {
+		return []byte(serectkey), nil
+	})
 	payload, ok := reslt.Claims.(*Customeclaims)
-	if ok && reslt.Valid {
-		return *payload, true
+	if err == nil {
+		if ok && reslt.Valid {
+			return *payload, true
+		}
 	}
 	return Customeclaims{}, false
 
