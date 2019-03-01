@@ -1,6 +1,6 @@
 <template>
   <el-header>
-    <div class="flex full-width">
+    <div class="header flex full-width">
       <div class="home-link flex-item">
          <a href="/">OFriends</a>
       </div>
@@ -25,6 +25,10 @@ export default {
   background-color: $--primary-color;
   min-height: 36px;
   @include flex
+}
+.header {
+  max-width: $--standard-width;
+  padding: 0 20px;
 }
 .home-link {
   min-height: 36px;

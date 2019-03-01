@@ -1,42 +1,43 @@
 <template>
-  <div class="hello">
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-pwa" target="_blank" rel="noopener">pwa</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-unit-jest" target="_blank" rel="noopener">unit-jest</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-e2e-nightwatch" target="_blank" rel="noopener">e2e-nightwatch</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+  <div class="customers-container">
+    <p class="title-font">Customers</p>
+    <el-row :gutter="20" class="space-bottom">
+      <el-col :span="12">
+        <el-input placeholder="Filter by name" v-model="filterName"></el-input>
+      </el-col>
+      <el-col :span="6">
+        <el-input placeholder="Arrive" v-model="filterArrive"></el-input>
+      </el-col>
+      <el-col :span="6">
+        <el-input placeholder="Depart" v-model="filterDepart"></el-input>
+      </el-col>
+    </el-row>
+    <div class="space-bottom">
+      <el-radio-group v-model="filterTime">
+        <el-radio-button label="Current"></el-radio-button>
+        <el-radio-button label="Upcomming"></el-radio-button>
+        <el-radio-button label="Served"></el-radio-button>
+        <el-radio-button label="All"></el-radio-button>
+      </el-radio-group>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'Customers'
+  name: 'Customers',
+  data: () => {
+    return {
+      filterName: '',
+      filterTime: 'Current'
+    }
+  }
 }
 </script>
-<style lang="sass" scoped>
-
+<style lang="scss" scoped>
+.customers-container {
+  margin: auto;
+  padding: 0 20px;
+  max-width: 1366px;
+}
 </style>

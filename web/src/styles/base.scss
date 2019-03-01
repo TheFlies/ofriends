@@ -1,3 +1,11 @@
+.title-font {
+    font-size: $--font-md;
+}
+
+.normal-font {
+    font-size: $--font-sm;
+}
+
 .full-width {
     width: 100%;
 }
@@ -6,4 +14,7 @@
 }
 .quarter-width {
     width: 25%;
+}
+.space-bottom {
+    margin-bottom: 20px
 }
