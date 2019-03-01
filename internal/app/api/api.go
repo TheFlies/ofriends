@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"github.com/TheFlies/ofriends/internal/app/api/handler/login"
 	"net/http"
 
 	"github.com/TheFlies/ofriends/internal/app/api/handler/friend"
@@ -53,7 +54,7 @@ func Init(conns *InfraConns) (http.Handler, error) {
 	friendLogger := logger.WithField("package", "friend")
 	friendSrv := friend.NewService(friendRepo, friendLogger)
 	friendHandler := friendhandler.New(friendSrv, friendLogger)
-
+	logiinhandler := login.New()
 	indexWebHandler := indexhandler.New()
 	routes := []route{
 		// infra
@@ -68,12 +69,22 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			method:  get,
 			handler: friendHandler.Get,
 		},
+		{
+			path:    "/api/v1/login/",
+			method:  post,
+			handler: logiinhandler.Authenticaiton,
+		},
 
 		// web
 		{
 			path:    "/",
 			method:  get,
 			handler: indexWebHandler.Index,
+		},
+		{
+			path:    "/login",
+			method:  get,
+			handler: logiinhandler.Login,
 		},
 	}
 
