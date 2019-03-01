@@ -5,11 +5,11 @@
       <el-col :span="12">
         <el-input placeholder="Filter by name" v-model="filterName"></el-input>
       </el-col>
-      <el-col :span="6">
-        <el-input placeholder="Arrive" v-model="filterArrive"></el-input>
+      <el-col :span="6" class="text-right">
+        <el-date-picker v-model="filterArrive" type="date" placeholder="Arrive day"> </el-date-picker>
       </el-col>
-      <el-col :span="6">
-        <el-input placeholder="Depart" v-model="filterDepart"></el-input>
+      <el-col :span="6" class="text-right">
+        <el-date-picker v-model="filterDepart" type="date" placeholder="Depart day"> </el-date-picker>
       </el-col>
     </el-row>
     <div class="space-bottom">
@@ -20,17 +20,34 @@
         <el-radio-button label="All"></el-radio-button>
       </el-radio-group>
     </div>
+    <div class="customers">
+      <Customer/>
+      <Customer/>
+      <Customer/>
+      <Customer/>
+      <Customer/>
+      <Customer/>
+      <Customer/>
+      <Customer/>
+    </div>
   </div>
 </template>
 
 <script>
+import Customer from './Customer'
+
 export default {
   name: 'Customers',
   data: () => {
     return {
       filterName: '',
-      filterTime: 'Current'
+      filterTime: 'Current',
+      filterArrive: new Date(),
+      filterDepart: new Date()
     }
+  },
+  components: {
+    Customer
   }
 }
 </script>

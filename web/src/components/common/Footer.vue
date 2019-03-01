@@ -1,5 +1,5 @@
 <template>
-    <el-footer>
+    <el-footer class="full-width">
 
     </el-footer>
 </template>
@@ -12,6 +12,9 @@ export default {
 
 <style lang="scss" scoped>
 .el-footer {
-    background-color: $--primary-color
+    background-color: $--primary;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
 }
 </style>

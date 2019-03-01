@@ -22,7 +22,7 @@ export default {
 
 <style lang="scss">
 .el-header {
-  background-color: $--primary-color;
+  background-color: $--primary;
   min-height: 36px;
   @include flex
 }

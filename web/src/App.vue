@@ -1,8 +1,10 @@
 <template>
   <div id="app">
-    <Header/>
-    <Customers msg="Welcome to Your Vue.js App"/>
-    <Footer/>
+    <div id="app-container">
+      <Header/>
+      <Customers msg="Welcome to Your Vue.js App"/>
+      <Footer/>
+    </div>
   </div>
 </template>
 
@@ -21,12 +23,17 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
+}
+#app-container {
+  height: 100vh;
+  position: relative;
+  padding-bottom: 60px;
 }
 body {
   margin: 0
