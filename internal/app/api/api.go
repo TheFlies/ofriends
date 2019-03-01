@@ -68,6 +68,7 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			method:  get,
 			handler: friendHandler.Get,
 		},
+
 		// web
 		{
 			path:    "/",
