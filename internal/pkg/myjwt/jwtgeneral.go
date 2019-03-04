@@ -51,19 +51,6 @@ func GetPayload(token string, serectkey string) Customeclaims {
 	payload, _ := reslt.Claims.(*Customeclaims)
 	return *payload
 }
-func CheckToken(token string, serectkey string) (Customeclaims, bool) {
-	reslt, err := jwt.ParseWithClaims(token, &Customeclaims{}, func(token *jwt.Token) (i interface{}, e error) {
-		return []byte(serectkey), nil
-	})
-	payload, ok := reslt.Claims.(*Customeclaims)
-	if err == nil {
-		if ok && reslt.Valid {
-			return *payload, true
-		}
-	}
-	return Customeclaims{}, false
-
-}
 
 // This method will check a token is expired with current time
 // Return true if the token still no expired
