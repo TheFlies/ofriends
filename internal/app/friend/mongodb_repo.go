@@ -34,5 +34,5 @@ func (r *MongoRepository) FindByID(ctx context.Context, id string) (*types.Frien
 }
 
 func (r *MongoRepository) collection(s *mgo.Session) *mgo.Collection {
-	return s.DB("").C("friends")
+	return s.DB("ofriends").C("friends")
 }
