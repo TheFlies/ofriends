@@ -26,6 +26,7 @@ func NewMongoRepository(s *mgo.Session) *MongoRepository {
 func (r *MongoRepository) FindByID(ctx context.Context, id string) (*types.Friend, error) {
 	s := r.session.Clone()
 	defer s.Close()
+
 	var friend *types.Friend
 	if err := r.collection(s).Find(bson.M{"id": id}).One(&friend); err != nil {
 		return nil, errors.Wrap(err, "failed to find the given friend from database")

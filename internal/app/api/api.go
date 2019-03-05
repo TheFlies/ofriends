@@ -54,7 +54,7 @@ func Init(conns *InfraConns) (http.Handler, error) {
 	friendLogger := logger.WithField("package", "friend")
 	friendSrv := friend.NewService(friendRepo, friendLogger)
 	friendHandler := friendhandler.New(friendSrv, friendLogger)
-	logiinhandler := login.New()
+	loginHandeler := login.New()
 	indexWebHandler := indexhandler.New()
 	routes := []route{
 		// infra
@@ -72,7 +72,7 @@ func Init(conns *InfraConns) (http.Handler, error) {
 		{
 			path:    "/api/v1/login/",
 			method:  post,
-			handler: logiinhandler.Authenticaiton,
+			handler: loginHandeler.Authentication,
 		},
 
 		// web
@@ -84,7 +84,7 @@ func Init(conns *InfraConns) (http.Handler, error) {
 		{
 			path:    "/login",
 			method:  get,
-			handler: logiinhandler.Login,
+			handler: loginHandeler.Login,
 		},
 	}
 
