@@ -7,7 +7,8 @@ import (
 	"github.com/TheFlies/ofriends/internal/pkg/glog"
 	"github.com/TheFlies/ofriends/internal/pkg/respond"
 	"net/http"
-
+	"errors"
+	"io"
 	"github.com/gorilla/mux"
 )
 
@@ -52,13 +53,19 @@ func (h *Handler) GetAll(w http.ResponseWriter, r *http.Request) {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
 	}
+	
 	respond.JSON(w, http.StatusOK, gifts)
 }
 
 // Create handle insert gift HTTP Request
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	var gift types.Gift
+
 	if err := json.NewDecoder(r.Body).Decode(&gift); err != nil {
+		if err == io.EOF {
+			respond.Error(w, errors.New("Invalid request method"), http.StatusMethodNotAllowed)
+			return
+		}
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
 	}
@@ -67,13 +74,17 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
 	}
-	respond.JSON(w, http.StatusCreated, gift)
+	respond.JSON(w, http.StatusCreated, gift.ID)
 }
 
 // Update handle modify gift HTTP Request
 func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	var gift types.Gift
 	if err := json.NewDecoder(r.Body).Decode(&gift); err != nil {
+		if err == io.EOF {
+			respond.Error(w, errors.New("Invalid request method"), http.StatusMethodNotAllowed)
+			return
+		}
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
 	}
@@ -82,7 +93,7 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
 	}
-	respond.JSON(w, http.StatusCreated, map[string]string{"result": "success"})
+	respond.JSON(w, http.StatusOK, map[string]string{"result": "success"})
 }
 
 // Delete handle delete gift HTTP Request
@@ -91,5 +102,5 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
 	}
-	respond.JSON(w, http.StatusCreated, map[string]string{"result": "success"})
+	respond.JSON(w, http.StatusOK, map[string]string{"result": "success"})
 }

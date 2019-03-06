@@ -86,31 +86,31 @@ func Init(conns *InfraConns) (http.Handler, error) {
 
 		// Gift services
 		{
-			path:    "/api/v1/gift/{id:[a-z0-9-\\-]+}",
+			path:    "/gifts/{id:[a-z0-9-\\-]+}",
 			method:  get,
 			handler: giftHandler.Get,
 		},
 
 		{
-			path:    "/api/v1/gifts",
+			path:    "/gifts",
 			method:  get,
 			handler: giftHandler.GetAll,
 		},
 
 		{
-			path:    "/api/v1/gifts",
+			path:    "/gifts",
 			method:  post,
 			handler: giftHandler.Create,
 		},
 
 		{
-			path:    "/api/v1/gifts",
+			path:    "/gifts",
 			method:  put,
 			handler: giftHandler.Update,
 		},
 
 		{
-			path:    "/api/v1/gift/{id:[a-z0-9-\\-]+}",
+			path:    "/gifts/{id:[a-z0-9-\\-]+}",
 			method:  delete,
 			handler: giftHandler.Delete,
 		},

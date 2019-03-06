@@ -1,7 +1,7 @@
 <template>
     <el-dialog
-        title="Update Gift"
-        :visible.sync="isVisibleUpdate"
+        title="Add Gift"
+        :visible.sync="isVisibleAdd"
         width="30%"
         append-to-body :before-close="handleBackdropClick">
         <el-form :model="gift" :rules="rules" ref="gift" label-width="120px" class="demo-ruleForm">
@@ -36,22 +36,21 @@
 
 <script>
 export default {
-  name: 'giftUpdate',
+  name: 'giftAdd',
   props: {
-    isVisibleUpdate: { type: Boolean, default: false },
-    gift: {
-      id: 0,
-      name: '',
-      idea: '',
-      size: '',
-      quantity: 0,
-      price: 0,
-      link: '',
-      description: ''
-    }
+    isVisibleAdd: { type: Boolean, default: false }
   },
   data () {
     return {
+      gift: {
+        name: '',
+        idea: '',
+        size: '',
+        quantity: 0,
+        price: 0,
+        link: '',
+        description: ''
+      },
       rules: {
         name: [
           { required: true, message: 'Please input Gift name', trigger: 'blur' }
@@ -61,13 +60,13 @@ export default {
   },
   methods: {
     handleBackdropClick () {
-      this.$emit('update:isVisibleUpdate', false)
+      this.$emit('update:isVisibleAdd', false)
     },
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.$emit('update:isVisibleUpdate', false)
-          this.$emit('isUpdateGift', true)
+          this.$emit('update:isVisibleAdd', false)
+          this.$emit('isAddGift', true, this.gift)
         } else {
           console.log('error submit!!')
           return false
@@ -76,7 +75,7 @@ export default {
     },
     resetForm (formName) {
       this.$refs[formName].resetFields()
-      this.$emit('update:isVisibleUpdate', false)
+      this.$emit('update:isVisibleAdd', false)
     }
   }
 }

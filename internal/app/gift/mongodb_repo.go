@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/TheFlies/ofriends/internal/app/types"
-
+	"github.com/TheFlies/ofriends/internal/pkg/uuid"
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
 	"github.com/pkg/errors"
@@ -28,7 +28,7 @@ func (r *MongoRepository) FindByID(ctx context.Context, id string) (*types.Gift,
 	defer s.Close()
 	var gift *types.Gift
 	if err := r.collection(s).Find(bson.M{"id": id}).One(&gift); err != nil {
-		return nil, errors.Wrap(err, "failed to find the given gift from database")
+		return nil, errors.Wrap(err, "Failed to find the given gift from database")
 	}
 	return gift, nil
 }
@@ -43,8 +43,9 @@ func (r *MongoRepository) FindAll(ctx context.Context) ([]types.Gift, error) {
 	defer s.Close()
 	var gifts []types.Gift
 	if err := r.collection(s).Find(bson.M{}).All(&gifts); err != nil {
-		return nil, errors.Wrap(err, "failed to fetch all gifts from database")
+		return nil, errors.Wrap(err, "Failed to fetch all gifts from database")
 	}
+	
 	return gifts, nil
 }
 
@@ -52,6 +53,7 @@ func (r *MongoRepository) FindAll(ctx context.Context) ([]types.Gift, error) {
 func (r *MongoRepository) Create(ctx context.Context, gift types.Gift) error {
 	s := r.session.Clone()
 	defer s.Close()
+	gift.ID = uuid.New()
 	err := r.collection(s).Insert(&gift)
 	return err
 }
