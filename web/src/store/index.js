@@ -6,19 +6,7 @@ import gift from './modules/gift.js'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
-  // state: {
-  //   user: {
-  //     userId: null,
-  //     user: null,
-  //     userImage: null
-  //   }
-  // },
-  // mutations: {
-
-  // },
-  // actions: {
-
-  // }
+  // strict: process.env.NODE_ENV !== 'production',
   modules: {
     customers,
     gift

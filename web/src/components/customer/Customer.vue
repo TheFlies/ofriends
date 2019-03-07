@@ -6,7 +6,7 @@
     </div>
     <div class="right">
       <span>21-12-2018</span>
-      <span> - </span>
+      <span> => </span>
       <span>22-12-2019</span>
     </div>
   </div>

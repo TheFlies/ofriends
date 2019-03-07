@@ -1,7 +1,7 @@
 const state = {
   customers: [],
   filter: {
-    name: 'John',
+    name: 'Johnnnnn',
     time: 'Current',
     arrive: new Date(),
     depart: new Date()
@@ -9,8 +9,11 @@ const state = {
 }
 
 const mutations = {
-  setFilter (state) {
-
+  setFilter (state, payload) {
+    state.filter = payload
+  },
+  setCustomers (state, payload) {
+    state.customers = payload
   }
 }
 
