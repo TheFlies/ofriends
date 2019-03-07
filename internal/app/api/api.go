@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"github.com/TheFlies/ofriends/internal/app/api/handler/login"
+	"github.com/TheFlies/ofriends/internal/app/usercache"
 	"net/http"
 
 	"github.com/TheFlies/ofriends/internal/app/api/handler/friend"
@@ -44,9 +45,12 @@ func Init(conns *InfraConns) (http.Handler, error) {
 	logger := glog.New()
 
 	var friendRepo friend.Repository
+	var usercacheRepo usercache.UsercacheReponsitory
 	switch conns.Databases.Type {
 	case db.TypeMongoDB:
 		friendRepo = friend.NewMongoRepository(conns.Databases.MongoDB)
+		usercacheRepo = usercache.NewUsercachMongoReopnsitoty(conns.Databases.MongoDB)
+
 	default:
 		return nil, fmt.Errorf("database type not supported: %s", conns.Databases.Type)
 	}
@@ -54,8 +58,11 @@ func Init(conns *InfraConns) (http.Handler, error) {
 	friendLogger := logger.WithField("package", "friend")
 	friendSrv := friend.NewService(friendRepo, friendLogger)
 	friendHandler := friendhandler.New(friendSrv, friendLogger)
-	loginHandeler := login.New()
 	indexWebHandler := indexhandler.New()
+	// usercache
+	usercachelogger := logger.WithField("package", "usercache")
+	usercacheService := usercache.NewUserCacheService(usercacheRepo, usercachelogger)
+	loginhandeler := login.NewLoginHandeler(usercacheService, usercachelogger)
 	routes := []route{
 		// infra
 		{
@@ -69,11 +76,6 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			method:  get,
 			handler: friendHandler.Get,
 		},
-		{
-			path:    "/api/v1/login/",
-			method:  post,
-			handler: loginHandeler.Authentication,
-		},
 
 		// web
 		{
@@ -82,9 +84,14 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			handler: indexWebHandler.Index,
 		},
 		{
-			path:    "/login",
-			method:  get,
-			handler: loginHandeler.Login,
+			path:    "/api/v1/login",
+			method:  post,
+			handler: loginhandeler.Authentication,
+		},
+		{
+			path:    "/api/v1/get",
+			method:  post,
+			handler: loginhandeler.GetUser,
 		},
 	}
 
@@ -95,7 +102,6 @@ func Init(conns *InfraConns) (http.Handler, error) {
 	r.Use(middleware.StatusResponseWriter)
 	r.Use(loggingMW)
 	r.Use(handlers.CompressHandler)
-	r.Use(middleware.Authent)
 
 	for _, rt := range routes {
 		h := rt.handler

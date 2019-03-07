@@ -5,7 +5,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"net/http"
 	"strings"
-	"time"
 )
 
 func Authent(h http.Handler) http.Handler {
@@ -16,8 +15,8 @@ func Authent(h http.Handler) http.Handler {
 		thebearertoken := r.Header.Get("Authorization")
 		jwttoken := strings.Split(thebearertoken, " ")[1]
 		logrus.Info("the token : %v\n", jwttoken)
-		unixtimenow := time.Now().Unix()
-		notExpire := myjwt.CheckExp(jwttoken, PRIVATE_KEY, unixtimenow)
+
+		notExpire := myjwt.CheckExp(jwttoken)
 		if notExpire {
 			payload := myjwt.GetPayload(jwttoken, PRIVATE_KEY)
 			logrus.Info("the payload is %v\n", payload)
