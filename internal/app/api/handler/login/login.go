@@ -1,71 +1,69 @@
 package login
 
 import (
-	"github.com/TheFlies/ofriends/internal/app/friend"
 	"github.com/TheFlies/ofriends/internal/app/types"
 	"github.com/TheFlies/ofriends/internal/pkg/glog"
 	"github.com/TheFlies/ofriends/internal/pkg/myjwt"
 	"github.com/TheFlies/ofriends/internal/pkg/respond"
-	"io"
-	"log"
+	"github.com/globalsign/mgo/bson"
 	"net/http"
-	"os"
 	"time"
 )
 
 type (
-
-	// Handler is index web handler
-	LoginHandeler struct {
-		usercacherepo friend.UseCacheRepository
-		logger        glog.Logger
+	service interface {
+		GetUserByeUserName(username string) (*types.Usercache, error)
+		AddUser(user *types.Usercache) error
+	}
+	LoginHandler struct {
+		srv    service
+		logger glog.Logger
 	}
 )
 
-func New(repo friend.UseCacheRepository, l glog.Logger) *LoginHandeler {
-	return &LoginHandeler{
-		usercacherepo: repo,
-		logger:        l,
+func NewLoginHandeler(s service, l glog.Logger) *LoginHandler {
+	return &LoginHandler{
+		srv:    s,
+		logger: l,
 	}
 }
-func (web *LoginHandeler) Login(w http.ResponseWriter, r *http.Request) {
-	f, err := os.Open("web/login.html")
-	if err != nil {
-		respond.Error(w, err, http.StatusInternalServerError)
-		return
-	}
-	if _, err := io.Copy(w, f); err != nil {
-		respond.Error(w, err, http.StatusInternalServerError)
-		return
-	}
-}
-func (web *LoginHandeler) Authentication(w http.ResponseWriter, r *http.Request) {
-	Primarykey := "AllYorbase"
-	//TODO ldap will query username role and fullname
-	usename := r.FormValue("usename")
+func (h *LoginHandler) Authentication(w http.ResponseWriter, r *http.Request) {
+	//privateKey :=os.Getenv("TOKENKEY")
+	usename := r.FormValue("username")
 	password := r.FormValue("password")
-	user := types.Usercache{Username: usename, Userrole: "eng", Fullname: "full name"}
-	if ok := LDAPAuthentication(usename, password); ok {
-		//Check user in database, if the user did't exist, get user information in ldap database and save them into mongodb
-		_, err := web.usercacherepo.FindUserByUserName(usename)
-		if err != nil {
-			if err := web.usercacherepo.InserUser(&user); err != nil {
-				log.Fatal("insert a user to cache database is fails")
-				log.Fatal(err)
-				respond.Error(w, err, http.StatusInternalServerError)
-			}
-		}
-		timeout := time.Now().Local().Add(time.Hour*time.Duration(0) +
-			time.Minute*time.Duration(60) +
-			time.Second*time.Duration(0)).Unix()
-		token, err := myjwt.CreateToken(time.Now().Unix(), "", timeout, Primarykey, usename, "fullname", "eng")
-		if err != nil {
-			log.Fatal("creating token is fails")
-			respond.Error(w, err, http.StatusInternalServerError)
-		}
-		respondmap := make(map[string]string)
-		respondmap["token"] = token
-		respondmap["usename"] = usename
-		respond.JSON(w, http.StatusAccepted, respondmap)
+	err := LDAPAuthentication(usename, password)
+	if err != nil {
+		respond.JSON(w, http.StatusUnauthorized, "login fails please check uou username and passwrod")
+		return
 	}
+	user, err := h.srv.GetUserByeUserName(usename)
+	if err != nil {
+		user.Id = bson.NewObjectId()
+		err := h.srv.AddUser(user)
+		if err != nil {
+			respond.JSON(w, http.StatusInternalServerError, err)
+			return
+		}
+	}
+
+	token, err := myjwt.CreateToken(user.Username, user.Fullname, user.Userrole, time.Now().Unix())
+	if err != nil {
+		respond.JSON(w, http.StatusInternalServerError, err)
+		return
+	}
+	responmap := make(map[string]interface{})
+	responmap["userinformation"] = user
+	responmap["token"] = token
+	respond.JSON(w, http.StatusAccepted, responmap)
+
+}
+func (h *LoginHandler) GetUser(w http.ResponseWriter, r *http.Request) {
+	usename := r.FormValue("username")
+	u, err := h.srv.GetUserByeUserName(usename)
+	if err != nil {
+		respond.JSON(w, http.StatusAccepted, err)
+		return
+	}
+	respond.JSON(w, http.StatusAccepted, u)
+	return
 }

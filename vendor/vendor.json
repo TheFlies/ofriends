@@ -171,9 +171,16 @@
 			"revisionTime": "2019-02-18T14:38:26Z"
 		},
 		{
-			"path": "gopkg.in/ldap",
-			"revision": "v3",
-			"version": "v3"
+			"checksumSHA1": "eiRlBF3rFjT+8RXEqDXmypNol6U=",
+			"path": "gopkg.in/asn1-ber.v1",
+			"revision": "f715ec2f112d1e4195b827ad68cf44017a3ef2b1",
+			"revisionTime": "2018-10-15T20:05:46Z"
+		},
+		{
+			"checksumSHA1": "ycFPsOXG7Q6DqAT8ySVxlXEIIS4=",
+			"path": "gopkg.in/ldap.v3",
+			"revision": "729c20c2694d870bcd631f0dadaecd088bd7ccbc",
+			"revisionTime": "2019-03-04T16:46:47Z"
 		}
 	],
 	"rootPath": "github.com/TheFlies/ofriends"
