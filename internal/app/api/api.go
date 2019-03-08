@@ -102,6 +102,7 @@ func Init(conns *InfraConns) (http.Handler, error) {
 	r.Use(middleware.StatusResponseWriter)
 	r.Use(loggingMW)
 	r.Use(handlers.CompressHandler)
+	r.Use(middleware.AuthenticateMiddelware)
 
 	for _, rt := range routes {
 		h := rt.handler

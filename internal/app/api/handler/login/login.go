@@ -28,7 +28,6 @@ func NewLoginHandeler(s service, l glog.Logger) *LoginHandler {
 	}
 }
 func (h *LoginHandler) Authentication(w http.ResponseWriter, r *http.Request) {
-	//privateKey :=os.Getenv("TOKENKEY")
 	usename := r.FormValue("username")
 	password := r.FormValue("password")
 	err := LDAPAuthentication(usename, password)

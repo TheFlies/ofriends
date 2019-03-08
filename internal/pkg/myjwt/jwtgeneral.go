@@ -1,6 +1,7 @@
 package myjwt
 
 import (
+	"fmt"
 	"github.com/TheFlies/ofriends/internal/pkg/config/env"
 	"github.com/dgrijalva/jwt-go"
 	"log"
@@ -42,6 +43,7 @@ func New(standard jwt.StandardClaims, uuseid string, usefullname string, userool
 func CreateToken(userid string, userfullnme string, userrole string, issueat int64) (string, error) {
 	var conf JWTConf
 	envconfig.Load(&conf)
+	fmt.Println(conf.PrivateKey)
 	rawtimeout := strings.Split(conf.TimeOut, ":")
 	if len(rawtimeout) != 3 {
 		log.Fatalf("too many agrumant fails to get time out form env %v", rawtimeout)
@@ -74,12 +76,25 @@ func CreateToken(userid string, userfullnme string, userrole string, issueat int
 	}
 	return ss, nil
 }
-func GetPayload(token string, serectkey string) Customeclaims {
+func GetPayload(token string) Customeclaims {
+	var conf JWTConf
+	envconfig.Load(&conf)
 	reslt, _ := jwt.ParseWithClaims(token, &Customeclaims{}, func(token *jwt.Token) (i interface{}, e error) {
-		return []byte(serectkey), nil
+		return []byte(conf.PrivateKey), nil
 	})
 	payload, _ := reslt.Claims.(*Customeclaims)
 	return *payload
+}
+func Checkvalib(token string) bool {
+	var conf JWTConf
+	envconfig.Load(&conf)
+	reslt, err := jwt.ParseWithClaims(token, &Customeclaims{}, func(token *jwt.Token) (i interface{}, e error) {
+		return []byte(conf.PrivateKey), nil
+	})
+	if err != nil {
+		return false
+	}
+	return reslt.Valid
 }
 
 // This method will check a token is expired with current time
