@@ -60,110 +60,110 @@
 
 <script>
 export default {
-  name: "addFriend",
+  name: 'addFriend',
   props: {
     msg: String
   },
-  data() {
+  data () {
     return {
       form: {
-        name: "",
-        title: "Mr",
-        position: "",
-        project: "",
-        company: "",
-        country: "",
-        city: "",
+        name: '',
+        title: 'Mr',
+        position: '',
+        project: '',
+        company: '',
+        country: '',
+        city: '',
         age: 50,
-        foodNote: "",
-        familyNote: "",
-        nextVisitNote:"",
+        foodNote: '',
+        familyNote: '',
+        nextVisitNote: '',
         response: null
       },
       rules: {
         name: [
           {
             required: true,
-            message: "Please input customer name",
-            trigger: "change"
+            message: 'Please input customer name',
+            trigger: 'change'
           }
         ],
         title: [
           {
             required: true,
-            message: "Please input customer title",
-            trigger: "change"
+            message: 'Please input customer title',
+            trigger: 'change'
           }
         ],
         position: [
           {
             required: true,
-            message: "Please input customer title",
-            trigger: "change"
+            message: 'Please input customer title',
+            trigger: 'change'
           }
         ],
         project: [
           {
             required: true,
-            message: "Please input project name",
-            trigger: "change"
+            message: 'Please input project name',
+            trigger: 'change'
           }
         ]
       }
-    };
+    }
   },
   methods: {
-    showMessage(status, mesg) {
-        var mesgType = 'error'
-        if (status === 201){
-          mesgType =  'success'
-          mesg = "Create friend successfully!"
-        }
-        this.$message({
-          message: mesg,
-          type: mesgType
-        });
+    showMessage (status, mesg) {
+      var mesgType = 'error'
+      if (status === 201) {
+        mesgType = 'success'
+        mesg = 'Create friend successfully!'
+      }
+      this.$message({
+        message: mesg,
+        type: mesgType
+      })
     },
-    onSubmit(form,event) {
+    onSubmit (form, event) {
       this.$refs[form].validate(valid => {
         if (valid) {
-          var value = this.form;
+          var value = this.form
           this.$http
-            .post("/friends", {
-                Name: value.name,
-                Title: value.title,
-                Position: value.position,
-                Project: value.project,
-                Age: parseInt(value.age,10),
-                Company: value.company,
-                Country: value.country,
-                City: value.city,
-                FoodNote: value.foodNote,
-                FamilyNote: value.familyNote,
-                NextVisitNote: value.nextVisitNote
+            .post('/friends', {
+              Name: value.name,
+              Title: value.title,
+              Position: value.position,
+              Project: value.project,
+              Age: parseInt(value.age, 10),
+              Company: value.company,
+              Country: value.country,
+              City: value.city,
+              FoodNote: value.foodNote,
+              FamilyNote: value.familyNote,
+              NextVisitNote: value.nextVisitNote
             })
             .then(
               response => {
-                this.form.response = response.data,
+                this.form.response = response.data
                 this.showMessage(response.status, response.data)
-                 if (response.status === 201){
-                  this.resetForm(form,event)
-                 }
+                if (response.status === 201) {
+                  this.resetForm(form, event)
+                }
               })
             .catch(error => {
               this.showMessage(404, error)
-            });
+            })
         } else {
-          console.log("error submit!!");
-          return false;
+          console.log('error submit!!')
+          return false
         }
-      });
+      })
     },
-    resetForm(form, event) {
-        this.$refs[form].resetFields();
-      }
+    resetForm (form, event) {
+      this.$refs[form].resetFields()
+    }
   }
-};
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
