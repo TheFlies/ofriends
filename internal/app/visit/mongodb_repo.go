@@ -1,4 +1,4 @@
-package friend
+package visit
 
 import (
 	"context"
@@ -23,44 +23,44 @@ func NewMongoRepository(s *mgo.Session) *MongoRepository {
 }
 
 // FindByID return friend base on given id
-func (r *MongoRepository) FindByID(ctx context.Context, id string) (*types.Friend, error) {
+func (r *MongoRepository) FindByID(ctx context.Context, id string) (*types.Visit, error) {
 	s := r.session.Clone()
 	defer s.Close()
-	var friend *types.Friend
-	if err := r.collection(s).Find(bson.M{"_id": id}).One(&friend); err != nil {
-		return nil, errors.Wrap(err, "failed to find the given friend from database")
+	var visit *types.Visit
+	if err := r.collection(s).Find(bson.M{"_id": id}).One(&visit); err != nil {
+		return nil, errors.Wrap(err, "failed to find the given visit from database")
 	}
-	return friend, nil
+	return visit, nil
 }
 
-// FindAll return all friends
-func (r *MongoRepository) FindAll(ctx context.Context) ([]types.Friend, error) {
+// FindAll return all visits
+func (r *MongoRepository) FindAll(ctx context.Context) ([]types.Visit, error) {
 	s := r.session.Clone()
 	defer s.Close()
-	var friend []types.Friend
-	if err := r.collection(s).Find(bson.M{}).All(&friend); err != nil {
-		return nil, errors.Wrap(err, "failed to fetch all friend from database")
+	var visit []types.Visit
+	if err := r.collection(s).Find(bson.M{}).All(&visit); err != nil {
+		return nil, errors.Wrap(err, "failed to fetch all visit from database")
 	}
 	
-	return friend, nil
+	return visit, nil
 }
 
-// Create a friend
-func (r *MongoRepository) Create(ctx context.Context, friend types.Friend) error {
+// Create a visit
+func (r *MongoRepository) Create(ctx context.Context, visit types.Visit) error {
 	s := r.session.Clone()
 	defer s.Close()
-	friend.ID = uuid.New()
-	return r.collection(s).Insert(&friend)
+	visit.ID = uuid.New()
+	return r.collection(s).Insert(&visit)
 }
 
-// Update a friend
-func (r *MongoRepository) Update(ctx context.Context, friend types.Friend) error {
+// Update a visit
+func (r *MongoRepository) Update(ctx context.Context, visit types.Visit) error {
 	s := r.session.Clone()
 	defer s.Close()
-	return r.collection(s).Update(bson.M{"_id": friend.ID}, &friend)
+	return r.collection(s).Update(bson.M{"_id": visit.ID}, &visit)
 }
 
-// Delete a friend
+// Delete a visit
 func (r *MongoRepository) Delete(ctx context.Context, id string) error {
 	s := r.session.Clone()
 	defer s.Close()
