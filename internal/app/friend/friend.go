@@ -5,6 +5,7 @@ import (
 
 	"github.com/TheFlies/ofriends/internal/app/types"
 	"github.com/TheFlies/ofriends/internal/pkg/glog"
+	"github.com/TheFlies/ofriends/internal/pkg/go-ozzo/ozzo-validation"
 )
 
 // Repository is an interface of a friend repository
@@ -42,11 +43,27 @@ func (s *Service) GetAll(ctx context.Context) ([]types.Friend, error) {
 
 // Create a friend
 func (s *Service) Create(ctx context.Context, friend types.Friend) error {
+	if err := validation.ValidateStruct(&friend,
+		validation.Field(&friend.Name, validation.Required),
+		validation.Field(&friend.Title, validation.Required),
+		validation.Field(&friend.Position, validation.Required),
+		validation.Field(&friend.Project, validation.Required),
+	); err != nil {
+		return err
+	} // not empty
 	return s.repo.Create(ctx, friend)
 }
 
 // Update a friend
 func (s *Service) Update(ctx context.Context, friend types.Friend) error {
+	if err := validation.ValidateStruct(&friend,
+		validation.Field(&friend.Name, validation.Required),
+		validation.Field(&friend.Title, validation.Required),
+		validation.Field(&friend.Position, validation.Required),
+		validation.Field(&friend.Project, validation.Required),
+	); err != nil {
+		return err
+	} // not empty
 	return s.repo.Update(ctx, friend)
 }
 

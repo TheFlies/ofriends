@@ -1,6 +1,6 @@
 <template>
   <el-container>
-    <el-header>
+    <el-header class="gift-list-header">
       <el-row>
         <el-col :span="12">
           <div style="text-align: left; font-size: 25px">
@@ -193,7 +193,7 @@ export default {
 </script>
 
 <style>
-  .el-header {
+  .gift-list-header {
     background-color: #E4E7ED;
     color: #333;
     line-height: 60px;

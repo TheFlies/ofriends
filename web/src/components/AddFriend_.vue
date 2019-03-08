@@ -65,51 +65,51 @@
 export default {
   name: 'friendAdd',
   props: {
-    isVisibleAdd: { type: Boolean, default: false },
+    isVisibleAdd: { type: Boolean, default: false }
   },
   data () {
     return {
       friend: {
-      id: 0,
-      name: '',
-      title: 'Mr',
-      position: '',
-      project: '',
-      age: 50,
-      company: '',
-      country: '',
-      city: '',
-      foodNote: '',
-      familyNote: '',
-      nextVisitNote: ''
-    },
-     rules: {
+        id: 0,
+        name: '',
+        title: 'Mr',
+        position: '',
+        project: '',
+        age: 50,
+        company: '',
+        country: '',
+        city: '',
+        foodNote: '',
+        familyNote: '',
+        nextVisitNote: ''
+      },
+      rules: {
         name: [
           {
             required: true,
-            message: "Please input customer name",
-            trigger: "change"
+            message: 'Please input customer name',
+            trigger: 'change'
           }
         ],
         title: [
           {
             required: true,
-            message: "Please input customer title",
-            trigger: "change"
+            message: 'Please input customer title',
+            trigger: 'change'
           }
         ],
         position: [
           {
             required: true,
-            message: "Please input customer title",
-            trigger: "change"
+            message: 'Please input customer title',
+            trigger: 'change'
           }
         ],
         project: [
           {
             required: true,
-            message: "Please input project name",
-            trigger: "change"
+            message: 'Please input project name',
+            trigger: 'change'
           }
         ]
       }
