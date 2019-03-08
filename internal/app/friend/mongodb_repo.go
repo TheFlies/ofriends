@@ -45,5 +45,5 @@ func (r *MongoRepository) FindAll(ctx context.Context) ([]types.Friend, error) {
 }
 
 func (r *MongoRepository) collection(s *mgo.Session) *mgo.Collection {
-	return s.DB("friends").C("friends")
+	return s.DB("").C("friend")
 }
