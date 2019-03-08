@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	"ofriends/internal/pkg/glog"
+	"github.com/TheFlies/ofriends/internal/pkg/glog"
 )
 
 // Logging is a handler that log request information
@@ -17,7 +17,9 @@ func Logging(logger glog.Logger) func(inner http.Handler) http.Handler {
 				Infoc(r.Context(), "")
 			inner.ServeHTTP(w, r)
 			code := http.StatusOK
-			if mw, ok := w.(interface{ Status() int }); ok {
+			if mw, ok := w.(interface {
+				Status() int
+			}); ok {
 				code = mw.Status()
 			}
 			logger.WithField("method", r.Method).WithField("path", r.URL.Path).

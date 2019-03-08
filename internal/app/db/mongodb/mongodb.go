@@ -3,7 +3,7 @@ package mongodb
 import (
 	"time"
 
-	"ofriends/internal/pkg/glog"
+	"github.com/TheFlies/ofriends/internal/pkg/glog"
 
 	"github.com/globalsign/mgo"
 )

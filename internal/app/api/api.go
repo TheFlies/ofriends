@@ -1,15 +1,16 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 
-	"ofriends/internal/app/api/handler/friend"
-	"ofriends/internal/app/api/handler/index"
-	"ofriends/internal/app/db"
-	"ofriends/internal/app/friend"
-	"ofriends/internal/pkg/glog"
-	"ofriends/internal/pkg/health"
-	"ofriends/internal/pkg/middleware"
+	"github.com/TheFlies/ofriends/internal/app/api/handler/friend"
+	"github.com/TheFlies/ofriends/internal/app/api/handler/index"
+	"github.com/TheFlies/ofriends/internal/app/db"
+	"github.com/TheFlies/ofriends/internal/app/friend"
+	"github.com/TheFlies/ofriends/internal/pkg/glog"
+	"github.com/TheFlies/ofriends/internal/pkg/health"
+	"github.com/TheFlies/ofriends/internal/pkg/middleware"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -46,7 +47,7 @@ func Init(conns *InfraConns) (http.Handler, error) {
 	case db.TypeMongoDB:
 		friendRepo = friend.NewMongoRepository(conns.Databases.MongoDB)
 	default:
-		panic("database type not supported: " + conns.Databases.Type)
+		return nil, fmt.Errorf("database type not supported: %s", conns.Databases.Type)
 	}
 
 	friendLogger := logger.WithField("package", "friend")
@@ -56,32 +57,48 @@ func Init(conns *InfraConns) (http.Handler, error) {
 	indexWebHandler := indexhandler.New()
 	routes := []route{
 		// infra
-		route{
+		{
 			path:    "/readiness",
 			method:  get,
 			handler: health.Readiness().ServeHTTP,
 		},
-		// services
-		route{
-			path:    "/api/v1/friend/{id:[a-z0-9-\\-]+}",
-			method:  get,
-			handler: friendHandler.Get,
-		},
-		route{
-			path:    "/api/v1/friend",
-			method:  get,
-			handler: friendHandler.GetAll,
-		},
 		// web
-		route{
+		{
 			path:    "/",
 			method:  get,
 			handler: indexWebHandler.Index,
+		},
+		// services
+		{
+			path:    "friends/{id:[a-z0-9-\\-]+}",
+			method:  get,
+			handler: friendHandler.Get,
+		},
+		{
+			path:    "/friends",
+			method:  post,
+			handler: friendHandler.Create,
+		},
+		{
+			path:    "/friends/{id:[a-z0-9-\\-]+}",
+			method:  put,
+			handler: friendHandler.Update,
+		},
+		{
+			path:    "/friends",
+			method:  get,
+			handler: friendHandler.GetAll,
+		},
+		{
+			path:    "/friends{id:[a-z0-9-\\-]+}",
+			method:  delete,
+			handler: friendHandler.Delete,
 		},
 	}
 
 	loggingMW := middleware.Logging(logger.WithField("package", "middleware"))
 	r := mux.NewRouter()
+	r.Use(middleware.EnableCORS)
 	r.Use(middleware.RequestID)
 	r.Use(middleware.StatusResponseWriter)
 	r.Use(loggingMW)
@@ -89,8 +106,8 @@ func Init(conns *InfraConns) (http.Handler, error) {
 
 	for _, rt := range routes {
 		h := rt.handler
-		for _, mdw := range rt.middlewares {
-			h = mdw(h)
+		for i := len(rt.middlewares) - 1; i >= 0; i-- {
+			h = rt.middlewares[i](h)
 		}
 		r.Path(rt.path).Methods(rt.method).HandlerFunc(h)
 	}
@@ -104,12 +121,8 @@ func Init(conns *InfraConns) (http.Handler, error) {
 		dir    string
 	}{
 		{
-			prefix: "/dist/",
-			dir:    "web/dist/",
-		},
-		{
-			prefix: "/assets/",
-			dir:    "web/assets/",
+			prefix: "/",
+			dir:    "web/",
 		},
 	}
 	for _, s := range static {

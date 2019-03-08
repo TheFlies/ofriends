@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"sync"
 
-	"ofriends/internal/pkg/respond"
+	"github.com/TheFlies/ofriends/internal/pkg/respond"
 )
 
 var (

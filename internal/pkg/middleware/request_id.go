@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"ofriends/internal/pkg/uuid"
+	"github.com/TheFlies/ofriends/internal/pkg/uuid"
 )
 
 func RequestID(h http.Handler) http.Handler {

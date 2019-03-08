@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"os"
 
-	"ofriends/internal/pkg/respond"
+	"github.com/TheFlies/ofriends/internal/pkg/respond"
 )
 
 type (
