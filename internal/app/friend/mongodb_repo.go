@@ -27,7 +27,7 @@ func (r *MongoRepository) FindByID(ctx context.Context, id string) (*types.Frien
 	s := r.session.Clone()
 	defer s.Close()
 	var friend *types.Friend
-	if err := r.collection(s).Find(bson.M{"id": id}).One(&friend); err != nil {
+	if err := r.collection(s).Find(bson.M{"_id": id}).One(&friend); err != nil {
 		return nil, errors.Wrap(err, "failed to find the given friend from database")
 	}
 	return friend, nil
@@ -57,14 +57,14 @@ func (r *MongoRepository) Create(ctx context.Context, friend types.Friend) error
 func (r *MongoRepository) Update(ctx context.Context, friend types.Friend) error {
 	s := r.session.Clone()
 	defer s.Close()
-	return r.collection(s).Update(bson.M{"id": friend.ID}, &friend)
+	return r.collection(s).Update(bson.M{"_id": friend.ID}, &friend)
 }
 
 // Delete a friend
 func (r *MongoRepository) Delete(ctx context.Context, id string) error {
 	s := r.session.Clone()
 	defer s.Close()
-	return r.collection(s).Remove(bson.M{"id": id})
+	return r.collection(s).Remove(bson.M{"_id": id})
 }
 
 func (r *MongoRepository) collection(s *mgo.Session) *mgo.Collection {

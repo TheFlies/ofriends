@@ -84,28 +84,28 @@ export default {
         name: [
           {
             required: true,
-            message: "Please input customer name",
+            message: "Please input friend name",
             trigger: "change"
           }
         ],
         title: [
           {
             required: true,
-            message: "Please input customer title",
+            message: "Please input friend title",
             trigger: "change"
           }
         ],
         position: [
           {
             required: true,
-            message: "Please input customer title",
+            message: "Please input friend position",
             trigger: "change"
           }
         ],
         project: [
           {
             required: true,
-            message: "Please input project name",
+            message: "Please input project",
             trigger: "change"
           }
         ]

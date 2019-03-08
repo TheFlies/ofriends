@@ -18,8 +18,8 @@ type (
 	service interface {
 		Get(ctx context.Context, id string) (*types.Friend, error)
 		GetAll(ctx context.Context) ([]types.Friend, error)
-		Create(ctx context.Context, gift types.Friend) error
-		Update(ctx context.Context, gift types.Friend) error
+		Create(ctx context.Context, friend types.Friend) error
+		Update(ctx context.Context, friend types.Friend) error
 		Delete(ctx context.Context, id string) error
 	}
 
@@ -48,7 +48,7 @@ func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
 	respond.JSON(w, http.StatusOK, friend)
 }
 
-// GetAll handle get gifts HTTP Request
+// GetAll handle get friends HTTP Request
 func (h *Handler) GetAll(w http.ResponseWriter, r *http.Request) {
 	friends, err := h.srv.GetAll(r.Context())
 	if err != nil {
@@ -60,7 +60,7 @@ func (h *Handler) GetAll(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// Create handle insert gift HTTP Request
+// Create handle insert friend HTTP Request
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	var friend types.Friend
 	
@@ -82,7 +82,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	respond.JSON(w, http.StatusCreated, map[string]string{"id": friend.ID})
 }
 
-// Update handle modify gift HTTP Request
+// Update handle modify friend HTTP Request
 func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	var friend types.Friend
 
@@ -104,7 +104,7 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	respond.JSON(w, http.StatusOK, map[string]string{"id": friend.ID})
 }
 
-// Delete handle delete gift HTTP Request
+// Delete handle delete friend HTTP Request
 func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 	if err := h.srv.Delete(r.Context(), mux.Vars(r)["id"]); err != nil {
 		respond.Error(w, err, http.StatusInternalServerError)

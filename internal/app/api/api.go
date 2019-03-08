@@ -79,7 +79,7 @@ func Init(conns *InfraConns) (http.Handler, error) {
 		},
 		// services
 		{
-			path:    "friends/{id:[a-z0-9-\\-]+}",
+			path:    "/friends/{id:[a-z0-9-\\-]+}",
 			method:  get,
 			handler: friendHandler.Get,
 		},
@@ -89,7 +89,7 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			handler: friendHandler.Create,
 		},
 		{
-			path:    "/friends/{id:[a-z0-9-\\-]+}",
+			path:    "/friends",
 			method:  put,
 			handler: friendHandler.Update,
 		},
@@ -99,7 +99,7 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			handler: friendHandler.GetAll,
 		},
 		{
-			path:    "/friends{id:[a-z0-9-\\-]+}",
+			path:    "/friends/{id:[a-z0-9-\\-]+}",
 			method:  delete,
 			handler: friendHandler.Delete,
 		},
