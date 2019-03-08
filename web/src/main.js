@@ -4,15 +4,15 @@ import router from './router'
 import store from './store/index'
 import './registerServiceWorker'
 import './plugins/element.js'
-import axios from 'axios'
+// import axios from 'axios'
 
 Vue.config.productionTip = false
 
 // Set base URL to backend API service
-const backendAddr = process.env.OFRIENDS_BACKEND_ADDRS || 'http://localhost:8080'
-console.log(`OFRIENDS_BACKEND_ADDRS: ${backendAddr}`)
-axios.defaults.baseURL = backendAddr
-Vue.prototype.$http = axios
+// const backendAddr = process.env.OFRIENDS_BACKEND_ADDRS || 'http://localhost:8080'
+// console.log(`OFRIENDS_BACKEND_ADDRS: ${backendAddr}`)
+// axios.defaults.baseURL = backendAddr
+// Vue.prototype.$http = axios
 
 new Vue({
   router,
