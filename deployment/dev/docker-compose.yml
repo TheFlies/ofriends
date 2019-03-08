@@ -24,6 +24,16 @@ services:
       # to backend service env config.
       - DB_TYPE=mongodb
       - MONGODB_ADDRS=mongodb:27017
+      #Ldap information include user first binding and basedn
+      # change basedn to fit with manager OU
+      - LDAP_ADDR=***REMOVED***
+      - LDAP_PORT=389
+      - LDAP_FIRST_BIND_USERNAME=***REMOVED***
+      - LDAP_FIRST_BIND_PASSWORD=***REMOVED***
+      - BASEDN=ou=TMAuser,dc=tma,dc=com,dc=vn
+      # JWT information include private key and token time out :fomat h:m:s
+      - PRIVATE_KEY=AllYourBase
+      - TIME_OUT=1:30:00
     command: [ "start" ]
     volumes:
       # Add Go packages here if needed.
