@@ -1,20 +1,30 @@
 <template>
   <div class="customer">
     <div class="left">
-      <span>John <label>(architect lead)</label></span>
-      <span class="project">KBTG</span>
+      <span>{{customer.title}} {{customer.name}} <label>({{customer.position}})</label></span>
+      <span class="project">{{customer.project}}</span>
     </div>
     <div class="right">
-      <span>21-12-2018</span>
+      <span>{{customer.arrive}}</span>
       <span> => </span>
-      <span>22-12-2019</span>
+      <span>{{customer.depart}}</span>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'Customer'
+  name: 'Customer',
+  props: {
+    customer: {
+      name: String,
+      title: String,
+      position: String,
+      project: String,
+      arrive: String,
+      depart: String
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>

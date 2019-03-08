@@ -20,8 +20,8 @@
         <el-radio-button label="All"></el-radio-button>
       </el-radio-group>
     </div>
-    <div class="customers">
-      <Customer/>
+    <div class="customers" v-for="customer in customers" :key="customer.id">
+      <Customer :customer="customer"/>
     </div>
   </div>
 </template>
@@ -33,6 +33,9 @@ export default {
   name: 'Customers',
   components: {
     Customer
+  },
+  created: function () {
+    this.$store.dispatch('customers/getCustomers')
   },
   computed: {
     filter: {
