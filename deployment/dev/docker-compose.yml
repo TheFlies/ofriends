@@ -28,8 +28,11 @@ services:
       # change basedn to fit with manager OU
       - LDAP_ADDR=***REMOVED***
       - LDAP_PORT=389
-      - LDAP_FIRST_BIND_USERNAME=***REMOVED***
-      - LDAP_FIRST_BIND_PASSWORD=***REMOVED***
+      # change your ldap passowrd here
+      # change your username in LDAP_FIRST_BIND_USERNAME=CN=yourusernmahere,OU=Admin_Privileges,OU=Revoke,DC=tma,DC=com,DC=vn
+      - LDAP_FIRST_BIND_USERNAME=CN=,OU=Admin_Privileges,OU=Revoke,DC=tma,DC=com,DC=vn
+      - LDAP_FIRST_BIND_PASSWORD=
+      # BaseDN of TMALDAP, you when deploy this DN much change to TMAmanager
       - BASEDN=ou=TMAuser,dc=tma,dc=com,dc=vn
       # JWT information include private key and token time out :fomat h:m:s
       - PRIVATE_KEY=AllYourBase
