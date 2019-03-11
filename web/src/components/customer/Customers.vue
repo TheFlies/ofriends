@@ -45,7 +45,6 @@ export default {
     },
     customers: {
       get: function () {
-        // return this.$store.getters.customers.customers
         return this.$store.getters['customers/customers']
       }
     }
