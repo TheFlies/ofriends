@@ -12,14 +12,14 @@
         <el-date-picker v-model="filter.depart" type="date" placeholder="Depart day"> </el-date-picker>
       </el-col>
     </el-row>
-    <!-- <div class="space-bottom">
+    <div class="space-bottom">
       <el-radio-group v-model="filter.time">
         <el-radio-button label="Current"></el-radio-button>
         <el-radio-button label="Up Comming"></el-radio-button>
         <el-radio-button label="Served"></el-radio-button>
         <el-radio-button label="All"></el-radio-button>
       </el-radio-group>
-    </div> -->
+    </div>
     <div class="customers" v-for="customer in customers" :key="customer.id">
       <Customer :customer="customer"/>
     </div>
