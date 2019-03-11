@@ -32,7 +32,7 @@ const actions = {
     axios({
       url: API_FRIEND
     }).then(r => {
-      context.setCustomers(r.data)
+      context.commit('setCustomers', r.data)
     })
   }
 }
