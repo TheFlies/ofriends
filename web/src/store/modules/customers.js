@@ -18,6 +18,14 @@ const state = {
   }
 }
 
+const getters = {
+  customers (state, getters, rootState) {
+    return state.customers.filter((customer) => {
+      return (customer.name.toLowerCase().indexOf(state.filter.name.toLowerCase()) !== -1)
+    })
+  }
+}
+
 const mutations = {
   setFilter (state, payload) {
     state.filter = payload
@@ -40,6 +48,7 @@ const actions = {
 export default {
   namespaced: true,
   state,
+  getters,
   mutations,
   actions
 }
