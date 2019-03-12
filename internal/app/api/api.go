@@ -4,16 +4,18 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
+
 	"github.com/TheFlies/ofriends/internal/app/api/handler/friend"
 	"github.com/TheFlies/ofriends/internal/app/api/handler/index"
+	"github.com/TheFlies/ofriends/internal/app/api/handler/login"
 	"github.com/TheFlies/ofriends/internal/app/db"
 	"github.com/TheFlies/ofriends/internal/app/friend"
+	"github.com/TheFlies/ofriends/internal/app/user"
 	"github.com/TheFlies/ofriends/internal/pkg/glog"
 	"github.com/TheFlies/ofriends/internal/pkg/health"
 	"github.com/TheFlies/ofriends/internal/pkg/middleware"
-
-	"github.com/gorilla/handlers"
-	"github.com/gorilla/mux"
 )
 
 type (
@@ -41,11 +43,12 @@ const (
 // Init init all handlers
 func Init(conns *InfraConns) (http.Handler, error) {
 	logger := glog.New()
-
 	var friendRepo friend.Repository
+	var usercacheRepo user.UserReponsitory
 	switch conns.Databases.Type {
 	case db.TypeMongoDB:
 		friendRepo = friend.NewMongoRepository(conns.Databases.MongoDB)
+		usercacheRepo = user.NewUsercachMongoReopnsitoty(conns.Databases.MongoDB)
 	default:
 		return nil, fmt.Errorf("database type not supported: %s", conns.Databases.Type)
 	}
@@ -55,6 +58,10 @@ func Init(conns *InfraConns) (http.Handler, error) {
 	friendHandler := friendhandler.New(friendSrv, friendLogger)
 
 	indexWebHandler := indexhandler.New()
+	//
+	usercachelogger := logger.WithField("package", "user")
+	usercacheService := user.NewUserCacheService(usercacheRepo, usercachelogger)
+	loginhandeler := login.NewLoginHandeler(usercacheService, usercachelogger)
 	routes := []route{
 		// infra
 		{
@@ -74,6 +81,16 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			method:  get,
 			handler: indexWebHandler.Index,
 		},
+		{
+			path:    "/api/v1/login",
+			method:  post,
+			handler: loginhandeler.Authenticate,
+		},
+		{
+			path:    "/api/v1/get",
+			method:  post,
+			handler: loginhandeler.GetUser,
+		},
 	}
 
 	loggingMW := middleware.Logging(logger.WithField("package", "middleware"))
@@ -83,6 +100,7 @@ func Init(conns *InfraConns) (http.Handler, error) {
 	r.Use(middleware.StatusResponseWriter)
 	r.Use(loggingMW)
 	r.Use(handlers.CompressHandler)
+	r.Use(middleware.Sercurity)
 
 	for _, rt := range routes {
 		h := rt.handler
