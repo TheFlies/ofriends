@@ -9,8 +9,10 @@
         </el-col>
         <el-col :span="12">
           <div style="text-align: right; font-size: 25px">
-            <i class="el-icon-plus" style="margin-right: 15px"
-            v-on:click="isVisibleAdd = !isVisibleAdd"></i>
+            <el-tooltip class="item" effect="dark" content="Add gift" placement="right-start">
+              <i class="el-icon-plus" style="margin-right: 15px"
+                    v-on:click="isVisibleAdd = !isVisibleAdd"></i>
+            </el-tooltip>
           </div>
         </el-col>
       </el-row>

@@ -2,7 +2,7 @@ package types
 
 // Gift hold information of a gift
 type Gift struct {
-	ID          string 		`json:"id,omitempty" bson:"id"`
+	ID          string 		`json:"id,omitempty" bson:"_id"`
 	Name        string 		`json:"name,omitempty"`
 	Idea        string 		`json:"idea"`
 	Size        string 		`json:"size"`

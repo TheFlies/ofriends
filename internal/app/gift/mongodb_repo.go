@@ -27,8 +27,8 @@ func (r *MongoRepository) FindByID(ctx context.Context, id string) (*types.Gift,
 	s := r.session.Clone()
 	defer s.Close()
 	var gift *types.Gift
-	if err := r.collection(s).Find(bson.M{"id": id}).One(&gift); err != nil {
-		return nil, errors.Wrap(err, "Failed to find the given gift from database")
+	if err := r.collection(s).Find(bson.M{"_id": id}).One(&gift); err != nil {
+		return nil, errors.Wrap(err, "failed to find the given gift from database")
 	}
 	return gift, nil
 }
@@ -43,33 +43,33 @@ func (r *MongoRepository) FindAll(ctx context.Context) ([]types.Gift, error) {
 	defer s.Close()
 	var gifts []types.Gift
 	if err := r.collection(s).Find(bson.M{}).All(&gifts); err != nil {
-		return nil, errors.Wrap(err, "Failed to fetch all gifts from database")
+		return nil, errors.Wrap(err, "failed to fetch all gifts from database")
 	}
 	
 	return gifts, nil
 }
 
 // Create a gift
-func (r *MongoRepository) Create(ctx context.Context, gift types.Gift) error {
+func (r *MongoRepository) Create(ctx context.Context, gift types.Gift) (string, error) {
 	s := r.session.Clone()
 	defer s.Close()
 	gift.ID = uuid.New()
 	err := r.collection(s).Insert(&gift)
-	return err
+	return gift.ID, err
 }
 
 // Update a gift
 func (r *MongoRepository) Update(ctx context.Context, gift types.Gift) error {
 	s := r.session.Clone()
 	defer s.Close()
-	err := r.collection(s).Update(bson.M{"id": gift.ID}, &gift)
+	err := r.collection(s).Update(bson.M{"_id": gift.ID}, &gift)
 	return err
 }
 
-// Create a gift
+// Delete a gift
 func (r *MongoRepository) Delete(ctx context.Context, id string) error {
 	s := r.session.Clone()
 	defer s.Close()
-	err := r.collection(s).Remove(bson.M{"id": id})
+	err := r.collection(s).Remove(bson.M{"_id": id})
 	return err
 }

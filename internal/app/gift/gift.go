@@ -2,16 +2,16 @@ package gift
 
 import (
 	"context"
-
 	"github.com/TheFlies/ofriends/internal/app/types"
 	"github.com/TheFlies/ofriends/internal/pkg/glog"
+	"github.com/TheFlies/ofriends/internal/pkg/go-ozzo/ozzo-validation"
 )
 
 // Repository is an interface of a gift repository
 type Repository interface {
 	FindByID(ctx context.Context, id string) (*types.Gift, error)
 	FindAll(ctx context.Context) ([]types.Gift, error)
-	Create(ctx context.Context, gift types.Gift) error
+	Create(ctx context.Context, gift types.Gift) (string, error)
 	Update(ctx context.Context, gift types.Gift) error
 	Delete(ctx context.Context, id string) error
 }
@@ -41,12 +41,23 @@ func (s *Service) GetAll(ctx context.Context) ([]types.Gift, error) {
 }
 
 // Create a gifts
-func (s *Service) Create(ctx context.Context, gift types.Gift) error {
+func (s *Service) Create(ctx context.Context, gift types.Gift) (string, error) {
+	if err := validation.ValidateStruct(&gift,
+		validation.Field(&gift.Name, validation.Required),
+	); err != nil {
+		return "", err
+	} // not empty
 	return s.repo.Create(ctx, gift)
 }
 
 // Update a gift
 func (s *Service) Update(ctx context.Context, gift types.Gift) error {
+	if err := validation.ValidateStruct(&gift,
+		validation.Field(&gift.ID, validation.Required),
+		validation.Field(&gift.Name, validation.Required),
+	); err != nil {
+		return err
+	} // not empty
 	return s.repo.Update(ctx, gift)
 }
 

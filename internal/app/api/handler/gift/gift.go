@@ -7,8 +7,6 @@ import (
 	"github.com/TheFlies/ofriends/internal/pkg/glog"
 	"github.com/TheFlies/ofriends/internal/pkg/respond"
 	"net/http"
-	"errors"
-	"io"
 	"github.com/gorilla/mux"
 )
 
@@ -16,7 +14,7 @@ type (
 	service interface {
 		Get(ctx context.Context, id string) (*types.Gift, error)
 		GetAll(ctx context.Context) ([]types.Gift, error)
-		Create(ctx context.Context, gift types.Gift) error
+		Create(ctx context.Context, gift types.Gift) (string, error)
 		Update(ctx context.Context, gift types.Gift) error
 		Delete(ctx context.Context, id string) error
 	}
@@ -62,30 +60,24 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	var gift types.Gift
 
 	if err := json.NewDecoder(r.Body).Decode(&gift); err != nil {
-		if err == io.EOF {
-			respond.Error(w, errors.New("Invalid request method"), http.StatusMethodNotAllowed)
-			return
-		}
-		respond.Error(w, err, http.StatusInternalServerError)
+		respond.Error(w, err, http.StatusBadRequest)
 		return
 	}
 
-	if err := h.srv.Create(r.Context(), gift); err != nil {
+	if id, err := h.srv.Create(r.Context(), gift); err != nil {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
+	} else {
+		gift.ID = id
 	}
-	respond.JSON(w, http.StatusCreated, gift.ID)
+	respond.JSON(w, http.StatusCreated, map[string]string{"id": gift.ID})
 }
 
 // Update handle modify gift HTTP Request
 func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	var gift types.Gift
 	if err := json.NewDecoder(r.Body).Decode(&gift); err != nil {
-		if err == io.EOF {
-			respond.Error(w, errors.New("Invalid request method"), http.StatusMethodNotAllowed)
-			return
-		}
-		respond.Error(w, err, http.StatusInternalServerError)
+		respond.Error(w, err, http.StatusBadRequest)
 		return
 	}
 
@@ -93,7 +85,7 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
 	}
-	respond.JSON(w, http.StatusOK, map[string]string{"result": "success"})
+	respond.JSON(w, http.StatusOK, map[string]string{"id": gift.ID, "status":"success"})
 }
 
 // Delete handle delete gift HTTP Request
