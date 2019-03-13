@@ -12,6 +12,9 @@ import (
 	"github.com/TheFlies/ofriends/internal/pkg/health"
 	"github.com/TheFlies/ofriends/internal/pkg/middleware"
 
+	"github.com/TheFlies/ofriends/internal/app/api/handler/gift"
+	"github.com/TheFlies/ofriends/internal/app/gift"
+
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
@@ -43,9 +46,11 @@ func Init(conns *InfraConns) (http.Handler, error) {
 	logger := glog.New()
 
 	var friendRepo friend.Repository
+	var giftRepo gift.Repository
 	switch conns.Databases.Type {
 	case db.TypeMongoDB:
 		friendRepo = friend.NewMongoRepository(conns.Databases.MongoDB)
+		giftRepo = gift.NewMongoRepository(conns.Databases.MongoDB)
 	default:
 		return nil, fmt.Errorf("database type not supported: %s", conns.Databases.Type)
 	}
@@ -53,6 +58,10 @@ func Init(conns *InfraConns) (http.Handler, error) {
 	friendLogger := logger.WithField("package", "friend")
 	friendSrv := friend.NewService(friendRepo, friendLogger)
 	friendHandler := friendhandler.New(friendSrv, friendLogger)
+
+	giftLogger := logger.WithField("package", "gift")
+	giftSrv := gift.NewService(giftRepo, giftLogger)
+	giftHandler := gifthandler.New(giftSrv, giftLogger)
 
 	indexWebHandler := indexhandler.New()
 	routes := []route{
@@ -93,6 +102,37 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			path:    "/friends{id:[a-z0-9-\\-]+}",
 			method:  delete,
 			handler: friendHandler.Delete,
+		},
+
+		// Gift services
+		{
+			path:    "/gifts/{id:[a-z0-9-\\-]+}",
+			method:  get,
+			handler: giftHandler.Get,
+		},
+
+		{
+			path:    "/gifts",
+			method:  get,
+			handler: giftHandler.GetAll,
+		},
+
+		{
+			path:    "/gifts",
+			method:  post,
+			handler: giftHandler.Create,
+		},
+
+		{
+			path:    "/gifts",
+			method:  put,
+			handler: giftHandler.Update,
+		},
+
+		{
+			path:    "/gifts/{id:[a-z0-9-\\-]+}",
+			method:  delete,
+			handler: giftHandler.Delete,
 		},
 	}
 

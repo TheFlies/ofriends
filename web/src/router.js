@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import Home from './views/Home.vue'
+import Gifts from './views/Gifts.vue'
 import Hello from '@/components/Hello'
 
 Vue.use(Router)
@@ -17,6 +19,11 @@ export default new Router({
       path: '/friend',
       name: 'Friend',
       component: () => import('./views/friends/Add.vue')
+    },
+    {
+      path: '/gifts',
+      name: 'gifts',
+      component: Gifts
     },
     {
       path: '/about',
