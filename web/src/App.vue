@@ -1,6 +1,8 @@
 <template>
   <div id="app">
-<!--   <router-link to="/gifts">Go to Gifts page</router-link> -->
+    <img src="./assets/logo.png">
+    <router-link to="/">Home</router-link>
+    <router-link to="/friend">friend</router-link>
     <router-view></router-view>
   </div>
 </template>

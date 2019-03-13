@@ -71,17 +71,37 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			method:  get,
 			handler: health.Readiness().ServeHTTP,
 		},
-		// services
-		{
-			path:    "/api/v1/friend/{id:[a-z0-9-\\-]+}",
-			method:  get,
-			handler: friendHandler.Get,
-		},
 		// web
 		{
 			path:    "/",
 			method:  get,
 			handler: indexWebHandler.Index,
+		},
+		// services
+		{
+			path:    "friends/{id:[a-z0-9-\\-]+}",
+			method:  get,
+			handler: friendHandler.Get,
+		},
+		{
+			path:    "/friends",
+			method:  post,
+			handler: friendHandler.Create,
+		},
+		{
+			path:    "/friends/{id:[a-z0-9-\\-]+}",
+			method:  put,
+			handler: friendHandler.Update,
+		},
+		{
+			path:    "/friends",
+			method:  get,
+			handler: friendHandler.GetAll,
+		},
+		{
+			path:    "/friends{id:[a-z0-9-\\-]+}",
+			method:  delete,
+			handler: friendHandler.Delete,
 		},
 
 		// Gift services
