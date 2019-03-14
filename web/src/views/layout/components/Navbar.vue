@@ -1,6 +1,6 @@
 <template lang="pug">
   .navbar
-    hamburger.hamburger.container(:toggle-click="toggleSidebar" :is-active="sidebar.opened")
+    hamburger.hamburger-container(:toggle-click="toggleSidebar" :is-active="sidebar.opened")
     breadcrumb
     el-dropdown.avatar-container(trigger="click")
       .avatar-wrapper
