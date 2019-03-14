@@ -5,12 +5,12 @@
 </template>
 
 <script>
-  export default {
-    name: 'Hello',
-    data () {
-      return {
-        msg: 'Welcome to Friend Management App'
-      }
+export default {
+  name: 'Hello',
+  data() {
+    return {
+      msg: 'Welcome to Friend Management App'
     }
   }
+}
 </script>
