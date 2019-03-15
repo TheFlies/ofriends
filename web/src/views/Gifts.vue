@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <GiftList msg="Welcome to Your Vue.js App"/>
+    <GiftList msg="Welcome to Your Vue.js App" />
   </div>
 </template>
 
@@ -9,7 +9,7 @@
 import GiftList from '@/components/gifts/GiftList.vue'
 
 export default {
-  name: 'gifts',
+  name: 'Gifts',
   components: {
     GiftList
   }

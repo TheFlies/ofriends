@@ -1,6 +1,6 @@
 <template>
   <div class="add-customer">
-    <AddFriend/>
+    <AddFriend />
   </div>
 </template>
 
@@ -9,7 +9,7 @@
 import AddFriend from '@/components/AddFriend.vue'
 
 export default {
-  name: 'add',
+  name: 'Add',
   components: {
     AddFriend
   }
