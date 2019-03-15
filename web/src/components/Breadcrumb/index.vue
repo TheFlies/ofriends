@@ -25,7 +25,7 @@ export default {
   },
   methods: {
     getBreadcrumb() {
-      let matched = this.$route.matched.filter(item => item.name)
+      const matched = this.$route.matched.filter(item => item.name)
 
       // const first = matched[0]
       // if (first && first.name !== 'dashboard') {

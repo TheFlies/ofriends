@@ -139,9 +139,6 @@
 <script>
 export default {
   name: 'AddFriend',
-  props: {
-    msg: String
-  },
   data() {
     return {
       form: {

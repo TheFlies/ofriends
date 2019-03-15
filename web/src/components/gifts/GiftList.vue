@@ -128,10 +128,10 @@ export default {
       isVisibleDelete: false,
       isVisibleAdd: false,
       search: '',
-      gift: Object,
+      gift: {},
       giftName: '',
       loading: true,
-      scopeGift: Function
+      scopeGift: {}
     }
   },
   mounted() {

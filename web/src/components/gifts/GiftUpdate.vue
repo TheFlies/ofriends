@@ -86,14 +86,17 @@ export default {
   props: {
     isVisibleUpdate: { type: Boolean, default: false },
     gift: {
-      id: 0,
-      name: '',
-      idea: '',
-      size: '',
-      quantity: 0,
-      price: 0,
-      link: '',
-      description: ''
+      type: Object,
+      default: () => ({
+        id: 0,
+        name: '',
+        idea: '',
+        size: '',
+        quantity: 0,
+        price: 0,
+        link: '',
+        description: ''
+      })
     }
   },
   data() {
