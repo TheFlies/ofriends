@@ -12,6 +12,7 @@ import (
 	"github.com/TheFlies/ofriends/internal/app/api/handler/login"
 	"github.com/TheFlies/ofriends/internal/app/db"
 	"github.com/TheFlies/ofriends/internal/app/friend"
+	"github.com/TheFlies/ofriends/internal/app/ldap"
 	"github.com/TheFlies/ofriends/internal/app/user"
 	"github.com/TheFlies/ofriends/internal/pkg/glog"
 	"github.com/TheFlies/ofriends/internal/pkg/health"
@@ -44,11 +45,11 @@ const (
 func Init(conns *InfraConns) (http.Handler, error) {
 	logger := glog.New()
 	var friendRepo friend.Repository
-	var usercacheRepo user.UserReponsitory
+	var userRepo user.UserReponsitory
 	switch conns.Databases.Type {
 	case db.TypeMongoDB:
 		friendRepo = friend.NewMongoRepository(conns.Databases.MongoDB)
-		usercacheRepo = user.NewUsercachMongoReopnsitoty(conns.Databases.MongoDB)
+		userRepo = user.NewUserMongoReopnsitoty(conns.Databases.MongoDB)
 	default:
 		return nil, fmt.Errorf("database type not supported: %s", conns.Databases.Type)
 	}
@@ -59,9 +60,10 @@ func Init(conns *InfraConns) (http.Handler, error) {
 
 	indexWebHandler := indexhandler.New()
 	//
-	usercachelogger := logger.WithField("package", "user")
-	usercacheService := user.NewUserCacheService(usercacheRepo, usercachelogger)
-	loginhandeler := login.NewLoginHandeler(usercacheService, usercachelogger)
+	userlogger := logger.WithField("package", "user")
+	userService := user.NewUserService(userRepo, userlogger)
+	loginservice := ldap.New(userService)
+	loginhandeler := login.NewLoginHandeler(userService, loginservice, userlogger)
 	routes := []route{
 		// infra
 		{
@@ -87,8 +89,8 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			handler: loginhandeler.Authenticate,
 		},
 		{
-			path:    "/api/v1/get",
-			method:  post,
+			path:    "/api/v1/user/{username}",
+			method:  get,
 			handler: loginhandeler.GetUser,
 		},
 	}

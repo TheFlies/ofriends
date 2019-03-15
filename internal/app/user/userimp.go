@@ -9,26 +9,26 @@ import (
 )
 
 type (
-	UsercacheMongoReponsitory struct {
+	UserMongoReponsitory struct {
 		session *mgo.Session
 	}
 )
 
-func NewUsercachMongoReopnsitoty(s *mgo.Session) *UsercacheMongoReponsitory {
-	return &UsercacheMongoReponsitory{
+func NewUserMongoReopnsitoty(s *mgo.Session) *UserMongoReponsitory {
+	return &UserMongoReponsitory{
 		session: s,
 	}
 }
-func (r *UsercacheMongoReponsitory) FindUserByUserName(username string) (*types.Usercache, error) {
+func (r *UserMongoReponsitory) FindUserByUserName(username string) (*types.User, error) {
 	s := r.session.Clone()
 	defer s.Close()
-	var user *types.Usercache
+	var user *types.User
 	if err := r.collection(s).Find(bson.M{"username": username}).One(&user); err != nil {
 		return nil, errors.Wrap(err, "fail to find username in database")
 	}
 	return user, nil
 }
-func (r *UsercacheMongoReponsitory) InserUser(user *types.Usercache) error {
+func (r *UserMongoReponsitory) InserUser(user *types.User) error {
 	s := r.session.Clone()
 	defer s.Close()
 	if err := r.collection(s).Insert(&user); err != nil {
@@ -37,15 +37,15 @@ func (r *UsercacheMongoReponsitory) InserUser(user *types.Usercache) error {
 	return nil
 
 }
-func (r *UsercacheMongoReponsitory) CheckUserByUsername(username string) bool {
+func (r *UserMongoReponsitory) CheckUserByUsername(username string) bool {
 	s := r.session.Clone()
 	defer s.Close()
-	var user *types.Usercache
+	var user *types.User
 	if err := r.collection(s).Find(bson.M{"username": username}).One(&user); err != nil {
 		return false
 	}
 	return true
 }
-func (r *UsercacheMongoReponsitory) collection(s *mgo.Session) *mgo.Collection {
+func (r *UserMongoReponsitory) collection(s *mgo.Session) *mgo.Collection {
 	return s.DB("").C("user")
 }

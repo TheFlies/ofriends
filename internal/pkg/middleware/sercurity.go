@@ -39,7 +39,7 @@ func Sercurity(h http.Handler) http.Handler {
 		notExpire := jwt.CheckExp(jwttoken)
 		if notExpire && jwt.Checkvalib(jwttoken) {
 			payload := jwt.GetPayload(jwttoken)
-			logrus.Info("the payload is %v\n", payload)
+			logrus.Info("the payload is %v\n", payload.Usefullname)
 			h.ServeHTTP(w, r)
 			return
 		}

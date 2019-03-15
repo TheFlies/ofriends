@@ -3,7 +3,7 @@ package types
 import "github.com/globalsign/mgo/bson"
 
 type (
-	Usercache struct {
+	User struct {
 		Id       bson.ObjectId `bson:"_id" json:"id"`
 		Username string        `bson:"username" json:"username"`
 		Fullname string        `bson:"fullname" json:"fullname"`
