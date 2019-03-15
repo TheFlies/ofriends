@@ -35,8 +35,6 @@
     "eslint": "^5.8.0",
     "eslint-plugin-vue": "^5.2.2",
     "lint-staged": "^8.1.0",
-    "node-sass": "^4.9.2",
-    "sass-loader": "^7.0.3",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
     "svgo": "^1.1.0",

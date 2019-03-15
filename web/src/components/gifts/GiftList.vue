@@ -136,7 +136,7 @@ export default {
   },
   mounted() {
     // We already set the axios baseURL to the backend service in main.js file.
-    this.$http.get('http://localhost:8080/gifts')
+    this.$http.get('/gifts')
       .then(resp => {
         if (resp.data != null) {
           this.tableData = resp.data
@@ -152,7 +152,7 @@ export default {
     handleAdd: function(isAddGift, gift) {
       if (isAddGift) {
         this.loading = true
-        this.$http.post('http://localhost:8080/gifts', gift)
+        this.$http.post('/gifts', gift)
           .then(resp => {
             this.$notify({
               title: 'Success',
@@ -175,7 +175,7 @@ export default {
     handleUpdate: function(isUpdateGift) {
       if (isUpdateGift) {
         this.loading = true
-        this.$http.put('http://localhost:8080/gifts', this.gift)
+        this.$http.put('/gifts', this.gift)
           .then(resp => {
             console.log(resp.data)
             this.$notify({
@@ -197,7 +197,7 @@ export default {
     handleDelete: function(isDeleteGift) {
       if (isDeleteGift) {
         this.loading = true
-        this.$http.delete('http://localhost:8080/gifts/' + this.scopeGift.row.id)
+        this.$http.delete('/gifts/' + this.scopeGift.row.id)
           .then(resp => {
             this.tableData.splice(this.scopeGift.$index, 1)
             this.$notify({
