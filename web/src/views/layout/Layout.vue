@@ -1,5 +1,5 @@
 <template lang="pug">
-  div(:class="classObj").app-wrapper
+  div.app-wrapper(:class="classObj")
     .drawer-bg(v-if="device === 'mobile' && sidebar.opened" @click="handleClickOutside")
     sidebar.sidebar-container
     .main-container
@@ -37,7 +37,7 @@ export default {
   },
   methods: {
     handleClickOutside() {
-      this.$store.dispatch('CloseSideBar', { withoutAnimation: false })
+      this.$store.dispatch('CloseSidebar', { withoutAnimation: false })
     }
   }
 }
