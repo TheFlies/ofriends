@@ -4,19 +4,21 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
+
 	"github.com/TheFlies/ofriends/internal/app/api/handler/friend"
+	"github.com/TheFlies/ofriends/internal/app/api/handler/gift"
 	"github.com/TheFlies/ofriends/internal/app/api/handler/index"
+	"github.com/TheFlies/ofriends/internal/app/api/handler/login"
 	"github.com/TheFlies/ofriends/internal/app/db"
 	"github.com/TheFlies/ofriends/internal/app/friend"
+	"github.com/TheFlies/ofriends/internal/app/gift"
+	"github.com/TheFlies/ofriends/internal/app/ldap"
+	"github.com/TheFlies/ofriends/internal/app/user"
 	"github.com/TheFlies/ofriends/internal/pkg/glog"
 	"github.com/TheFlies/ofriends/internal/pkg/health"
 	"github.com/TheFlies/ofriends/internal/pkg/middleware"
-
-	"github.com/TheFlies/ofriends/internal/app/api/handler/gift"
-	"github.com/TheFlies/ofriends/internal/app/gift"
-
-	"github.com/gorilla/handlers"
-	"github.com/gorilla/mux"
 )
 
 type (
@@ -44,12 +46,13 @@ const (
 // Init init all handlers
 func Init(conns *InfraConns) (http.Handler, error) {
 	logger := glog.New()
-
 	var friendRepo friend.Repository
+	var userRepo user.UserReponsitory
 	var giftRepo gift.Repository
 	switch conns.Databases.Type {
 	case db.TypeMongoDB:
 		friendRepo = friend.NewMongoRepository(conns.Databases.MongoDB)
+		userRepo = user.NewUserMongoReopnsitoty(conns.Databases.MongoDB)
 		giftRepo = gift.NewMongoRepository(conns.Databases.MongoDB)
 	default:
 		return nil, fmt.Errorf("database type not supported: %s", conns.Databases.Type)
@@ -64,6 +67,12 @@ func Init(conns *InfraConns) (http.Handler, error) {
 	giftHandler := gifthandler.New(giftSrv, giftLogger)
 
 	indexWebHandler := indexhandler.New()
+
+	userlogger := logger.WithField("package", "user")
+	userService := user.NewUserService(userRepo, userlogger)
+	loginservice := ldap.New(userService)
+	loginhandeler := login.NewLoginHandeler(userService, loginservice, userlogger)
+
 	routes := []route{
 		// infra
 		{
@@ -134,6 +143,16 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			method:  delete,
 			handler: giftHandler.Delete,
 		},
+		{
+			path:    "/api/v1/login",
+			method:  post,
+			handler: loginhandeler.Authenticate,
+		},
+		{
+			path:    "/api/v1/user/{username}",
+			method:  get,
+			handler: loginhandeler.GetUser,
+		},
 	}
 
 	loggingMW := middleware.Logging(logger.WithField("package", "middleware"))
@@ -143,6 +162,7 @@ func Init(conns *InfraConns) (http.Handler, error) {
 	r.Use(middleware.StatusResponseWriter)
 	r.Use(loggingMW)
 	r.Use(handlers.CompressHandler)
+	r.Use(middleware.Sercurity)
 
 	for _, rt := range routes {
 		h := rt.handler
