@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/TheFlies/ofriends/internal/app/types"
 	"github.com/TheFlies/ofriends/internal/pkg/glog"
-	"github.com/TheFlies/ofriends/internal/pkg/go-ozzo/ozzo-validation"
+	"github.com/go-ozzo/ozzo-validation"
 )
 
 // Repository is an interface of a gift repository
