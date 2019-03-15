@@ -8,21 +8,17 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/TheFlies/ofriends/internal/app/api/handler/friend"
+	"github.com/TheFlies/ofriends/internal/app/api/handler/gift"
 	"github.com/TheFlies/ofriends/internal/app/api/handler/index"
 	"github.com/TheFlies/ofriends/internal/app/api/handler/login"
 	"github.com/TheFlies/ofriends/internal/app/db"
 	"github.com/TheFlies/ofriends/internal/app/friend"
+	"github.com/TheFlies/ofriends/internal/app/gift"
 	"github.com/TheFlies/ofriends/internal/app/ldap"
 	"github.com/TheFlies/ofriends/internal/app/user"
 	"github.com/TheFlies/ofriends/internal/pkg/glog"
 	"github.com/TheFlies/ofriends/internal/pkg/health"
 	"github.com/TheFlies/ofriends/internal/pkg/middleware"
-
-	"github.com/TheFlies/ofriends/internal/app/api/handler/gift"
-	"github.com/TheFlies/ofriends/internal/app/gift"
-
-	"github.com/gorilla/handlers"
-	"github.com/gorilla/mux"
 )
 
 type (
@@ -71,11 +67,12 @@ func Init(conns *InfraConns) (http.Handler, error) {
 	giftHandler := gifthandler.New(giftSrv, giftLogger)
 
 	indexWebHandler := indexhandler.New()
-	//
+
 	userlogger := logger.WithField("package", "user")
 	userService := user.NewUserService(userRepo, userlogger)
 	loginservice := ldap.New(userService)
 	loginhandeler := login.NewLoginHandeler(userService, loginservice, userlogger)
+
 	routes := []route{
 		// infra
 		{

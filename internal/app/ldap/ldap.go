@@ -3,7 +3,6 @@ package ldap
 import (
 	"fmt"
 	"gopkg.in/ldap.v3"
-	"log"
 	"strings"
 
 	"github.com/TheFlies/ofriends/internal/app/service"
@@ -40,7 +39,7 @@ func New(svr service.Userservice) *LdapAuthentication {
 	}
 }
 func (l *LdapAuthentication) Authenticate(username string, password string) (interface{}, error) {
-	err := ldapauthentication(username, password, l.conf)
+	err := ldapauthentication(username, password, l.conf, l.log)
 	responmap := make(map[string]interface{})
 	if err != nil {
 		l.log.Errorf("login fail %v", err)
@@ -64,7 +63,7 @@ func (l *LdapAuthentication) Authenticate(username string, password string) (int
 		responmap["token"] = jwttoken
 		return responmap, nil
 	}
-	ldapuser, err := ldapquery(username, l.conf)
+	ldapuser, err := ldapquery(username, l.conf, l.log)
 	l.log.Infof("Query user information in ldap ")
 	if err != nil {
 		l.log.Errorf("Get user fail")
@@ -80,10 +79,11 @@ func (l *LdapAuthentication) Authenticate(username string, password string) (int
 	return responmap, nil
 
 }
-func ldapauthentication(username string, password string, cf LDAPconf) error {
+func ldapauthentication(username string, password string, cf LDAPconf, l glog.Logger) error {
 	ldapconn, err := ldap.Dial("tcp", fmt.Sprintf("%s:%d", cf.LdapAddr, cf.LdapPort))
 	if err != nil {
-		log.Fatal(err)
+		l.Errorf("canan't connect to ldap server")
+		return err
 	}
 	defer ldapconn.Close()
 	var sb strings.Builder
@@ -93,11 +93,12 @@ func ldapauthentication(username string, password string, cf LDAPconf) error {
 	sb.WriteString(cf.BaseDN)
 	err = ldapconn.Bind(sb.String(), password)
 	if err != nil {
+		l.Errorf("can't authentication ")
 		return err
 	}
 	return nil
 }
-func ldapquery(username string, cf LDAPconf) (types.User, error) {
+func ldapquery(username string, cf LDAPconf, l glog.Logger) (types.User, error) {
 	ldapconn, err := ldap.Dial("tcp", fmt.Sprintf("%s:%d", cf.LdapAddr, cf.LdapPort))
 	if err != nil {
 		return types.User{}, err
@@ -116,7 +117,7 @@ func ldapquery(username string, cf LDAPconf) (types.User, error) {
 	)
 	searchrequest, err := ldapconn.Search(searchRequest)
 	if err != nil {
-		fmt.Println("search fails")
+		l.Errorf("search fail")
 		return types.User{}, err
 	}
 	emailaddr := searchrequest.Entries[0].GetAttributeValues("mail")

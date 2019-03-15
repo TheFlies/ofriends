@@ -33,7 +33,7 @@ services:
       # BaseDN of TMALDAP, you when deploy this DN much change according to the requeriment
       - BASEDN=**REMOVED**
       # JWT information include private key and token time out :fomat h:m:s
-      - PRIVATE_KEY=**REMOVED
+      - PRIVATE_KEY=**REMOVED**
       - JWT_DURATION=1h30m
     command: [ "start" ]
     volumes:
