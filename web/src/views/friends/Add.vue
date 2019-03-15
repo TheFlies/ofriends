@@ -1,0 +1,17 @@
+<template>
+  <div class="add-customer">
+    <AddFriend />
+  </div>
+</template>
+
+<script>
+// @ is an alias to /src
+import AddFriend from '@/components/AddFriend.vue'
+
+export default {
+  name: 'Add',
+  components: {
+    AddFriend
+  }
+}
+</script>

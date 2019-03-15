@@ -3,6 +3,12 @@
 	"ignore": "",
 	"package": [
 		{
+			"checksumSHA1": "1WnjH5Yh43ykR+n3oS8s3YNCy44=",
+			"path": "github.com/asaskevich/govalidator",
+			"revision": "f9ffefc3facfbe0caee3fea233cbb6e8208f4541",
+			"revisionTime": "2018-07-20T11:50:03Z"
+		},
+		{
 			"checksumSHA1": "3KhDEC5MM0iyN+FsLfxpnvFVeuY=",
 			"path": "github.com/davecgh/go-spew/spew",
 			"revision": "d8f796af33cc11cb798c1aaeb27a4ebc5099927d",
@@ -61,6 +67,18 @@
 			"path": "github.com/globalsign/mgo/internal/scram",
 			"revision": "eeefdecb41b842af6dc652aaea4026e8403e62df",
 			"revisionTime": "2018-10-15T13:59:52Z"
+		},
+		{
+			"checksumSHA1": "3D1Hhs5oql4PvDWvksSU/XFW1Ho=",
+			"path": "github.com/go-ozzo/ozzo-validation",
+			"revision": "2f76ea62300c36e72bd56c804484cb6db53b69a5",
+			"revisionTime": "2018-11-16T12:45:51Z"
+		},
+		{
+			"checksumSHA1": "aixwliPvmkKfLaIbUAHbSJO0G8o=",
+			"path": "github.com/go-ozzo/ozzo-validation/is",
+			"revision": "2f76ea62300c36e72bd56c804484cb6db53b69a5",
+			"revisionTime": "2018-11-16T12:45:51Z"
 		},
 		{
 			"checksumSHA1": "4ie6PbMZ0JHgHkS1/sUrAjVeA2w=",
@@ -139,6 +157,10 @@
 			"path": "github.com/stretchr/testify/require",
 			"revision": "78018b09cde1da8ab313a2344fa4395b86026def",
 			"revisionTime": "2018-08-22T01:07:44Z"
+		},
+		{
+			"path": "go-ozzo/ozzo-validation",
+			"revision": ""
 		},
 		{
 			"checksumSHA1": "Pgkpi+KZPLy3NTMt4q0ofidpy70=",

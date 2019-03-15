@@ -57,7 +57,7 @@ services:
     volumes:
       - ../../web:/home/ofriends
     working_dir: /home/ofriends/
-    command: [ sh, -c, "npm rebuild node-sass && npm run serve" ]
+    command: [ sh, -c, "npm run serve" ]
     depends_on:
       - backend
     restart: always

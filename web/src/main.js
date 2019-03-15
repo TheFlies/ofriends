@@ -1,10 +1,20 @@
 import Vue from 'vue'
+import axios from 'axios'
+
+import 'normalize.css/normalize.css'
+
+import '@/plugins/element'
+
+import '@/styles/index.styl'
+
 import App from './App.vue'
 import router from './router'
 import store from './store'
+
+import '@/icons'
+import '@/permission'
+
 import './registerServiceWorker'
-import './plugins/element.js'
-import axios from 'axios'
 
 Vue.config.productionTip = false
 
@@ -17,5 +27,6 @@ Vue.prototype.$http = axios
 new Vue({
   router,
   store,
+  el: '#app',
   render: h => h(App)
 }).$mount('#app')
