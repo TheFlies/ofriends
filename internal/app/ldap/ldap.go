@@ -45,40 +45,39 @@ func (l *LdapAuthentication) Authenticate(username string, password string) (int
 	if err != nil {
 		l.log.Errorf("login fail %v", err)
 		return "", err
-	} else {
-		l.log.Infof("login success, waiting query user information")
-		isExists := l.usersvr.CheckExistence(username)
-		if isExists {
-			l.log.Infof("query user information form database")
-			dbUser, err := l.usersvr.GetByName(username)
-			if err != nil {
-				l.log.Errorf("Get user fail")
-				return "", err
-			}
-			jwttoken, err := jwt.CreateToken(dbUser.Username, dbUser.Fullname, dbUser.Userrole)
-			if err != nil {
-				l.log.Errorf("Get user fail")
-				return "", err
-			}
-			responmap["userinformation"] = dbUser
-			responmap["token"] = jwttoken
-			return responmap, nil
-		}
-		ldapuser, err := ldapquery(username, l.conf)
-		l.log.Infof("Query user information in ldap ")
+	}
+	l.log.Infof("login success, waiting query user information")
+	isExists := l.usersvr.CheckExistence(username)
+	if isExists {
+		l.log.Infof("query user information form database")
+		dbUser, err := l.usersvr.GetByName(username)
 		if err != nil {
 			l.log.Errorf("Get user fail")
 			return "", err
 		}
-		jwttoken, err := jwt.CreateToken(ldapuser.Username, ldapuser.Fullname, ldapuser.Userrole)
+		jwttoken, err := jwt.CreateToken(dbUser.Username, dbUser.Fullname, dbUser.Userrole)
 		if err != nil {
 			l.log.Errorf("Get user fail")
 			return "", err
 		}
-		responmap["userinformation"] = ldapuser
+		responmap["userinformation"] = dbUser
 		responmap["token"] = jwttoken
 		return responmap, nil
 	}
+	ldapuser, err := ldapquery(username, l.conf)
+	l.log.Infof("Query user information in ldap ")
+	if err != nil {
+		l.log.Errorf("Get user fail")
+		return "", err
+	}
+	jwttoken, err := jwt.CreateToken(ldapuser.Username, ldapuser.Fullname, ldapuser.Userrole)
+	if err != nil {
+		l.log.Errorf("Get user fail")
+		return "", err
+	}
+	responmap["userinformation"] = ldapuser
+	responmap["token"] = jwttoken
+	return responmap, nil
 
 }
 func ldapauthentication(username string, password string, cf LDAPconf) error {

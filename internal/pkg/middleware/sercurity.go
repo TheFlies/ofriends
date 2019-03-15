@@ -24,7 +24,7 @@ func Sercurity(h http.Handler) http.Handler {
 	ignorlist = append(ignorlist, "/api/v1/login")
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		for _, a := range ignorlist {
-			if strings.EqualFold(a, r.RequestURI) {
+			if a == r.RequestURI {
 				h.ServeHTTP(w, r)
 				return
 			}
