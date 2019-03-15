@@ -15,9 +15,9 @@ export default new Router({
       component: Hello
     },
     {
-      path: '/friend',
+      path: '/friends/test',
       name: 'Friend',
-      component: () => import('./views/friends/Add.vue')
+      component: () => import('./views/friends/ShowDetail.vue')
     },
     {
       path: '/gifts',

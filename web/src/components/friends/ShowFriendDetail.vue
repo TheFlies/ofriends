@@ -1,8 +1,8 @@
 <template>
     <el-dialog
-        title="Add Friend"
+        title="Friend Detail"
         :visible.sync="isVisibleAdd"
-        width="30%"
+        width="70%"
         append-to-body :before-close="handleBackdropClick">
         <el-form :model="friend" :rules="rules" ref="friend" label-width="120px" class="demo-ruleForm">
           <el-form-item label="Name" prop="name">

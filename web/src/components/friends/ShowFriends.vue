@@ -55,9 +55,9 @@
 </template>
 
 <script>
-import EditFriend from '@/components/EditFriend.vue'
-import DeleteFriend from '@/components/DeleteFriend.vue'
-import AddFriend from '@/components/AddFriend_.vue'
+import EditFriend from '@/components/friends/EditFriend.vue'
+import DeleteFriend from '@/components/friends/DeleteFriend.vue'
+import AddFriend from '@/components/friends/AddFriend.vue'
 export default {
   name: 'ListFriends',
   components: {

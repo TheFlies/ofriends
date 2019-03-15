@@ -6,7 +6,7 @@
 
 <script>
 // @ is an alias to /src
-import ShowFriends from '@/components/ShowFriends.vue'
+import ShowFriends from '@/components/friends/ShowFriends.vue'
 
 export default {
   name: 'show',
