@@ -9,7 +9,6 @@ import (
 	"github.com/TheFlies/ofriends/internal/pkg/config/env"
 	"github.com/TheFlies/ofriends/internal/pkg/jwt"
 	"github.com/TheFlies/ofriends/internal/pkg/respond"
-	"github.com/TheFlies/ofriends/internal/pkg/utils"
 )
 
 type (
@@ -24,9 +23,11 @@ func Sercurity(h http.Handler) http.Handler {
 	var ignorlist []string
 	ignorlist = append(ignorlist, "/api/v1/login")
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if utils.Iscontains(ignorlist, r.RequestURI) {
-			h.ServeHTTP(w, r)
-			return
+		for _, a := range ignorlist {
+			if strings.EqualFold(a, r.RequestURI) {
+				h.ServeHTTP(w, r)
+				return
+			}
 		}
 		thebearertoken := r.Header.Get("Authorization")
 		tokenarry := strings.Split(thebearertoken, " ")

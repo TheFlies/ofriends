@@ -62,20 +62,21 @@ func (l *LdapAuthentication) Authenticate(username string, password string) (int
 			}
 			responmap["userinformation"] = dbUser
 			responmap["token"] = jwttoken
-		} else {
-			ldapuser, err := ldapquery(username, l.conf)
-			if err != nil {
-				l.log.Errorf("Get user fail")
-				return "", err
-			}
-			jwttoken, err := jwt.CreateToken(ldapuser.Username, ldapuser.Fullname, ldapuser.Userrole)
-			if err != nil {
-				l.log.Errorf("Get user fail")
-				return "", err
-			}
-			responmap["userinformation"] = ldapuser
-			responmap["token"] = jwttoken
+			return responmap, nil
 		}
+		ldapuser, err := ldapquery(username, l.conf)
+		l.log.Infof("Query user information in ldap ")
+		if err != nil {
+			l.log.Errorf("Get user fail")
+			return "", err
+		}
+		jwttoken, err := jwt.CreateToken(ldapuser.Username, ldapuser.Fullname, ldapuser.Userrole)
+		if err != nil {
+			l.log.Errorf("Get user fail")
+			return "", err
+		}
+		responmap["userinformation"] = ldapuser
+		responmap["token"] = jwttoken
 		return responmap, nil
 	}
 
