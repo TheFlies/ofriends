@@ -12,10 +12,12 @@ type Activity struct {
 type Visit struct {
 	ID          	string 		`json:"id,omitempty" bson:"_id"`
 	Lab        		string 		`json:"lab,omitempty"`
-	ArrivedDate     string 		`json:"arrivedDate,omitempty"`
-	PreApproveVisa  string 		`json:"preApproveVisa"`
+	ArrivedTime     string 		`json:"arrivedTime,omitempty"`
+	DepartureTime   string 		`json:"departureTime"`
+	PreApproveVisa  bool 		`json:"preApproveVisa"`
 	PassportInfo  	string 		`json:"passportInfo"`
 	CreatedBy  		string 		`json:"createdBy"`
-	DepartureDate   string 		`json:"departureDate"`
+	HotelStayed  	string 		`json:"hotelStayed"`
+	Pickup  		string 		`json:"pickup"`
 	Activities      []Activity 	`json:"activities"`
 }

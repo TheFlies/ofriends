@@ -1,7 +1,7 @@
 <template>
-  <div class="show-friend-detail">
+  <div class="add-customer">
     <FriendShowDetail/>
-    <VisitList/>
+    <VisitList />
   </div>
 </template>
 
@@ -11,7 +11,7 @@ import FriendShowDetail from '@/components/friends/FriendShowDetail.vue'
 import VisitList from '@/components/visits/VisitList.vue'
 
 export default {
-  name: 'showDetail',
+  name: 'show',
   components: {
     FriendShowDetail,
     VisitList

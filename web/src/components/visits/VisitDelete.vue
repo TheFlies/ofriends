@@ -25,7 +25,7 @@ export default {
     handleBackdropClick () {
       this.$emit('update:isVisibleDelete', false)
     },
-    deleteFriend () {
+    deleteVisit () {
       this.$emit('update:isVisibleDelete', false)
       this.$emit('isDeleteVisit', true)
     }

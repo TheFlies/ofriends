@@ -2,7 +2,7 @@ package types
 
 // Friend hold information of a friend
 type Friend struct {
-	ID    		string  `json:"id,omitempty" bson:"_id"`
+	ID    		    string  `json:"id,omitempty" bson:"_id"`
 	Name        	string  `json:"name,omitempty"`
 	Title       	string  `json:"title,omitempty"`
 	Position    	string  `json:"position,omitempty"`

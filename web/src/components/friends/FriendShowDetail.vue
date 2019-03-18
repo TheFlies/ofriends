@@ -78,7 +78,7 @@
 
 <script>
 export default {
-  name: "addFriend",
+  name: "friendShowDetail",
   props: {
     msg: String
   },

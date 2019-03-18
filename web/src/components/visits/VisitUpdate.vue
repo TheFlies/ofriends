@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     title="update Visit"
-    :visible.sync="isVisibleAdd"
+    :visible.sync="isVisibleUpdate"
     width="30%"
     append-to-body
     :before-close="handleBackdropClick"
