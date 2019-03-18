@@ -1,0 +1,15 @@
+- pipeline: "test"
+  trigger_mode: "ON_EVERY_PUSH"
+  ref_name: "master"
+  actions:
+  - action: "Execute: go build"
+    type: "BUILD"
+    docker_image_name: "library/golang"
+    docker_image_tag: "1.9"
+    execute_commands:
+    - "# Working directory with cloned repository: /src/github.com/nasa9084/go-strlib"
+    - "# Click the link at the bottom for more options"
+    - "export GOPATH=/"
+    - "export GO15VENDOREXPERIMENT=1"
+    - "go vet"
+    - "go test -v ./..."

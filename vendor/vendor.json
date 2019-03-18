@@ -117,6 +117,12 @@
 			"revisionTime": "2018-10-04T22:41:46Z"
 		},
 		{
+			"checksumSHA1": "IzamwdpxxCwBBIYGBjcizHN/HtQ=",
+			"path": "github.com/nasa9084/go-strlib",
+			"revision": "bd071e78b3b91d9cb237315afe64f5deddca479b",
+			"revisionTime": "2017-10-04T07:04:56Z"
+		},
+		{
 			"checksumSHA1": "W5XFRMopUjaPHf7px4zRCV2n3iE=",
 			"path": "github.com/pkg/errors",
 			"revision": "856c240a51a2bf8fb8269ea7f3f9b046aadde36e",
