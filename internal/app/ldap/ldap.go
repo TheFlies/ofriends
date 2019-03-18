@@ -2,8 +2,12 @@ package ldap
 
 import (
 	"fmt"
+	"regexp"
+
+	"github.com/globalsign/mgo/bson"
+	"github.com/nasa9084/go-strlib"
+	"github.com/pkg/errors"
 	"gopkg.in/ldap.v3"
-	"strings"
 
 	"github.com/TheFlies/ofriends/internal/app/service"
 	"github.com/TheFlies/ofriends/internal/app/types"
@@ -24,13 +28,14 @@ type (
 		log     glog.Logger
 		conf    LDAPconf
 		usersvr service.Userservice
+		lconn   *ldap.Conn
 	}
 )
 
 func New(svr service.Userservice) *LdapAuthentication {
 	var ldapconf LDAPconf
-	l := glog.New()
-	l.WithField("package", "ldap")
+	log := glog.New()
+	l := log.WithField("package", "ldap")
 	envconfig.Load(&ldapconf)
 	return &LdapAuthentication{
 		log:     l,
@@ -38,8 +43,18 @@ func New(svr service.Userservice) *LdapAuthentication {
 		usersvr: svr,
 	}
 }
+func (l *LdapAuthentication) Conection() {
+	conection, err := ldap.Dial("tcp", fmt.Sprintf("%s:%d", l.conf.LdapAddr, l.conf.LdapPort))
+	if err != nil {
+		l.log.Errorf("connection fails")
+	}
+	l.lconn = conection
+
+}
 func (l *LdapAuthentication) Authenticate(username string, password string) (interface{}, error) {
-	err := ldapauthentication(username, password, l.conf, l.log)
+	l.Conection()
+	defer l.lconn.Close()
+	err := ldapauthentication(username, password, l.conf, l.log, l.lconn)
 	responmap := make(map[string]interface{})
 	if err != nil {
 		l.log.Errorf("login fail %v", err)
@@ -51,25 +66,27 @@ func (l *LdapAuthentication) Authenticate(username string, password string) (int
 		l.log.Infof("query user information form database")
 		dbUser, err := l.usersvr.GetByName(username)
 		if err != nil {
-			l.log.Errorf("Get user fail")
+			l.log.Errorf("get user fail")
 			return "", err
 		}
-		jwttoken, err := jwt.CreateToken(dbUser.Username, dbUser.Fullname, dbUser.Userrole)
+		jwttoken, err := jwt.CreateToken(dbUser.Username, dbUser.Fullname, dbUser.DeliveryCenter)
 		if err != nil {
-			l.log.Errorf("Get user fail")
+			l.log.Errorf("get user fail")
 			return "", err
 		}
 		responmap["userinformation"] = dbUser
 		responmap["token"] = jwttoken
 		return responmap, nil
 	}
-	ldapuser, err := ldapquery(username, l.conf, l.log)
-	l.log.Infof("Query user information in ldap ")
+	ldapuser, err := ldapquery(username, l.conf, l.log, l.lconn)
+	l.log.Infof("query user information in ldap ")
 	if err != nil {
-		l.log.Errorf("Get user fail")
+		l.log.Errorf("get user fail")
 		return "", err
 	}
-	jwttoken, err := jwt.CreateToken(ldapuser.Username, ldapuser.Fullname, ldapuser.Userrole)
+	ldapuser.Id = bson.NewObjectId()
+	l.usersvr.AddUser(&ldapuser)
+	jwttoken, err := jwt.CreateToken(ldapuser.Username, ldapuser.Fullname, ldapuser.DeliveryCenter)
 	if err != nil {
 		l.log.Errorf("Get user fail")
 		return "", err
@@ -79,32 +96,28 @@ func (l *LdapAuthentication) Authenticate(username string, password string) (int
 	return responmap, nil
 
 }
-func ldapauthentication(username string, password string, cf LDAPconf, l glog.Logger) error {
-	ldapconn, err := ldap.Dial("tcp", fmt.Sprintf("%s:%d", cf.LdapAddr, cf.LdapPort))
+func ldapauthentication(username string, password string, cf LDAPconf, l glog.Logger, conn *ldap.Conn) error {
+	userdn, err := finduserdn(username, cf, l, conn)
+	l.Infof("userdn= %v", userdn)
 	if err != nil {
-		l.Errorf("canan't connect to ldap server")
 		return err
 	}
-	defer ldapconn.Close()
-	var sb strings.Builder
-	sb.WriteString("Cn=")
-	sb.WriteString(username)
-	sb.WriteString(",")
-	sb.WriteString(cf.BaseDN)
-	err = ldapconn.Bind(sb.String(), password)
-	if err != nil {
-		l.Errorf("can't authentication ")
-		return err
+	ok := false
+	for _, dn := range userdn {
+		err = conn.Bind(dn, password)
+		if err == nil {
+			ok = true
+			break
+		}
 	}
-	return nil
+	if ok {
+		return nil
+	}
+	return errors.New("login fails")
+
 }
-func ldapquery(username string, cf LDAPconf, l glog.Logger) (types.User, error) {
-	ldapconn, err := ldap.Dial("tcp", fmt.Sprintf("%s:%d", cf.LdapAddr, cf.LdapPort))
-	if err != nil {
-		return types.User{}, err
-	}
-	defer ldapconn.Close()
-	err = ldapconn.Bind(cf.LdapFirstBindUsername, cf.LdapFirstBindPassword)
+func ldapquery(username string, cf LDAPconf, l glog.Logger, conn *ldap.Conn) (types.User, error) {
+	err := conn.Bind(cf.LdapFirstBindUsername, cf.LdapFirstBindPassword)
 	if err != nil {
 		return types.User{}, err
 	}
@@ -112,21 +125,77 @@ func ldapquery(username string, cf LDAPconf, l glog.Logger) (types.User, error) 
 		cf.BaseDN,
 		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false,
 		fmt.Sprintf("(&(objectClass=*)(cn=%s))", username),
-		[]string{"dn", "mail", "memberOf", "description", "displayName"},
+		[]string{"dn", "mail", "memberOf", "description", "displayName", "cn"},
 		nil,
 	)
-	searchrequest, err := ldapconn.Search(searchRequest)
+	searchresult, err := conn.Search(searchRequest)
 	if err != nil {
-		l.Errorf("search fail")
+		l.Errorf("ldap query search fail")
 		return types.User{}, err
 	}
-	emailaddr := searchrequest.Entries[0].GetAttributeValues("mail")
-	role := searchrequest.Entries[0].GetAttributeValues("description")
-	fulname := searchrequest.Entries[0].GetAttributeValues("displayName")
-	return types.User{
-		Username: username,
-		Fullname: fulname[0],
-		Userrole: role[0],
-		Email:    emailaddr[0],
-	}, nil
+	if len(searchresult.Entries) == 0 {
+		l.Errorf("no user query")
+		err := errors.New("user does not exist ")
+		return types.User{}, err
+	}
+	for _, entries := range searchresult.Entries {
+		if strlib.IsLower(entries.GetAttributeValue("cn")) {
+			emailaddr := entries.GetAttributeValue("mail")
+			ds := entries.GetAttributeValue("description")
+			// try to get DC name form description value
+			dc := getdcformdescripton(ds, "DC[0-9]+")
+			fulname := entries.GetAttributeValues("displayName")
+			var name string
+			if len(fulname) == 0 {
+				name = ""
+			}
+			name = fulname[0]
+			return types.User{
+				Username:       username,
+				Fullname:       name,
+				DeliveryCenter: dc,
+				Email:          emailaddr,
+			}, nil
+		}
+	}
+	return types.User{}, errors.New("can't get user information form ldap")
+}
+func finduserdn(username string, cf LDAPconf, l glog.Logger, conn *ldap.Conn) ([]string, error) {
+	err := conn.Bind(cf.LdapFirstBindUsername, cf.LdapFirstBindPassword)
+	if err != nil {
+		l.Errorf("can't first bind to ldap database to query user dn ")
+		return nil, err
+	}
+	l.Infof("query user by basedn : %s", cf.BaseDN)
+	searchRequest := ldap.NewSearchRequest(
+		cf.BaseDN,
+		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false,
+		fmt.Sprintf("(&(objectClass=*)(cn=%s))", username),
+		[]string{"dn"},
+		nil,
+	)
+	searresult, err := conn.Search(searchRequest)
+	if err != nil {
+		l.Errorf("search dn for login fail")
+		return nil, err
+	}
+	if len(searresult.Entries) == 0 {
+		l.Errorf("query fail")
+		err := errors.New("user does not exist")
+		return nil, err
+	}
+	dn := make([]string, len(searresult.Entries))
+	for _, stringdn := range searresult.Entries {
+		dn = append(dn, stringdn.DN)
+	}
+	return dn, nil
+
+}
+func getdcformdescripton(s string, r string) string {
+	re := regexp.MustCompile(r)
+	result := re.FindAllString(s, 1)
+	if len(result) != 1 {
+		return "wanderer"
+	}
+	return result[0]
 }

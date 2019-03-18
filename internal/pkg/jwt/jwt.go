@@ -12,9 +12,9 @@ import (
 type (
 	Customeclaims struct {
 		jwt.StandardClaims
-		Useid       string
-		Usefullname string
-		Userole     string
+		Useid          string
+		Usefullname    string
+		Deliverycenter string
 	}
 	JWTConf struct {
 		PrivateKey string `envconfig:"PRIVATE_KEY"`
@@ -22,7 +22,7 @@ type (
 	}
 )
 
-func New(standard jwt.StandardClaims, uuseid string, usefullname string, useroole string) *Customeclaims {
+func New(standard jwt.StandardClaims, uuseid string, usefullname string, deliverycenter string) *Customeclaims {
 	return &Customeclaims{
 		StandardClaims: jwt.StandardClaims{
 			Audience:  standard.Audience,
@@ -33,13 +33,13 @@ func New(standard jwt.StandardClaims, uuseid string, usefullname string, userool
 			NotBefore: standard.NotBefore,
 			Subject:   standard.Subject,
 		},
-		Useid:       uuseid,
-		Usefullname: usefullname,
-		Userole:     useroole,
+		Useid:          uuseid,
+		Usefullname:    usefullname,
+		Deliverycenter: deliverycenter,
 	}
 }
 
-func CreateToken(userId string, userFullName string, userRole string) (string, error) {
+func CreateToken(userId string, userFullName string, dc string) (string, error) {
 	logger := glog.New()
 	logger.WithField("package", "jwt")
 	var conf JWTConf
@@ -54,7 +54,7 @@ func CreateToken(userId string, userFullName string, userRole string) (string, e
 		IssuedAt:  time.Now().Unix(),
 		ExpiresAt: duration,
 	},
-		userId, userFullName, userRole)
+		userId, userFullName, dc)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, payload)
 	ss, err := token.SignedString([]byte(conf.PrivateKey))
 	if err != nil {
