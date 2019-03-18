@@ -3,7 +3,7 @@
     <el-header style="width: 80%; margin:auto">
       <el-button type="primary" icon="el-icon-plus" plain style="float:right"
       v-on:click="isVisibleAdd = !isVisibleAdd"
-      >New friend</el-button>
+      >New visit</el-button>
     </el-header>
      <el-main>
     <el-table
@@ -12,31 +12,29 @@
       style="width: 80%; margin:auto"
     >
       <el-table-column type="index" :index="indexMethod"></el-table-column>
-      <el-table-column label="Name"  width="120" sortable prop="name"></el-table-column>
-      <el-table-column label="Position" width="120" sortable prop="position"></el-table-column>
-      <el-table-column label="Project" width="120" sortable prop="project"></el-table-column>
-      <el-table-column label="Age" width="120" sortable prop="age"></el-table-column>
-      <el-table-column label="Company" width="120" sortable prop="company"></el-table-column>
-      <el-table-column label="Country" width="120" sortable prop="country"></el-table-column>
-      <el-table-column label="City" width="120" sortable prop="city"></el-table-column>
-      <el-table-column label="Food Note" width="120" prop="foodNote"></el-table-column>
-      <el-table-column label="Family Note" width="120" prop="familyNote"></el-table-column>
-      <el-table-column label="Next Visit Note" width="120" prop="nextVisitNote"></el-table-column>
+      <el-table-column label="Lab"  width="120" sortable prop="name"></el-table-column>
+      <el-table-column label="Arrived Date" width="120" sortable prop="position"></el-table-column>
+      <el-table-column label="Departure Date" width="120" sortable prop="project"></el-table-column>
+      <el-table-column label="Pre-approved visa" width="120" sortable prop="age"></el-table-column>
+      <el-table-column label="Passport Info" width="120" sortable prop="country"></el-table-column>
+      <el-table-column label="Created By" width="120" sortable prop="company"></el-table-column>
+      <el-table-column label="Hotel Stayed" width="120" sortable prop="city"></el-table-column>
+      <el-table-column label="Pickup" width="120" prop="foodNote"></el-table-column>
       <el-table-column align="right">
         <template slot="header" slot-scope="scope">
           <el-input v-model="search" size="mini" placeholder="Type to search"/>
         </template>
-        <EditFriend
+        <VisitUpdate
           :isVisibleUpdate.sync="isVisibleUpdate"
-          @isUpdateFriend="handleUpdate"
-          :friend.sync="friend"
+          @isUpdateVisit="handleUpdate"
+          :visit.sync="visit"
         />
-        <DeleteFriend
+        <VisitDelete
           :isVisibleDelete.sync="isVisibleDelete"
-          @isDeleteFriend="handleDelete"
-          :friendName.sync="friendName"
+          @isDeleteVisit="handleDelete"
+          :visitInfo.sync="visitInfo"
         />
-        <AddFriend :isVisibleAdd.sync="isVisibleAdd" @isAddFriend="handleAdd"/>
+        <VisitAdd :isVisibleAdd.sync="isVisibleAdd" @isAddVisit="handleAdd"/>
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -45,7 +43,7 @@
           <el-button
             size="mini"
             type="danger"
-            v-on:click="isVisibleDelete = !isVisibleDelete; scopeFriend = scope; friendName = scope.row.name"
+            v-on:click="isVisibleDelete = !isVisibleDelete; scopeVisit= scope; visitInfo = scope.row.name"
           >Delete</el-button>
         </template>
       </el-table-column>
@@ -55,31 +53,11 @@
 </template>
 
 <script>
-import EditFriend from '@/components/friends/FriendUpdate.vue'
-import DeleteFriend from '@/components/friends/FriendDelete.vue'
-import AddFriend from '@/components/friends/FriendAdd.vue'
+import VisitUpdate from '@/components/visits/VisitUpdate.vue'
+import VisitDelete from '@/components/visits/VisitDelete.vue'
+import VisitAdd from '@/components/visits/VisitAdd.vue'
 export default {
-  name: 'ListFriends',
-  components: {
-    EditFriend,
-    DeleteFriend,
-    AddFriend
-  },
-  mounted () {
-    // We already set the axios baseURL to the backend service in main.js file.
-    this.$http
-      .get('http://localhost:8080/friends')
-      .then(resp => {
-        if (resp.data != null) {
-          this.tableData = resp.data
-        }
-        this.loading = false
-      })
-      .catch(err => {
-        console.log(err)
-      })
-  },
-
+  name: 'VisitList',
   data () {
     return {
       tableData: [],
@@ -88,12 +66,12 @@ export default {
       isVisibleDelete: false,
       search: '',
       loading: true,
-      friend: Object,
-      friendName: '',
-      scopeFriend: Function
+      visit: Object,
+      scopeVisit: Function
     }
   },
   methods: {
+    methods: {
     handleAdd: function (isAddFriend, friend) {
       if (isAddFriend) {
         this.loading = true
@@ -179,7 +157,8 @@ export default {
     },
     indexMethod (index) {
       return index * 1
-    }
+    },
+  }
   }
 }
 
