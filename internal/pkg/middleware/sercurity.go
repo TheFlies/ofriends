@@ -17,7 +17,7 @@ type (
 	}
 )
 
-func Sercurity(h http.Handler) http.Handler {
+func Security(h http.Handler) http.Handler {
 	var conf JWTConf
 	envconfig.Load(&conf)
 	var ignorlist []string
@@ -38,9 +38,9 @@ func Sercurity(h http.Handler) http.Handler {
 		jwttoken := strings.Split(thebearertoken, " ")[1]
 		logrus.Info("the token : %v\n", jwttoken)
 		notExpire := jwt.CheckExp(jwttoken)
-		if notExpire && jwt.Checkvalib(jwttoken) {
+		if notExpire && jwt.CheckValib(jwttoken) {
 			payload := jwt.GetPayload(jwttoken)
-			logrus.Info("the payload is %v\n", payload.Usefullname)
+			logrus.Info("the payload is %v\n", payload.UserFullName)
 			h.ServeHTTP(w, r)
 			return
 		}

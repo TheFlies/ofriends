@@ -13,13 +13,13 @@ import (
 
 type (
 	LoginHandler struct {
-		srv      service.Userservice
+		srv      service.UserService
 		logger   glog.Logger
 		loginsvr service.Loginservice
 	}
 )
 
-func NewLoginHandeler(s service.Userservice, lgsvr service.Loginservice, l glog.Logger) *LoginHandler {
+func NewLoginHandeler(s service.UserService, lgsvr service.Loginservice, l glog.Logger) *LoginHandler {
 	return &LoginHandler{
 		srv:      s,
 		logger:   l,

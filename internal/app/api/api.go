@@ -47,12 +47,12 @@ const (
 func Init(conns *InfraConns) (http.Handler, error) {
 	logger := glog.New()
 	var friendRepo friend.Repository
-	var userRepo user.UserReponsitory
+	var userRepo user.UserRepository
 	var giftRepo gift.Repository
 	switch conns.Databases.Type {
 	case db.TypeMongoDB:
 		friendRepo = friend.NewMongoRepository(conns.Databases.MongoDB)
-		userRepo = user.NewUserMongoReopnsitoty(conns.Databases.MongoDB)
+		userRepo = user.NewUserMongoRepositoty(conns.Databases.MongoDB)
 		giftRepo = gift.NewMongoRepository(conns.Databases.MongoDB)
 	default:
 		return nil, fmt.Errorf("database type not supported: %s", conns.Databases.Type)
@@ -162,7 +162,7 @@ func Init(conns *InfraConns) (http.Handler, error) {
 	r.Use(middleware.StatusResponseWriter)
 	r.Use(loggingMW)
 	r.Use(handlers.CompressHandler)
-	r.Use(middleware.Sercurity)
+	r.Use(middleware.Security)
 
 	for _, rt := range routes {
 		h := rt.handler
