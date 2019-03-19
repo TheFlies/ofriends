@@ -1,6 +1,0 @@
-version: "{build}"
-
-clone_folder: c:\go\src\github.com\nasa9084\go-strlib
-
-build_script:
-- go test -v -race ./...
