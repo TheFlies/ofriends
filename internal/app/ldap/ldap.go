@@ -64,6 +64,7 @@ func (l *LdapAuthentication) Authenticate(username string, password string) (int
 	l.ConnectToServer()
 	defer l.Close()
 	err := ldapAuthentication(username, password, l.conf, l.log, l.lconn)
+	JWTGenration := jwt.NewTokenGeneration()
 	respondMap := make(map[string]interface{})
 	if err != nil {
 		l.log.Errorf("login fail %v ", err)
@@ -78,7 +79,8 @@ func (l *LdapAuthentication) Authenticate(username string, password string) (int
 			l.log.Errorf("get user fail: %v", err)
 			return "", err
 		}
-		JWTToken, err := jwt.CreateToken(DBUser.Username, DBUser.Fullname, DBUser.DeliveryCenter)
+
+		JWTToken, err := JWTGenration.CreateToken(DBUser.Username, DBUser.Fullname, DBUser.DeliveryCenter)
 		if err != nil {
 			l.log.Errorf("get user fail : %v", err)
 			return "", err
@@ -99,7 +101,7 @@ func (l *LdapAuthentication) Authenticate(username string, password string) (int
 	if err != nil {
 		l.log.Errorf("can not add a user to mongodb %v", err)
 	}
-	JWTToken, err := jwt.CreateToken(LDAPUser.Username, LDAPUser.Fullname, LDAPUser.DeliveryCenter)
+	JWTToken, err := JWTGenration.CreateToken(LDAPUser.Username, LDAPUser.Fullname, LDAPUser.DeliveryCenter)
 	if err != nil {
 		l.log.Errorf("Get token fail : %v", err)
 		return "", err
@@ -168,7 +170,7 @@ func ldapQuery(username string, cf LDAPconf, l glog.Logger, conn *ldap.Conn) (ty
 			emailAddress := entries.GetAttributeValue("mail")
 			description := entries.GetAttributeValue("description")
 			// try to get DC name form description value
-			deliveryCenter := getDCFormDescripton(description, "DC[\\s,\\-]*[0-9]+")
+			deliveryCenter := getDCFormDescripton(description, "DC[\\s,\\-]*[0-9]+", l)
 			fulname := entries.GetAttributeValues("displayName")
 			var name string
 			if len(fulname) == 0 {
@@ -222,18 +224,17 @@ func findUserDN(username string, cf LDAPconf, l glog.Logger, conn *ldap.Conn) ([
 }
 
 // the method just is used in here
-func getDCFormDescripton(s string, r string) []string {
-	logger := glog.New().WithField("package", "ldap")
-	logger.Infof("the description : %s", s)
+func getDCFormDescripton(s string, r string, l glog.Logger) []string {
+	l.Infof("the description : %s", s)
 	re := regexp.MustCompile(r)
 	result := re.FindAllString(s, -1)
 	if len(result) == 0 {
-		logger.Infof("can not get DC form description string")
-		logger.Infof("Default is Wanderer")
+		l.Infof("can not get DC form description string")
+		l.Infof("Default is Wanderer")
 		re := []string{"Wanderer"}
 		return re
 	}
-	logger.Infof("get dc success %v ", result)
+	l.Infof("get dc success %v ", result)
 	return result
 }
 func isUserInfoCN(s string) bool {

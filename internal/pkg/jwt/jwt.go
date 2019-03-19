@@ -20,8 +20,21 @@ type (
 		PrivateKey string `envconfig:"PRIVATE_KEY"`
 		Duration   string `envconfig:"JWT_DURATION"`
 	}
+	TokenGeneration struct {
+		logger glog.Logger
+		conf   JWTConf
+	}
 )
 
+func NewTokenGeneration() *TokenGeneration {
+	logger := glog.New().WithField("package", "jwt")
+	var conf JWTConf
+	envconfig.Load(&conf)
+	return &TokenGeneration{
+		logger: logger,
+		conf:   conf,
+	}
+}
 func New(standard jwt.StandardClaims, uid string, fullname string, deliverycenter []string) *Customeclaims {
 	return &Customeclaims{
 		StandardClaims: jwt.StandardClaims{
@@ -38,16 +51,13 @@ func New(standard jwt.StandardClaims, uid string, fullname string, deliverycente
 		DeliveryCenter: deliverycenter,
 	}
 }
+func (tkg *TokenGeneration) CreateToken(uid string, fullname string, deliverycenter []string) (string, error) {
 
-func CreateToken(uid string, fullname string, deliverycenter []string) (string, error) {
-	logger := glog.New().WithField("package", "jwt")
-	var conf JWTConf
-	envconfig.Load(&conf)
-	logger.Infof("environment list [%v]", conf)
-	confDuration, err := time.ParseDuration(conf.Duration)
-	logger.Infof("duration time is : %v", confDuration)
+	tkg.logger.Infof("environment list [%v]", tkg.conf)
+	confDuration, err := time.ParseDuration(tkg.conf.Duration)
+	tkg.logger.Infof("duration time is : %v", confDuration)
 	if err != nil {
-		logger.Errorf("can't parser duration form server's environment variable: %v", err)
+		tkg.logger.Errorf("can't parser duration form server's environment variable: %v", err)
 	}
 	duration := time.Now().Add(confDuration).Unix()
 	payload := New(jwt.StandardClaims{
@@ -56,33 +66,29 @@ func CreateToken(uid string, fullname string, deliverycenter []string) (string, 
 	},
 		uid, fullname, deliverycenter)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, payload)
-	JWTToken, err := token.SignedString([]byte(conf.PrivateKey))
+	JWTToken, err := token.SignedString([]byte(tkg.conf.PrivateKey))
 	if err != nil {
-		logger.Errorf("can't create token with errors : %v", err)
+		tkg.logger.Errorf("can't create token with errors : %v", err)
 		return "", err
 	}
 	return JWTToken, nil
 }
-func GetPayload(token string) Customeclaims {
-	logger := glog.New().WithField("package", "jwt")
-	var conf JWTConf
-	envconfig.Load(&conf)
-	logger.Infof("environment list [%v]", conf)
+func (tkg *TokenGeneration) GetPayload(token string) Customeclaims {
+
+	tkg.logger.Infof("environment list [%v]", tkg.conf)
 	result, err := jwt.ParseWithClaims(token, &Customeclaims{}, func(token *jwt.Token) (i interface{}, e error) {
-		return []byte(conf.PrivateKey), nil
+		return []byte(tkg.conf.PrivateKey), nil
 	})
 	if err != nil {
-		logger.Errorf("can not parse claims form token errors: %v", err)
+		tkg.logger.Errorf("can not parse claims form token errors: %v", err)
 	}
-	logger.Infof("get token success ")
+	tkg.logger.Infof("get token success ")
 	payload, _ := result.Claims.(*Customeclaims)
 	return *payload
 }
-func CheckValib(token string) bool {
-	var conf JWTConf
-	envconfig.Load(&conf)
+func (tkg TokenGeneration) CheckValib(token string) bool {
 	result, err := jwt.ParseWithClaims(token, &Customeclaims{}, func(token *jwt.Token) (i interface{}, e error) {
-		return []byte(conf.PrivateKey), nil
+		return []byte(tkg.conf.PrivateKey), nil
 	})
 	if err != nil {
 		return false
@@ -92,18 +98,23 @@ func CheckValib(token string) bool {
 
 // This method will check a token is expired with current time
 // Return true if the token still no expired
-func CheckExp(token string) bool {
+func (tkg *TokenGeneration) CheckExp(token string) bool {
 	timeNow := time.Now()
-	logger := glog.New().WithField("package", "jwt")
-	logger.Infof("time now at :", timeNow.Format(time.ANSIC))
+	tkg.logger.Infof("time now at :", timeNow.Format(time.ANSIC))
 	var conf JWTConf
 	envconfig.Load(&conf)
-	result, _ := jwt.ParseWithClaims(token, &Customeclaims{}, func(token *jwt.Token) (i interface{}, e error) {
+	result, err := jwt.ParseWithClaims(token, &Customeclaims{}, func(token *jwt.Token) (i interface{}, e error) {
 		return []byte(conf.PrivateKey), nil
 	})
+	if err != nil {
+		tkg.logger.Errorf("%v", err)
+		return false
+	}
 	payload, ok := result.Claims.(*Customeclaims)
 	if ok && payload.VerifyExpiresAt(timeNow.Unix(), false) {
+		tkg.logger.Infof("Token not expire")
 		return true
 	}
+	tkg.logger.Infof("Token is expire")
 	return false
 }
