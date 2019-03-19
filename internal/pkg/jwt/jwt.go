@@ -12,9 +12,9 @@ import (
 type (
 	Customeclaims struct {
 		jwt.StandardClaims
-		UseId          string
-		UserFullName   string
-		Deliverycenter []string
+		UseID          string
+		UserFullname   string
+		DeliveryCenter []string
 	}
 	JWTConf struct {
 		PrivateKey string `envconfig:"PRIVATE_KEY"`
@@ -22,7 +22,7 @@ type (
 	}
 )
 
-func New(standard jwt.StandardClaims, uid string, ufullname string, dc []string) *Customeclaims {
+func New(standard jwt.StandardClaims, uid string, fullname string, deliverycenter []string) *Customeclaims {
 	return &Customeclaims{
 		StandardClaims: jwt.StandardClaims{
 			Audience:  standard.Audience,
@@ -33,76 +33,76 @@ func New(standard jwt.StandardClaims, uid string, ufullname string, dc []string)
 			NotBefore: standard.NotBefore,
 			Subject:   standard.Subject,
 		},
-		UseId:          uid,
-		UserFullName:   ufullname,
-		Deliverycenter: dc,
+		UseID:          uid,
+		UserFullname:   fullname,
+		DeliveryCenter: deliverycenter,
 	}
 }
 
-func CreateToken(uid string, ufullname string, dc []string) (string, error) {
+func CreateToken(uid string, fullname string, deliverycenter []string) (string, error) {
 	logger := glog.New().WithField("package", "jwt")
 	var conf JWTConf
 	envconfig.Load(&conf)
 	logger.Infof("environment list [%v]", conf)
-	confduration, err := time.ParseDuration(conf.Duration)
-	logger.Infof("duration time is : %v", confduration)
+	confDuration, err := time.ParseDuration(conf.Duration)
+	logger.Infof("duration time is : %v", confDuration)
 	if err != nil {
 		logger.Errorf("can't parser duration form server's environment variable: %v", err)
 	}
-	duration := time.Now().Add(confduration).Unix()
+	duration := time.Now().Add(confDuration).Unix()
 	payload := New(jwt.StandardClaims{
 		IssuedAt:  time.Now().Unix(),
 		ExpiresAt: duration,
 	},
-		uid, ufullname, dc)
+		uid, fullname, deliverycenter)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, payload)
-	ss, err := token.SignedString([]byte(conf.PrivateKey))
+	JWTToken, err := token.SignedString([]byte(conf.PrivateKey))
 	if err != nil {
 		logger.Errorf("can't create token with errors : %v", err)
 		return "", err
 	}
-	return ss, nil
+	return JWTToken, nil
 }
 func GetPayload(token string) Customeclaims {
 	logger := glog.New().WithField("package", "jwt")
 	var conf JWTConf
 	envconfig.Load(&conf)
 	logger.Infof("environment list [%v]", conf)
-	reslt, err := jwt.ParseWithClaims(token, &Customeclaims{}, func(token *jwt.Token) (i interface{}, e error) {
+	result, err := jwt.ParseWithClaims(token, &Customeclaims{}, func(token *jwt.Token) (i interface{}, e error) {
 		return []byte(conf.PrivateKey), nil
 	})
 	if err != nil {
 		logger.Errorf("can not parse claims form token errors: %v", err)
 	}
 	logger.Infof("get token success ")
-	payload, _ := reslt.Claims.(*Customeclaims)
+	payload, _ := result.Claims.(*Customeclaims)
 	return *payload
 }
 func CheckValib(token string) bool {
 	var conf JWTConf
 	envconfig.Load(&conf)
-	reslt, err := jwt.ParseWithClaims(token, &Customeclaims{}, func(token *jwt.Token) (i interface{}, e error) {
+	result, err := jwt.ParseWithClaims(token, &Customeclaims{}, func(token *jwt.Token) (i interface{}, e error) {
 		return []byte(conf.PrivateKey), nil
 	})
 	if err != nil {
 		return false
 	}
-	return reslt.Valid
+	return result.Valid
 }
 
 // This method will check a token is expired with current time
 // Return true if the token still no expired
 func CheckExp(token string) bool {
-	timenow := time.Now()
+	timeNow := time.Now()
 	logger := glog.New().WithField("package", "jwt")
-	logger.Infof("time now at :", timenow.Format(time.ANSIC))
+	logger.Infof("time now at :", timeNow.Format(time.ANSIC))
 	var conf JWTConf
 	envconfig.Load(&conf)
-	reslt, _ := jwt.ParseWithClaims(token, &Customeclaims{}, func(token *jwt.Token) (i interface{}, e error) {
+	result, _ := jwt.ParseWithClaims(token, &Customeclaims{}, func(token *jwt.Token) (i interface{}, e error) {
 		return []byte(conf.PrivateKey), nil
 	})
-	payload, ok := reslt.Claims.(*Customeclaims)
-	if ok && payload.VerifyExpiresAt(timenow.Unix(), false) {
+	payload, ok := result.Claims.(*Customeclaims)
+	if ok && payload.VerifyExpiresAt(timeNow.Unix(), false) {
 		return true
 	}
 	return false
