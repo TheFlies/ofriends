@@ -70,8 +70,11 @@ After this step, source code must be available at `$GOPATH/src/github.com/TheFli
 #### 3. Start development environment with Docker
 
 Instead of manually start services like step 2. You can use Docker to start all services at once.
+Copy docker-compose.sample into docker-compose.yml and add neccessary information (LDAP information).
 
 ```shell
+$ copy deployment/dev/docker-compose.sample deployment/dev/docker-compose.yml # Do this only once
+$ vim deployment/dev/docker-compose.yml # Do this only once, add your LDAP configuraiton.
 $ cd web && yarn install && cd ..   # Do this only once to install frontend modules first
 $ make compose
 ```
