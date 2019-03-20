@@ -28,13 +28,25 @@ export const constantRouterMap = [
     path: '/',
     redirect: 'home',
     component: Layout,
+    meta: {
+      title: 'Home',
+      icon: 'link'
+    },
     children: [
       {
         path: 'home',
         component: Hello,
         meta: {
-          title: 'Home',
+          title: 'Hello',
           icon: 'form'
+        }
+      },
+      {
+        path: 'thome',
+        component: () => import('./views/home-tmpl/index.vue'),
+        meta: {
+          title: 'Testing home',
+          icon: 'example'
         }
       }
     ]

@@ -87,6 +87,9 @@ export default {
             this.loading = false
             this.$router.push({ path: this.redirect || '/' })
           }).catch(() => {
+            console.log('error login bug temp ok for other func')
+            this.$router.push({ path: this.redirect || '/' })
+          }).finally(() => {
             this.loading = false
           })
         } else {
