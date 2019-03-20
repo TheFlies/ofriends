@@ -6,18 +6,18 @@ import (
 )
 
 type (
-	UserReponsitory interface {
+	UserRepository interface {
 		FindUserByUserName(username string) (*types.User, error)
 		InserUser(user *types.User) error
 		CheckUserByUsername(username string) bool
 	}
 	UserService struct {
-		repo   UserReponsitory
+		repo   UserRepository
 		logger glog.Logger
 	}
 )
 
-func NewUserService(r UserReponsitory, l glog.Logger) *UserService {
+func NewUserService(r UserRepository, l glog.Logger) *UserService {
 	return &UserService{
 		repo:   r,
 		logger: l,

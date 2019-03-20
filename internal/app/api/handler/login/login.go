@@ -13,29 +13,29 @@ import (
 
 type (
 	LoginHandler struct {
-		srv      service.Userservice
+		srv      service.UserService
 		logger   glog.Logger
-		loginsvr service.Loginservice
+		loginSvr service.Loginservice
 	}
 )
 
-func NewLoginHandeler(s service.Userservice, lgsvr service.Loginservice, l glog.Logger) *LoginHandler {
+func NewLoginHandeler(s service.UserService, loginsvr service.Loginservice, l glog.Logger) *LoginHandler {
 	return &LoginHandler{
 		srv:      s,
 		logger:   l,
-		loginsvr: lgsvr,
+		loginSvr: loginsvr,
 	}
 }
 func (h *LoginHandler) Authenticate(w http.ResponseWriter, r *http.Request) {
-	usename := r.FormValue("username")
+	username := r.FormValue("username")
 	password := r.FormValue("password")
-	h.logger.Infof("login with username : %v,password:****** ", usename)
-	respondmap, err := h.loginsvr.Authenticate(usename, password)
+	h.logger.Infof("login with username : %v,password:****** ", username)
+	respondMap, err := h.loginSvr.Authenticate(username, password)
 	if err != nil {
-		respond.JSON(w, http.StatusInternalServerError, err)
+		respond.JSON(w, http.StatusInternalServerError, "login fail")
 		return
 	}
-	respond.JSON(w, http.StatusAccepted, respondmap)
+	respond.JSON(w, http.StatusAccepted, respondMap)
 
 }
 func (h *LoginHandler) GetUser(w http.ResponseWriter, r *http.Request) {

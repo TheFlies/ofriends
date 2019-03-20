@@ -12,17 +12,30 @@ import (
 type (
 	Customeclaims struct {
 		jwt.StandardClaims
-		Useid       string
-		Usefullname string
-		Userole     string
+		UseID          string
+		UserFullname   string
+		DeliveryCenter []string
 	}
 	JWTConf struct {
 		PrivateKey string `envconfig:"PRIVATE_KEY"`
 		Duration   string `envconfig:"JWT_DURATION"`
 	}
+	TokenGeneration struct {
+		logger glog.Logger
+		conf   JWTConf
+	}
 )
 
-func New(standard jwt.StandardClaims, uuseid string, usefullname string, useroole string) *Customeclaims {
+func NewTokenGeneration() *TokenGeneration {
+	logger := glog.New().WithField("package", "jwt")
+	var conf JWTConf
+	envconfig.Load(&conf)
+	return &TokenGeneration{
+		logger: logger,
+		conf:   conf,
+	}
+}
+func New(standard jwt.StandardClaims, uid string, fullname string, deliverycenter []string) *Customeclaims {
 	return &Customeclaims{
 		StandardClaims: jwt.StandardClaims{
 			Audience:  standard.Audience,
@@ -33,68 +46,75 @@ func New(standard jwt.StandardClaims, uuseid string, usefullname string, userool
 			NotBefore: standard.NotBefore,
 			Subject:   standard.Subject,
 		},
-		Useid:       uuseid,
-		Usefullname: usefullname,
-		Userole:     useroole,
+		UseID:          uid,
+		UserFullname:   fullname,
+		DeliveryCenter: deliverycenter,
 	}
 }
+func (tkg *TokenGeneration) CreateToken(uid string, fullname string, deliverycenter []string) (string, error) {
 
-func CreateToken(userId string, userFullName string, userRole string) (string, error) {
-	logger := glog.New()
-	logger.WithField("package", "jwt")
-	var conf JWTConf
-	envconfig.Load(&conf)
-	confduration, err := time.ParseDuration(conf.Duration)
-	logger.Infof("duratione time is : %v", confduration)
+	tkg.logger.Infof("environment list [%v]", tkg.conf)
+	confDuration, err := time.ParseDuration(tkg.conf.Duration)
+	tkg.logger.Infof("duration time is : %v", confDuration)
 	if err != nil {
-		logger.Errorf("can't parser duraration form server envairoment: &v", err)
+		tkg.logger.Errorf("can't parser duration form server's environment variable: %v", err)
 	}
-	duration := time.Now().Add(confduration).Unix()
+	duration := time.Now().Add(confDuration).Unix()
 	payload := New(jwt.StandardClaims{
 		IssuedAt:  time.Now().Unix(),
 		ExpiresAt: duration,
 	},
-		userId, userFullName, userRole)
+		uid, fullname, deliverycenter)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, payload)
-	ss, err := token.SignedString([]byte(conf.PrivateKey))
+	JWTToken, err := token.SignedString([]byte(tkg.conf.PrivateKey))
 	if err != nil {
+		tkg.logger.Errorf("can't create token with errors : %v", err)
 		return "", err
 	}
-	return ss, nil
+	return JWTToken, nil
 }
-func GetPayload(token string) Customeclaims {
-	var conf JWTConf
-	envconfig.Load(&conf)
-	reslt, _ := jwt.ParseWithClaims(token, &Customeclaims{}, func(token *jwt.Token) (i interface{}, e error) {
-		return []byte(conf.PrivateKey), nil
+func (tkg *TokenGeneration) GetPayload(token string) Customeclaims {
+
+	tkg.logger.Infof("environment list [%v]", tkg.conf)
+	result, err := jwt.ParseWithClaims(token, &Customeclaims{}, func(token *jwt.Token) (i interface{}, e error) {
+		return []byte(tkg.conf.PrivateKey), nil
 	})
-	payload, _ := reslt.Claims.(*Customeclaims)
+	if err != nil {
+		tkg.logger.Errorf("can not parse claims form token errors: %v", err)
+	}
+	tkg.logger.Infof("get token success ")
+	payload, _ := result.Claims.(*Customeclaims)
 	return *payload
 }
-func Checkvalib(token string) bool {
-	var conf JWTConf
-	envconfig.Load(&conf)
-	reslt, err := jwt.ParseWithClaims(token, &Customeclaims{}, func(token *jwt.Token) (i interface{}, e error) {
-		return []byte(conf.PrivateKey), nil
+func (tkg TokenGeneration) CheckValib(token string) bool {
+	result, err := jwt.ParseWithClaims(token, &Customeclaims{}, func(token *jwt.Token) (i interface{}, e error) {
+		return []byte(tkg.conf.PrivateKey), nil
 	})
 	if err != nil {
 		return false
 	}
-	return reslt.Valid
+	return result.Valid
 }
 
 // This method will check a token is expired with current time
 // Return true if the token still no expired
-func CheckExp(token string) bool {
-	timenow := time.Now().Unix()
+func (tkg *TokenGeneration) CheckExp(token string) bool {
+	timeNow := time.Now()
+	tkg.logger.Infof("time now at :", timeNow.Format(time.ANSIC))
 	var conf JWTConf
 	envconfig.Load(&conf)
-	reslt, _ := jwt.ParseWithClaims(token, &Customeclaims{}, func(token *jwt.Token) (i interface{}, e error) {
+	result, err := jwt.ParseWithClaims(token, &Customeclaims{}, func(token *jwt.Token) (i interface{}, e error) {
 		return []byte(conf.PrivateKey), nil
 	})
-	payload, ok := reslt.Claims.(*Customeclaims)
-	if ok && payload.VerifyExpiresAt(timenow, false) {
+	if err != nil {
+		tkg.logger.Errorf("%v", err)
+		return false
+	}
+	payload, ok := result.Claims.(*Customeclaims)
+	if ok && payload.VerifyExpiresAt(timeNow.Unix(), false) {
+		tkg.logger.Infof("Token not expire")
 		return true
 	}
+	tkg.logger.Infof("Token is expire")
 	return false
 }
