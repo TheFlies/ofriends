@@ -38,13 +38,12 @@ export default {
           subtitle: 'Junior Engineer',
           content: 'NA',
           dc: 'DC14'
-        },
+        }
       ]
     }
   }
 }
 </script>
-
 
 <style scoped lang="stylus">
 #timeline
