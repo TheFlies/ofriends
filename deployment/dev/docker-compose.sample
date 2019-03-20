@@ -24,16 +24,16 @@ services:
       # to backend service env config.
       - DB_TYPE=mongodb
       - MONGODB_ADDRS=mongodb:27017
-      - LDAP_ADDR=**REMOVED**
-      - LDAP_PORT=389
+      - LDAP_ADDR=
+      - LDAP_PORT=
       # change your ldap passowrd here
       # change your username in LDAP_FIRST_BIND_USERNAME
-      - LDAP_FIRST_BIND_USERNAME=**REMOVED**
-      - LDAP_FIRST_BIND_PASSWORD=**REMOVED**
+      - LDAP_FIRST_BIND_USERNAME=
+      - LDAP_FIRST_BIND_PASSWORD=
       # BaseDN of TMALDAP, you when deploy this DN much change according to the requeriment
-      - BASEDN=**REMOVED**
+      - BASEDN=DC=
       # JWT information include private key and token time out :fomat h:m:s
-      - PRIVATE_KEY=**REMOVED**
+      - PRIVATE_KEY=
       - JWT_DURATION=1h30m
     command: [ "start" ]
     volumes:
