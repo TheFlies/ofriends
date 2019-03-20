@@ -1,6 +1,6 @@
 <template lang="pug">
   .s-card-wrapper(:style="cssProps")
-    s-card(v-for="(item, i) in data" :color="item.color" :total="data.length" :step="i + 1" :stagger="i===1?stagger:0")
+    s-card(v-for="(item, i) in data" :color="item.color" :total="data.length" :step="i + 1" :stagger="i===1?stagger:0" :key="item.title")
       s-card-head(:title="item.title" :sub-title="item.subtitle" :inner-margin="innerMargin" :number-size="numberSize")
         .number-box
           span {{ item.dc }}
@@ -15,6 +15,7 @@ import SCardHead from './SCardHead.vue'
 import SCardBody from './SCardBody.vue'
 
 export default {
+  components: { SCard, SCardHead, SCardBody },
   props: {
     data: {
       type: Array,
@@ -49,7 +50,6 @@ export default {
       default: '#f7f7f7'
     }
   },
-  components: { SCard, SCardHead, SCardBody },
   data() {
     return {
       innerMargin: 15,
@@ -69,7 +69,7 @@ export default {
         '--marker-dist-add': `${this.markerDist() + 1}px`,
         '--marker-dist-sub': `${this.markerDist() - 1}px`,
         '--timeline': this.markerColor,
-        '--background': this.markerBorderColor,
+        '--background': this.markerBorderColor
       }
     }
   },
@@ -93,98 +93,5 @@ export default {
 }
 </script>
 
-<style lang="stylus" scoped>
-/* Media Queries */
-mq-xs()
-  @media (min-width: 320px)
-    {block}
-mq-sm()
-  @media (min-width: 480px)
-    {block}
-mq-md()
-  @media (min-width: 720px)
-    {block}
-mq-lg()
-  @media (min-width: 1000px)
-    {block}
-
-$box-shadow = 0px 1px 22px 4px rgba(0, 0, 0, 0.07)
-$border = 1px solid rgba(191, 191, 191, 0.4)
-
-*
-  box-sizing: border-box
-
-$oarrow
-  position: absolute
-  content: ""
-  width: 0
-  height: 0
-  border-top: 15px solid transparent
-  border-bottom: 15px solid transparent
-
-$omarker
-  position: absolute
-  content: ""
-  width var(--marker-size)
-  height var(--marker-size)
-  background-color: var(--timeline)
-  border-radius var(--marker-size)
-  box-shadow: 0px 0px 2px 8px var(--background)
-
-.s-card-wrapper
-  position: relative
-  margin: auto
-  +mq-lg()
-    width var(--c-width)
-    height var(--c-height)
-    display: flex
-    flex-flow: column wrap
-    margin: 0 auto
-  &::after
-    z-index: 1
-    content: ""
-    position: absolute
-    top: 0
-    bottom: 0
-    left: 50%
-    border-left: $border
-    +mq-lg()
-      border-left: 1px solid var(--timeline)
-.s-card
-  position: relative
-  display: block
-  margin: 10px auto 80px
-  max-width: 94%
-  z-index: 2
-  +mq-sm()
-    max-width: 60%
-    box-shadow: $box-shadow
-  +mq-md()
-    max-width 40%
-  +mq-lg()
-    height var(--card-height)
-    max-width var(--card-width)
-    margin var(--outer-margin)
-    margin-top var(--half-outer-margin)
-    margin-bottom var(--half-outer-margin)
-    &:nth-child(odd)
-      margin-right var(--half-outer-margin)
-      .head::after
-        @extend $oarrow
-        border-left-width: 15px
-        border-left-style: solid
-        left: 100%
-      .head::before
-        @extend $omarker
-        left var(--marker-dist-add)
-    &:nth-child(even)
-      margin-left var(--half-outer-margin)
-      .head::after
-        @extend $oarrow
-        border-right-width: 15px
-        border-right-style: solid
-        right: 100%
-      .head::before
-        @extend $omarker
-        right: var(--marker-dist-sub)
+<style lang="stylus" scoped src="@/styles/scard.styl">
 </style>

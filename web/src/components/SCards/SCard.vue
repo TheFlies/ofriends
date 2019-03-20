@@ -5,7 +5,32 @@
 
 <script>
 export default {
-  props: ['step', 'color', 'bg-color', 'total', 'stagger', 'cardWidth'],
+  props: {
+    step: {
+      type: Number,
+      required: true
+    },
+    color: {
+      type: String,
+      default: '#332211'
+    },
+    bgColor: {
+      type: String,
+      default: '#ffffff'
+    },
+    total: {
+      type: Number,
+      required: true
+    },
+    stagger: {
+      type: Number,
+      default: 180
+    },
+    cardWidth: {
+      type: Number,
+      default: 450
+    }
+  },
   computed: {
     cssProps() {
       const props = {
@@ -29,7 +54,7 @@ export default {
   methods: {
     calculateOrder() {
       const items = this.total
-      const counter = Math.ceil(items/2)
+      const counter = Math.ceil(items / 2)
 
       let ord = Math.ceil(this.step / 2)
       if (this.step % 2 === 0) {

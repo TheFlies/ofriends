@@ -14,7 +14,8 @@ export default {
       required: true
     },
     subTitle: {
-      type: String
+      type: String,
+      default: null
     },
     innerMargin: {
       type: Number,
