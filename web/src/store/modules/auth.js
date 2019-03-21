@@ -1,7 +1,7 @@
-import { login } from '@/api/login'
+import { login, getInfo } from '@/api/login'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 
-const auth = {
+const user = {
   state: {
     token: getToken(),
     name: '',
@@ -36,9 +36,7 @@ const auth = {
           const data = response.data
           setToken(data.token)
           commit('SET_TOKEN', data.token)
-          // TODO update this later
           commit('SET_ROLES', ['admin'])
-          commit('SET_NAME', data.userInformation.username)
           commit('SET_INFO', data.userInformation)
           resolve()
         }).catch(error => {
@@ -46,34 +44,34 @@ const auth = {
         })
       })
     },
-    // GetInfo({ commit, state }) {
-    //   return new Promise((resolve, reject) => {
-    //     getInfo(state.token).then(response => {
-    //       const data = response.data
-    //       if (data.roles && data.roles.length > 0) {
-    //         commit('SET_ROLES', data.roles)
-    //       } else {
-    //         reject('getInfo: roles must be a non-null array !')
-    //       }
-    //       commit('SET_NAME', data.name)
-    //       commit('SET_AVATAR', data.avatar)
-    //       resolve(response)
-    //     }).catch(error => {
-    //       reject(error)
-    //     })
-    //   })
-    // },
-    LogOut({ commit, state }) {
-      // TODO we don't have logout on server side, so for now just clear all token, user and roles
+    GetInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
-      //   logout(state.token).then(() => {
+        getInfo(state.token).then(response => {
+          const data = response.data
+          if (data.roles && data.roles.length > 0) {
+            commit('SET_ROLES', data.roles)
+          } else {
+            reject('getInfo: roles must be a non-null array !')
+          }
+          commit('SET_NAME', data.name)
+          commit('SET_AVATAR', data.avatar)
+          resolve(response)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+    LogOut({ commit, state }) {
+      return new Promise((resolve, reject) => {
+        // logout(state.token).then(() => {
         commit('SET_TOKEN', '')
         commit('SET_ROLES', [])
+        commit('SET_INFO', {})
         removeToken()
         resolve()
-      //   }).catch(error => {
-      //     reject(error)
-      //   })
+        // }).catch(error => {
+        //   reject(error)
+        // })
       })
     },
     FedLogOut({ commit }) {
@@ -86,4 +84,4 @@ const auth = {
   }
 }
 
-export default auth
+export default user

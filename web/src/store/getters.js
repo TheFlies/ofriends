@@ -8,3 +8,4 @@ const getters = {
   info: state => state.auth.info
 }
 export default getters
+

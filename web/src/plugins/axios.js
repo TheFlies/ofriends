@@ -16,7 +16,6 @@ axios.defaults.baseURL = backendAddr
 // axios default
 axios.interceptors.request.use(
   config => {
-    console.log('token: ', getToken())
     if (store.getters.token) {
       config.headers['Authorization'] = `Bearer ${getToken()}`
     }
