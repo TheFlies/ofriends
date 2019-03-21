@@ -30,7 +30,7 @@ export const constantRouterMap = [
     component: Layout,
     meta: {
       title: 'Home',
-      icon: 'link'
+      icon: 'dashboard'
     },
     children: [
       {
@@ -62,7 +62,7 @@ export const constantRouterMap = [
         component: () => import('./views/friends/Add.vue'),
         meta: {
           title: 'Friends',
-          icon: 'user'
+          icon: 'user-setting'
         }
       }
     ]
@@ -78,7 +78,7 @@ export const constantRouterMap = [
         component: Gifts,
         meta: {
           title: 'Gifts',
-          icon: 'eye'
+          icon: 'gift'
         }
       }
     ]
