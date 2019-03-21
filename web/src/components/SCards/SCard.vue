@@ -67,7 +67,7 @@ export default {
 </script>
 
 <style scoped>
-@media (min-width: 1000px) {
+@media (min-width: 1200px) {
   .mgt2 {
     margin-top: var(--margin) !important;
   }

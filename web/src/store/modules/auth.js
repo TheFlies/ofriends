@@ -1,4 +1,4 @@
-import { login, getInfo } from '@/api/login'
+import { login } from '@/api/login'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 
 const user = {
@@ -44,23 +44,23 @@ const user = {
         })
       })
     },
-    GetInfo({ commit, state }) {
-      return new Promise((resolve, reject) => {
-        getInfo(state.token).then(response => {
-          const data = response.data
-          if (data.roles && data.roles.length > 0) {
-            commit('SET_ROLES', data.roles)
-          } else {
-            reject('getInfo: roles must be a non-null array !')
-          }
-          commit('SET_NAME', data.name)
-          commit('SET_AVATAR', data.avatar)
-          resolve(response)
-        }).catch(error => {
-          reject(error)
-        })
-      })
-    },
+    // GetInfo({ commit, state }) {
+    //   return new Promise((resolve, reject) => {
+    //     getInfo(state.token).then(response => {
+    //       const data = response.data
+    //       if (data.roles && data.roles.length > 0) {
+    //         commit('SET_ROLES', data.roles)
+    //       } else {
+    //         reject('getInfo: roles must be a non-null array !')
+    //       }
+    //       commit('SET_NAME', data.name)
+    //       commit('SET_AVATAR', data.avatar)
+    //       resolve(response)
+    //     }).catch(error => {
+    //       reject(error)
+    //     })
+    //   })
+    // },
     LogOut({ commit, state }) {
       return new Promise((resolve, reject) => {
         // logout(state.token).then(() => {

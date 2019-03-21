@@ -1,11 +1,11 @@
 import Vue from 'vue'
 import axios from 'axios'
-// import router from '../router'
+import router from '../router'
 import store from '../store'
 
 import { getToken } from '../utils/auth'
 
-// import { Message } from 'element-ui'
+import { Message } from 'element-ui'
 
 // Set base URL to backend API service
 const backendAddr = process.env.OFRIENDS_BACKEND_ADDRS || 'http://localhost:8080'
@@ -33,16 +33,32 @@ axios.interceptors.response.use(
   },
   (error) => {
     if (error.response && error.response.status === 401) {
-      console.log(error)
-      // Message({
-      //   message: 'Unauthorize Access!!!',
-      //   duration: 5000,
-      //   showClose: true,
-      //   type: 'error',
-      //   onClose: () => {
-      //     router.replace(`/login?redirect=${router.currentRoute.path}`)
-      //   }
-      // })
+      Message({
+        message: 'Unauthorize Access!!!',
+        duration: 5000,
+        showClose: true,
+        type: 'error',
+        onClose: () => {
+          store.dispatch('FedLogOut').then(() => {
+            router.replace(`/login?redirect=${router.currentRoute.path}`)
+          })
+        }
+      })
+    }
+    if (error.response && error.response.status === 500) {
+      Message({
+        message: 'Server Error!!!. We don\'t expect this kind of error. Please report this to system administrator.',
+        duration: 5000,
+        showClose: true,
+        type: 'error',
+        onClose: () => {
+          store.dispatch('FedLogOut').then(() => {
+            if (router.currentRoute.path !== '/login') {
+              router.replace(`/login?redirect=${router.currentRoute.path}`)
+            }
+          })
+        }
+      })
     }
     return Promise.reject(error)
   }

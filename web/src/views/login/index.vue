@@ -23,9 +23,9 @@
           svg-icon(:name="pwdType === 'password' ? 'eye' : 'eye-open'")
       el-form-item
         el-button(:loading="loading" type="primary" style="width:100%" @click.native.prevent="handleLogin") Sign in
-      .tips
-        span(style="margin-right: 20px") username: admin
-        span password: admin
+      //- .tips
+      //-   span(style="margin-right: 20px") username: admin
+      //-   span password: admin
 </template>
 
 <script>
@@ -86,7 +86,12 @@ export default {
           this.$store.dispatch('Login', this.loginForm).then(() => {
             this.loading = false
             this.$router.replace({ path: this.redirect || '/' })
-          }).catch(() => {
+          }).catch((err) => {
+            this.$notify({
+              title: 'Error',
+              message: err.message,
+              type: 'error'
+            })
           }).finally(() => {
             this.loading = false
           })

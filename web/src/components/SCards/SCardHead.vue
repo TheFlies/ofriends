@@ -4,6 +4,7 @@
     h2
       span.small {{ subTitle }}
       |  {{ title }}
+    .left hello
 </template>
 
 <script>
@@ -91,4 +92,12 @@ mq-sm()
       margin: 0
       +mq-sm()
         font-size 0.8rem
+  .left
+    text-align right
+    display: inline
+    position absolute
+    width 50px
+    height 30px
+    right 5px
+    top 5px
 </style>

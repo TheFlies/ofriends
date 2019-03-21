@@ -7,7 +7,9 @@ import { getToken } from '@/utils/auth' // getToken from cookie
 
 NProgress.configure({ showSpinner: false })// NProgress configuration
 
-const whiteList = ['/login', '/home', '/thome'] // temporary allow until login implemented
+// For easier, all the page that using Navbar (having logout)
+// should not be included here.
+const whiteList = ['/login'] // temporary allow until login implemented
 
 router.beforeEach((to, from, next) => {
   NProgress.start()
@@ -21,7 +23,7 @@ router.beforeEach((to, from, next) => {
       //     next()
       //   }).catch(() => {
       //     store.dispatch('FedLogOut').then(() => {
-      //       // Message.error(err || 'Verification failed, please login again')
+      // Message.error('Verification failed, please login again')
       //       next({ path: '/' })
       //     })
       //   })

@@ -20,7 +20,7 @@ export default {
     },
     cardWidth: {
       type: Number,
-      default: 450,
+      default: 450
     }
   },
   computed: {
@@ -43,7 +43,7 @@ export default {
 
 <style lang="stylus" scoped>
 mq-lg()
-  @media (min-width: 1000px)
+  @media (min-width: 1200px)
     {block}
 
 $border = 1px solid rgba(191, 191, 191, 0.4)

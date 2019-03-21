@@ -13,11 +13,7 @@
         .number-box
           span {{ item.dc }}
       s-card-body(:card-height="cardHeight" :card-width="cardWidth" :inner-margin="innerMargin" :number-size="numberSize")
-        el-container
-          el-card.no-margin
-            p {{ item.content }}
-          el-footer(height="20px") {{ item.arrival || new Date() }}
-        //- img(src="http://placehold.it/1000x500" alt="Graphic")
+        span TBD
 </template>
 
 <script>
@@ -62,7 +58,7 @@ export default {
     },
     arrowSize: {
       type: Number,
-      default: 15,
+      default: 15
     },
     numberSize: {
       type: Number,

@@ -3,7 +3,7 @@
   s-cards(:data="items"
     :outer-margin="30"
     :card-height="230"
-    :card-width="580"
+    :card-width="540"
     marker-color="red"
     :number-size="35"
     marker-border-color="#3b2c11" :stagger="60" :arrow-size="5")
