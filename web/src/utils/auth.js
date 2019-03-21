@@ -1,6 +1,6 @@
 import Cookies from 'js-cookie'
 
-const TokenKey = 'ofriends_token'
+const TokenKey = 'ofriends-token'
 
 export function getToken() {
   return Cookies.get(TokenKey)

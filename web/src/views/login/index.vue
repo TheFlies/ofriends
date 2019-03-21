@@ -85,10 +85,8 @@ export default {
           this.loading = true
           this.$store.dispatch('Login', this.loginForm).then(() => {
             this.loading = false
-            this.$router.push({ path: this.redirect || '/' })
+            this.$router.replace({ path: this.redirect || '/' })
           }).catch(() => {
-            console.log('error login bug temp ok for other func')
-            this.$router.push({ path: this.redirect || '/' })
           }).finally(() => {
             this.loading = false
           })
