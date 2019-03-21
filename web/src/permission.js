@@ -7,7 +7,7 @@ import { getToken } from '@/utils/auth' // getToken from cookie
 
 NProgress.configure({ showSpinner: false })// NProgress configuration
 
-const whiteList = ['/login', '/home', '/friend', '/gifts'] // temporary allow until login implemented
+const whiteList = ['/login', '/home', '/thome', '/gifts', '/friend'] // temporary allow until login implemented
 
 router.beforeEach((to, from, next) => {
   NProgress.start()
