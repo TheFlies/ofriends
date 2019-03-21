@@ -1,6 +1,12 @@
 <template lang="pug">
 #timeline
-  s-cards(:data="items")
+  s-cards(:data="items"
+    :outer-margin="30"
+    :card-height="230"
+    :card-width="580"
+    marker-color="red"
+    :number-size="35"
+    marker-border-color="#3b2c11" :stagger="60" :arrow-size="5")
 </template>
 
 <script>
@@ -15,29 +21,30 @@ export default {
           title: 'Mr. Park Heo',
           color: '#3ee9d1',
           subtitle: 'CEO from Samsung',
-          content: 'He working with TNTVU and ppu a',
-          dc: 'DC14'
+          content: 'He working with TNTVU',
+          dc: '14',
+          arrival: '15 March 2019'
         },
         {
           title: 'Kin Khung Ah',
           color: '#4d92eb',
           subtitle: 'VP',
           content: 'Scary boss and dog lover',
-          dc: 'DC12A'
+          dc: '12A'
         },
         {
           title: 'Tam Tran',
           color: '#ce43eb',
           subtitle: 'Junior Engineer',
           content: 'NA',
-          dc: 'DC1'
+          dc: '1'
         },
         {
           title: 'Hai 3b',
           color: '#3ee9d1',
           subtitle: 'Junior Engineer',
           content: 'NA',
-          dc: 'DC14'
+          dc: '14'
         }
       ]
     }

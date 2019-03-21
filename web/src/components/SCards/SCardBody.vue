@@ -17,13 +17,18 @@ export default {
     cardHeight: {
       type: Number,
       default: 400
+    },
+    cardWidth: {
+      type: Number,
+      default: 450,
     }
   },
   computed: {
     cssProps() {
       return {
         '--inner-margin': `${this.innerMargin}px`,
-        '--body-height': `${this.bodyHeight()}px`
+        '--body-height': `${this.bodyHeight()}px`,
+        'overflow': 'auto'
       }
     }
   },

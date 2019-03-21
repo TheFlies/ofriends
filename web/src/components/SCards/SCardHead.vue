@@ -24,13 +24,28 @@ export default {
     numberSize: {
       type: Number,
       default: 35
+    },
+    titleSize: {
+      type: Number,
+      default: 1.3
+    },
+    subTitleSize: {
+      type: Number,
+      default: 0.6
+    },
+    color: {
+      type: String,
+      default: '#fff'
     }
   },
   computed: {
     cssProps() {
       return {
         '--inner-margin': `${this.innerMargin}px`,
-        '--number-size': `${this.numberSize}px`
+        '--number-size': `${this.numberSize}px`,
+        '--title-size': `${this.titleSize}rem`,
+        '--sub-title-size': `${this.subTitleSize}rem`,
+        '--bg-color': this.color
       }
     }
   }
@@ -47,7 +62,9 @@ mq-sm()
   display: flex
   align-items: center
   color: #fff
+  background-color: var(--bg-color)
   font-weight: 400
+  text-align: left
   .number-box
     display: inline
     float: left
@@ -59,7 +76,7 @@ mq-sm()
     background: rgba(0, 0, 0, 0.17)
   h2
     text-transform: uppercase
-    font-size: 1.3rem
+    font-size: var(--title-size)
     font-weight: inherit
     letter-spacing: 2px
     margin: 0
@@ -70,7 +87,7 @@ mq-sm()
       line-height 1.2rem
     span
       display: block
-      font-size: 0.6rem
+      font-size: var(--sub-title-size)
       margin: 0
       +mq-sm()
         font-size 0.8rem

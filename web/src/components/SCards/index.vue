@@ -1,12 +1,23 @@
 <template lang="pug">
   .s-card-wrapper(:style="cssProps")
     s-card(v-for="(item, i) in data" :color="item.color" :total="data.length" :step="i + 1" :stagger="i===1?stagger:0" :key="item.title")
-      s-card-head(:title="item.title" :sub-title="item.subtitle" :inner-margin="innerMargin" :number-size="numberSize")
+      s-card-head(
+        :title="item.title"
+        :sub-title="item.subtitle"
+        :inner-margin="innerMargin"
+        :number-size="numberSize"
+        :color="item.color"
+        :title-size="titleSize"
+        :sub-title-size="subTitleSize"
+      )
         .number-box
           span {{ item.dc }}
-      s-card-body(:card-height="cardHeight" :inner-margin="innerMargin" :number-size="numberSize")
-        p {{ item.content }}
-        img(src="http://placehold.it/1000x500" alt="Graphic")
+      s-card-body(:card-height="cardHeight" :card-width="cardWidth" :inner-margin="innerMargin" :number-size="numberSize")
+        el-container
+          el-card.no-margin
+            p {{ item.content }}
+          el-footer(height="20px") {{ item.arrival || new Date() }}
+        //- img(src="http://placehold.it/1000x500" alt="Graphic")
 </template>
 
 <script>
@@ -48,12 +59,26 @@ export default {
     markerBorderColor: {
       type: String,
       default: '#f7f7f7'
-    }
-  },
-  data() {
-    return {
-      innerMargin: 15,
-      numberSize: 35
+    },
+    arrowSize: {
+      type: Number,
+      default: 15,
+    },
+    numberSize: {
+      type: Number,
+      default: 35
+    },
+    innerMargin: {
+      type: Number,
+      default: 15
+    },
+    titleSize: {
+      type: Number,
+      default: 1.3
+    },
+    subTitleSize: {
+      type: Number,
+      default: 0.6
     }
   },
   computed: {
@@ -69,7 +94,8 @@ export default {
         '--marker-dist-add': `${this.markerDist() + 1}px`,
         '--marker-dist-sub': `${this.markerDist() - 1}px`,
         '--timeline': this.markerColor,
-        '--background': this.markerBorderColor
+        '--background': this.markerBorderColor,
+        '--arrow-size': `${this.arrowSize}px`
       }
     }
   },

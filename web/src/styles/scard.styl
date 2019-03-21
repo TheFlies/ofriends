@@ -13,7 +13,7 @@ mq-lg()
     {block}
 
 $box-shadow = 0px 1px 22px 4px rgba(0, 0, 0, 0.07)
-$border = 1px solid rgba(191, 191, 191, 0.4)
+$border = 1px solid var(--timeline)
 
 *
   box-sizing: border-box
@@ -23,8 +23,8 @@ $oarrow
   content: ""
   width: 0
   height: 0
-  border-top: 15px solid transparent
-  border-bottom: 15px solid transparent
+  border-top: var(--arrow-size) solid transparent
+  border-bottom: var(--arrow-size) solid transparent
 
 $omarker
   position: absolute
@@ -59,6 +59,7 @@ $omarker
   display: block
   margin: 10px auto 80px
   max-width: 94%
+  width: var(--card-width)
   z-index: 2
   +mq-sm()
     max-width: 60%

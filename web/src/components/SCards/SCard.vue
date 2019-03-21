@@ -37,7 +37,7 @@ export default {
         backgroundColor: this.color,
         // this is variable for the css
         '--bg-color': this.color,
-        '--margin': `${(this.stagger / 2)}px`,
+        '--margin': `${(this.stagger)}px`,
         '--left-marker-dist': '',
         order: this.calculateOrder()
       }
@@ -69,7 +69,7 @@ export default {
 <style scoped>
 @media (min-width: 1000px) {
   .mgt2 {
-    margin-top: 180px !important;
+    margin-top: var(--margin) !important;
   }
 }
 .head::after {
