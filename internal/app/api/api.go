@@ -12,6 +12,7 @@ import (
 	"github.com/TheFlies/ofriends/internal/app/api/handler/index"
 	"github.com/TheFlies/ofriends/internal/app/api/handler/login"
 	"github.com/TheFlies/ofriends/internal/app/db"
+	"github.com/TheFlies/ofriends/internal/app/dbauth"
 	"github.com/TheFlies/ofriends/internal/app/friend"
 	"github.com/TheFlies/ofriends/internal/app/gift"
 	"github.com/TheFlies/ofriends/internal/app/ldap"
@@ -69,9 +70,12 @@ func Init(conns *InfraConns) (http.Handler, error) {
 	indexWebHandler := indexhandler.New()
 
 	userlogger := logger.WithField("package", "user")
+	DBLoginLongger := logger.WithField("package", "dbauth")
 	userService := user.NewUserService(userRepo, userlogger)
-	loginservice := ldap.New(userService)
-	loginhandeler := login.NewLoginHandeler(userService, loginservice, userlogger)
+	LDAPLoginService := ldap.New(userService)
+	DBLoginService := dbauth.NewDBAuthentication(DBLoginLongger, userService)
+	athenList := []login.LoginService{LDAPLoginService, DBLoginService}
+	loginHandeler := login.NewLoginHandeler(userService, athenList, userlogger)
 
 	routes := []route{
 		// infra
@@ -146,12 +150,27 @@ func Init(conns *InfraConns) (http.Handler, error) {
 		{
 			path:    "/api/v1/login",
 			method:  post,
-			handler: loginhandeler.Authenticate,
+			handler: loginHandeler.Authenticate,
 		},
 		{
 			path:    "/api/v1/user/{username}",
 			method:  get,
-			handler: loginhandeler.GetUser,
+			handler: loginHandeler.GetUser,
+		},
+		{
+			path:    "/api/v1/register",
+			method:  post,
+			handler: loginHandeler.Register,
+		},
+		{
+			path:    "/api/v1/password/change",
+			method:  post,
+			handler: loginHandeler.ChangeLocalPassword,
+		},
+		{
+			path:    "/api/v1/user/setlocalpassword",
+			method:  post,
+			handler: loginHandeler.SetLocalPassword,
 		},
 	}
 

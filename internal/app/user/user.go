@@ -10,6 +10,7 @@ type (
 		FindUserByUserName(username string) (*types.User, error)
 		InserUser(user *types.User) error
 		CheckUserByUsername(username string) bool
+		UpdateUser(user *types.User) error
 	}
 	UserService struct {
 		repo   UserRepository
@@ -31,4 +32,7 @@ func (s *UserService) AddUser(user *types.User) error {
 }
 func (s *UserService) CheckExistence(username string) bool {
 	return s.repo.CheckUserByUsername(username)
+}
+func (s *UserService) ChangeUserPassword(user *types.User) error {
+	return s.repo.UpdateUser(user)
 }
