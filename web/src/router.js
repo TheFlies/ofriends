@@ -59,7 +59,7 @@ export const constantRouterMap = [
       {
         path: '',
         name: 'Friend',
-        component: () => import('./views/friends/Add.vue'),
+        component: () => import('./views/friends/Show.vue'),
         meta: {
           title: 'Friends',
           icon: 'user-setting'
