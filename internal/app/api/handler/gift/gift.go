@@ -94,5 +94,5 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
 	}
-	respond.JSON(w, http.StatusOK, map[string]string{"result": "success"})
+	respond.JSON(w, http.StatusOK, map[string]string{"status": "success"})
 }

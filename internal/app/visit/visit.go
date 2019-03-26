@@ -12,7 +12,7 @@ import (
 type Repository interface {
 	FindByID(ctx context.Context, id string) (*types.Visit, error)
 	FindAll(ctx context.Context) ([]types.Visit, error)
-	Create(ctx context.Context, visit types.Visit) error
+	Create(ctx context.Context, visit types.Visit) (string, error)
 	Update(ctx context.Context, visit types.Visit) error
 	Delete(ctx context.Context, id string) error
 }
@@ -42,11 +42,11 @@ func (s *Service) GetAll(ctx context.Context) ([]types.Visit, error) {
 }
 
 // Create a visit
-func (s *Service) Create(ctx context.Context, visit types.Visit) error {
+func (s *Service) Create(ctx context.Context, visit types.Visit) (string, error) {
 	if err := validation.ValidateStruct(&visit,
 
 	); err != nil {
-		return err
+		return "",err
 	} // not empty
 	return s.repo.Create(ctx, visit)
 }

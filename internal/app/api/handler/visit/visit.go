@@ -18,7 +18,7 @@ type (
 	service interface {
 		Get(ctx context.Context, id string) (*types.Visit, error)
 		GetAll(ctx context.Context) ([]types.Visit, error)
-		Create(ctx context.Context, visit types.Visit) error
+		Create(ctx context.Context, visit types.Visit) (string, error)
 		Update(ctx context.Context, visit types.Visit) error
 		Delete(ctx context.Context, id string) error
 	}
@@ -75,10 +75,13 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close() 
 
-	if err := h.srv.Create(r.Context(), visit); err != nil {
+	if id, err := h.srv.Create(r.Context(), visit); err != nil {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
+	} else {
+		visit.ID = id
 	}
+
 	respond.JSON(w, http.StatusCreated, map[string]string{"id": visit.ID})
 }
 
@@ -110,5 +113,5 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
 	}
-	respond.JSON(w, http.StatusOK, map[string]string{"result": "success"})
+	respond.JSON(w, http.StatusOK, map[string]string{"status": "success"})
 }

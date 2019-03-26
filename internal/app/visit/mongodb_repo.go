@@ -46,11 +46,12 @@ func (r *MongoRepository) FindAll(ctx context.Context) ([]types.Visit, error) {
 }
 
 // Create a visit
-func (r *MongoRepository) Create(ctx context.Context, visit types.Visit) error {
+func (r *MongoRepository) Create(ctx context.Context, visit types.Visit) (string, error) {
 	s := r.session.Clone()
 	defer s.Close()
 	visit.ID = uuid.New()
-	return r.collection(s).Insert(&visit)
+	err := r.collection(s).Insert(&visit)
+	return visit.ID, err
 }
 
 // Update a visit

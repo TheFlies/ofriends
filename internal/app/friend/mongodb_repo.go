@@ -46,11 +46,12 @@ func (r *MongoRepository) FindAll(ctx context.Context) ([]types.Friend, error) {
 }
 
 // Create a friend
-func (r *MongoRepository) Create(ctx context.Context, friend types.Friend) error {
+func (r *MongoRepository) Create(ctx context.Context, friend types.Friend) (string, error) {
 	s := r.session.Clone()
 	defer s.Close()
 	friend.ID = uuid.New()
-	return r.collection(s).Insert(&friend)
+	err := r.collection(s).Insert(&friend)
+	return friend.ID, err
 }
 
 // Update a friend

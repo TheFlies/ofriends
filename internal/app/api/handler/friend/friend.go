@@ -18,7 +18,7 @@ type (
 	service interface {
 		Get(ctx context.Context, id string) (*types.Friend, error)
 		GetAll(ctx context.Context) ([]types.Friend, error)
-		Create(ctx context.Context, friend types.Friend) error
+		Create(ctx context.Context, friend types.Friend) (string, error)
 		Update(ctx context.Context, friend types.Friend) error
 		Delete(ctx context.Context, id string) error
 	}
@@ -75,10 +75,13 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close() 
 
-	if err := h.srv.Create(r.Context(), friend); err != nil {
+	if id, err := h.srv.Create(r.Context(), friend); err != nil {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
+	} else {
+		friend.ID = id
 	}
+
 	respond.JSON(w, http.StatusCreated, map[string]string{"id": friend.ID})
 }
 
@@ -110,5 +113,5 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
 	}
-	respond.JSON(w, http.StatusOK, map[string]string{"result": "success"})
+	respond.JSON(w, http.StatusOK, map[string]string{"status": "success"})
 }
