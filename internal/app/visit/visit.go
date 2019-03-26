@@ -12,6 +12,7 @@ import (
 type Repository interface {
 	FindByID(ctx context.Context, id string) (*types.Visit, error)
 	FindAll(ctx context.Context) ([]types.Visit, error)
+	FindByFriendID(ctx context.Context, friendId string) ([]types.Visit, error)
 	Create(ctx context.Context, visit types.Visit) (string, error)
 	Update(ctx context.Context, visit types.Visit) error
 	Delete(ctx context.Context, id string) error
@@ -36,6 +37,11 @@ func (s *Service) Get(ctx context.Context, id string) (*types.Visit, error) {
 	return s.repo.FindByID(ctx, id)
 }
 
+// Get all visits from database by friend ID
+func (s *Service) GetByFriendID(ctx context.Context, friendId string) ([]types.Visit, error) {
+	return s.repo.FindByFriendID(ctx, friendId)
+}
+
 // Get All return all visits from database
 func (s *Service) GetAll(ctx context.Context) ([]types.Visit, error) {
 	return s.repo.FindAll(ctx)
@@ -44,7 +50,10 @@ func (s *Service) GetAll(ctx context.Context) ([]types.Visit, error) {
 // Create a visit
 func (s *Service) Create(ctx context.Context, visit types.Visit) (string, error) {
 	if err := validation.ValidateStruct(&visit,
-
+		validation.Field(&visit.Lab, validation.Required),
+		validation.Field(&visit.ArrivedTime, validation.Required),
+		validation.Field(&visit.DepartureTime, validation.Required),
+		validation.Field(&visit.FriendID, validation.Required),
 	); err != nil {
 		return "",err
 	} // not empty
@@ -54,7 +63,11 @@ func (s *Service) Create(ctx context.Context, visit types.Visit) (string, error)
 // Update a visit
 func (s *Service) Update(ctx context.Context, visit types.Visit) error {
 	if err := validation.ValidateStruct(&visit,
-
+		validation.Field(&visit.ID, validation.Required),
+		validation.Field(&visit.Lab, validation.Required),
+		validation.Field(&visit.ArrivedTime, validation.Required),
+		validation.Field(&visit.DepartureTime, validation.Required),
+		validation.Field(&visit.FriendID, validation.Required),
 	); err != nil {
 		return err
 	} // not empty

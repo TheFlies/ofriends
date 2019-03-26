@@ -16,35 +16,35 @@
         style="width: 80%; margin:auto"
       >
         <el-table-column type="index" :index="indexMethod"></el-table-column>
-        <el-table-column label="Lab" width="120" sortable prop="name"></el-table-column>
-        <el-table-column label="Arrived Date" width="120" sortable prop="position"></el-table-column>
-        <el-table-column label="Departure Date" width="120" sortable prop="project"></el-table-column>
-        <el-table-column label="Pre-approved visa" width="120" sortable prop="age"></el-table-column>
-        <el-table-column label="Passport Info" width="120" sortable prop="country"></el-table-column>
-        <el-table-column label="Created By" width="120" sortable prop="company"></el-table-column>
-        <el-table-column label="Hotel Stayed" width="120" sortable prop="city"></el-table-column>
-        <el-table-column label="Pickup" width="120" prop="foodNote"></el-table-column>
+        <el-table-column label="Lab" width="70" sortable prop="lab"></el-table-column>
+        <el-table-column label="Arrived Date" width="130" prop="arrivedTime"></el-table-column>
+        <el-table-column label="Departure Date" width="150" prop="departureTime"></el-table-column>
+        <el-table-column label="Pre-approved visa" width="120">
+          <template slot-scope="scope">
+            <el-checkbox v-model="scope.row.preApproveVisa"></el-checkbox>
+          </template>
+        </el-table-column>
+        <el-table-column label="Passport Info" width="280" prop="passportInfo"></el-table-column>
+        <el-table-column label="Created By" width="120" sortable prop="createdBy"></el-table-column>
+        <el-table-column label="Hotel Stayed" width="180" prop="hotelStayed"></el-table-column>
+        <el-table-column label="Pickup" width="120" prop="pickup"></el-table-column>
         <el-table-column align="right">
           <VisitUpdate
             :isVisibleUpdate.sync="isVisibleUpdate"
             @isUpdateVisit="handleUpdate"
             :visit.sync="visit"
           />
-          <VisitDelete
-            :isVisibleDelete.sync="isVisibleDelete"
-            @isDeleteVisit="handleDelete"
-            :visitInfo.sync="visitInfo"
-          />
+          <VisitDelete :isVisibleDelete.sync="isVisibleDelete" @isDeleteVisit="handleDelete"/>
           <VisitAdd :isVisibleAdd.sync="isVisibleAdd" @isAddVisit="handleAdd"/>
           <template slot-scope="scope">
             <el-button
               size="mini"
-              v-on:click="friend = scope.row; isVisibleUpdate = !isVisibleUpdate"
+              v-on:click="visit = scope.row; isVisibleUpdate = !isVisibleUpdate"
             >Edit</el-button>
             <el-button
               size="mini"
               type="danger"
-              v-on:click="isVisibleDelete = !isVisibleDelete; scopeVisit= scope; visitInfo = scope.row.name"
+              v-on:click="isVisibleDelete = !isVisibleDelete; scopeVisit= scope"
             >Delete</el-button>
           </template>
         </el-table-column>
@@ -59,7 +59,7 @@ import VisitDelete from "@/components/visits/VisitDelete.vue";
 import VisitAdd from "@/components/visits/VisitAdd.vue";
 export default {
   name: "VisitList",
-   components: {
+  components: {
     VisitUpdate,
     VisitDelete,
     VisitAdd
@@ -72,29 +72,42 @@ export default {
       isVisibleDelete: false,
       search: "",
       loading: false, // need to be true need fix
-      visit: Object,
-      scopeVisit: Function,
-      visitInfo:""
+      visit: {},
+      scopeVisit: {}
     };
+  },
+  created() {
+    this.visit.friendID = this.$route.params.id;
+  },
+  mounted() {
+    // We already set the axios baseURL to the backend service in main.js file.
+    this.$http
+      .get("/visits/friend/" + this.visit.friendID)
+      .then(resp => {
+        if (resp.data != null) {
+          this.tableData = resp.data;
+        }
+        this.loading = false;
+      })
+      .catch(err => {
+        console.log(err);
+      });
   },
   methods: {
     handleAdd: function(isAddVisit, visit) {
       if (isAddVisit) {
         this.loading = true;
-        console.log(visit);
         this.$http
-          .post("http://localhost:8080/friends", {
-            Name: friend.name,
-            Title: friend.title,
-            Position: friend.position,
-            Project: friend.project,
-            Age: parseInt(friend.age, 10),
-            Company: friend.company,
-            Country: friend.country,
-            City: friend.city,
-            FoodNote: friend.foodNote,
-            FamilyNote: friend.familyNote,
-            NextVisitNote: friend.nextVisitNote
+          .post("http://localhost:8080/visits", {
+            Lab: visit.lab,
+            ArrivedTime: visit.arrivedTime.toString(),
+            DepartureTime: visit.departureTime.toString(),
+            PreApproveVisa: visit.preApproveVisa,
+            PassportInfo: visit.passportInfo,
+            CreatedBy: visit.createdBy,
+            HotelStayed: visit.hotelStayed,
+            Pickup: visit.pickup,
+            FriendID: visit.friendID
           })
           .then(resp => {
             this.$notify({
@@ -102,8 +115,10 @@ export default {
               message: "Update successfully!",
               type: "success"
             });
-            friend.id = resp.data.id;
-            this.tableData.splice(0, 0, friend);
+            visit.id = resp.data.id;
+            visit.arrivedTime = visit.arrivedTime.toString();
+            visit.departureTime = visit.departureTime.toString();
+            this.tableData.splice(0, 0, visit);
           })
           .catch(err => {
             console.log(err);
@@ -115,11 +130,11 @@ export default {
         this.loading = false;
       }
     },
-    handleUpdate: function(isUpdateFriend) {
-      if (isUpdateFriend) {
+    handleUpdate: function(isUpdateVisit) {
+      if (isUpdateVisit) {
         this.loading = true;
         this.$http
-          .put("http://localhost:8080/friends", this.friend)
+          .put("http://localhost:8080/visits", this.visit)
           .then(resp => {
             console.log(resp.data);
             this.$notify({
@@ -138,14 +153,14 @@ export default {
         this.loading = false;
       }
     },
-    handleDelete: function(isDeleteFriend) {
-      if (isDeleteFriend) {
+    handleDelete: function(isDeleteVisit) {
+      if (isDeleteVisit) {
         this.loading = true;
-        console.log(this.scopeFriend.row);
+        console.log(this.scopeVisit.row);
         this.$http
-          .delete("http://localhost:8080/friends/" + this.scopeFriend.row.id)
+          .delete("http://localhost:8080/visits/" + this.scopeVisit.row.id)
           .then(resp => {
-            this.tableData.splice(this.scopeFriend.$index, 1);
+            this.tableData.splice(this.scopeVisit.$index, 1);
             this.$notify({
               title: "Success",
               message: "Delete successfully!",

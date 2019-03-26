@@ -6,7 +6,7 @@
     append-to-body
     :before-close="handleBackdropClick"
   >
-    <el-form :model="visit" :rules="rules" ref="visit" label-width="120px" class="visit-form">
+    <el-form :model="visit" :rules="rules" ref="visit" label-width="130px" class="visit-form">
       <el-form-item label="lab" prop="lab">
         <el-select style="width: 100%;" v-model="visit.lab" placeholder="please select lab visit">
           <el-option label="lab 1" value="lab1"></el-option>
@@ -19,24 +19,26 @@
         </el-select>
       </el-form-item>
       <el-form-item label="Visit time" required>
-        <el-col :span="11">
+        <el-col :span="22">
           <el-form-item prop="arrivedTime">
             <el-date-picker
-              type="date"
+              type="datetime"
               placeholder="Pick arrived time"
               v-model="visit.arrivedTime"
               style="width: 100%;"
             ></el-date-picker>
           </el-form-item>
         </el-col>
-        <el-col class="line" :span="2">-</el-col>
-        <el-col :span="11">
+      </el-form-item>
+      <el-form-item label="Departure time" required>
+        <el-col :span="22">
           <el-form-item prop="departureTime">
-            <el-time-picker
+            <el-date-picker
+              type="datetime"
               placeholder="Pick Departure Time"
               v-model="visit.departureTime"
               style="width: 100%;"
-            ></el-time-picker>
+            ></el-date-picker>
           </el-form-item>
         </el-col>
       </el-form-item>
@@ -97,9 +99,7 @@ export default {
   },
   data() {
     return {
-      rules: {
-
-      }
+      rules: {}
     };
   },
   methods: {

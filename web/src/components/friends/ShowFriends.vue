@@ -16,7 +16,13 @@
         style="width: 80%; margin:auto"
       >
         <el-table-column type="index" :index="indexMethod"></el-table-column>
-        <el-table-column label="Name" width="120" sortable prop="name"></el-table-column>
+        <el-table-column label="Name" width="120" sortable prop="name">
+          <template slot-scope="scope">
+            <router-link :to="{ name: 'Friend', params: { id: scope.row.id }}" class="link-type">
+              <span>{{ scope.row.name }}</span>
+            </router-link>
+          </template>
+        </el-table-column>
         <el-table-column label="Position" width="120" sortable prop="position"></el-table-column>
         <el-table-column label="Project" width="120" sortable prop="project"></el-table-column>
         <el-table-column label="Age" width="120" sortable prop="age"></el-table-column>
@@ -186,3 +192,9 @@ export default {
   }
 };
 </script>
+<style scoped lang="stylus">
+.link-type {
+  color: #1989fa;
+  text-decoration: underline;
+}
+</style>
