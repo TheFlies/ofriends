@@ -37,17 +37,17 @@ func Security(h http.Handler) http.Handler {
 			respond.JSON(w, http.StatusUnauthorized, "Unauthorized")
 			return
 		}
-		JWTToken := strings.Split(theBearerToken, " ")[1]
+		jwtToken := strings.Split(theBearerToken, " ")[1]
 		logger.Infof("checking token")
 		JWTGeneration := jwt.NewTokenGeneration()
-		notExpire := JWTGeneration.CheckExp(JWTToken)
-		if notExpire && JWTGeneration.CheckValib(JWTToken) {
-			payload := JWTGeneration.GetPayload(JWTToken)
+		notExpire := JWTGeneration.CheckExp(jwtToken)
+		if notExpire && JWTGeneration.CheckValib(jwtToken) {
+			payload := JWTGeneration.GetPayload(jwtToken)
 			logger.Infof("the payload owner is %v", payload.UserFullname)
+			logger.Infof("the request is continue treatment")
 			h.ServeHTTP(w, r)
 			return
 		}
-
 		respond.JSON(w, http.StatusUnauthorized, "Unauthorized")
 		return
 	})
