@@ -1,20 +1,20 @@
 <template>
   <div class="add-customer">
-    <FriendShowDetail/>
-    <VisitList />
+    <FriendShowDetail />
+    <VisitListByFriend />
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
 import FriendShowDetail from '@/components/friends/FriendShowDetail.vue'
-import VisitList from '@/components/visits/VisitList.vue'
+import VisitListByFriend from '@/components/visits/VisitListByFriend.vue'
 
 export default {
-  name: 'show',
+  name: 'Show',
   components: {
     FriendShowDetail,
-    VisitList
+    VisitListByFriend
   }
 }
 </script>

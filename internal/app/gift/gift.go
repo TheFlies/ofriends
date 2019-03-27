@@ -11,6 +11,7 @@ import (
 // Repository is an interface of a gift repository
 type Repository interface {
 	FindByID(ctx context.Context, id string) (*types.Gift, error)
+	FindByVisitID(ctx context.Context, visitId string) ([]types.Gift, error)
 	FindAll(ctx context.Context) ([]types.Gift, error)
 	Create(ctx context.Context, gift types.Gift) (string, error)
 	Update(ctx context.Context, gift types.Gift) error
@@ -34,6 +35,11 @@ func NewService(r Repository, l glog.Logger) *Service {
 // Get return given gift by his/her id
 func (s *Service) Get(ctx context.Context, id string) (*types.Gift, error) {
 	return s.repo.FindByID(ctx, id)
+}
+
+// Get all gifts from database by visit ID
+func (s *Service) GetByVisitID(ctx context.Context, visitId string) ([]types.Gift, error) {
+	return s.repo.FindByVisitID(ctx, visitId)
 }
 
 // Get All return all gifts from database

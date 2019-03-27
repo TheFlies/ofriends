@@ -1,54 +1,30 @@
 <template>
-  <el-container>
+  <el-container style="background: #f0f9eb;">
+    <el-header style="width: 100%; margin:auto">
+      <el-button
+        type="success"
+        icon="el-icon-plus"
+        plain
+        style="float:right"
+        @click="isVisibleAdd = !isVisibleAdd"
+      >
+        New gift
+      </el-button>
+    </el-header>
     <el-main>
       <el-table
         v-loading="loading"
         :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
         style="width: 100%"
       >
-        <el-table-column
-          label="Name"
-          prop="name"
-          sortable
-        />
-        <el-table-column
-          label="Idea"
-          prop="idea"
-          sortable
-        />
-        <el-table-column
-          label="Size"
-          prop="size"
-          sortable
-        />
-        <el-table-column
-          label="Quantity"
-          prop="quantity"
-          sortable
-        />
-        <el-table-column
-          label="Price"
-          prop="price"
-          sortable
-        />
-        <el-table-column
-          label="Link"
-          prop="link"
-        />
-        <el-table-column
-          label="Description"
-          prop="description"
-        />
-        <el-table-column
-          align="right"
-        >
-          <template slot="header">
-            <el-input
-              v-model="search"
-              size="mini"
-              placeholder="Type to search"
-            />
-          </template>
+        <el-table-column label="Name" prop="name" sortable />
+        <el-table-column label="Idea" prop="idea" sortable />
+        <el-table-column label="Size" prop="size" sortable />
+        <el-table-column label="Quantity" prop="quantity" sortable />
+        <el-table-column label="Price" prop="price" sortable />
+        <el-table-column label="Link" prop="link" />
+        <el-table-column label="Description" prop="description" />
+        <el-table-column align="right">
           <GiftUpdate
             :is-visible-update.sync="isVisibleUpdate"
             :gift.sync="gift"
@@ -59,10 +35,7 @@
             :gift-name.sync="giftName"
             @isDeleteGift="handleDelete"
           />
-          <GiftAdd
-            :is-visible-add.sync="isVisibleAdd"
-            @isAddGift="handleAdd"
-          />
+          <GiftAdd :is-visible-add.sync="isVisibleAdd" @isAddGift="handleAdd" />
           <template slot-scope="scope">
             <el-button
               size="mini"
@@ -88,14 +61,22 @@
 import GiftUpdate from '@/components/gifts/GiftUpdate.vue'
 import GiftDelete from '@/components/gifts/GiftDelete.vue'
 import GiftAdd from '@/components/gifts/GiftAdd.vue'
-import { getAllGifts, createGifts, modifyGifts, deleteGiftById } from '@/api/gift'
+import {
+  getAllGiftsByVisitID,
+  createGifts,
+  modifyGifts,
+  deleteGiftById
+} from '@/api/gift'
 
 export default {
-  name: 'ListGift',
+  name: 'GiftListByVisit',
   components: {
     GiftUpdate,
     GiftDelete,
     GiftAdd
+  },
+  props: {
+    visitId: { type: String, default: '' }
   },
 
   data() {
@@ -111,13 +92,17 @@ export default {
       scopeGift: {}
     }
   },
+  created() {
+    this.gift.visitID = this.visitId
+  },
   mounted() {
-    getAllGifts().then(resp => {
-      if (resp.data != null) {
-        this.tableData = resp.data
-      }
-      this.loading = false
-    })
+    getAllGiftsByVisitID(this.gift.visitID)
+      .then(resp => {
+        if (resp.data != null) {
+          this.tableData = resp.data
+        }
+        this.loading = false
+      })
       .catch(err => {
         console.log(err)
       })
@@ -127,15 +112,16 @@ export default {
     handleAdd: function(isAddGift, gift) {
       if (isAddGift) {
         this.loading = true
-        createGifts(gift).then(resp => {
-          this.$notify({
-            title: 'Success',
-            message: 'Update successfully!',
-            type: 'success'
+        createGifts(gift)
+          .then(resp => {
+            this.$notify({
+              title: 'Success',
+              message: 'Update successfully!',
+              type: 'success'
+            })
+            gift.id = resp.data.id
+            this.tableData.splice(0, 0, gift)
           })
-          gift.id = resp.data.id
-          this.tableData.splice(0, 0, gift)
-        })
           .catch(err => {
             console.log(err)
             this.$notify.error({
@@ -149,14 +135,15 @@ export default {
     handleUpdate: function(isUpdateGift) {
       if (isUpdateGift) {
         this.loading = true
-        modifyGifts(this.gift).then(resp => {
-          console.log(resp.data)
-          this.$notify({
-            title: 'Success',
-            message: 'Update successfully!',
-            type: 'success'
+        modifyGifts(this.gift)
+          .then(resp => {
+            console.log(resp.data)
+            this.$notify({
+              title: 'Success',
+              message: 'Update successfully!',
+              type: 'success'
+            })
           })
-        })
           .catch(err => {
             console.log(err)
             this.$notify.error({
@@ -170,14 +157,15 @@ export default {
     handleDelete: function(isDeleteGift) {
       if (isDeleteGift) {
         this.loading = true
-        deleteGiftById(this.scopeGift.row.id).then(resp => {
-          this.tableData.splice(this.scopeGift.$index, 1)
-          this.$notify({
-            title: 'Success',
-            message: 'Delete successfully!',
-            type: 'success'
+        deleteGiftById(this.scopeGift.row.id)
+          .then(resp => {
+            this.tableData.splice(this.scopeGift.$index, 1)
+            this.$notify({
+              title: 'Success',
+              message: 'Delete successfully!',
+              type: 'success'
+            })
           })
-        })
           .catch(err => {
             console.log(err)
             this.$notify.error({
@@ -191,11 +179,3 @@ export default {
   }
 }
 </script>
-
-<style>
-  .gift-list-header {
-    background-color: #E4E7ED;
-    color: #333;
-    line-height: 60px;
-  }
-</style>

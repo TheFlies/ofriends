@@ -13,6 +13,7 @@ import (
 type (
 	service interface {
 		Get(ctx context.Context, id string) (*types.Gift, error)
+		GetByVisitID(ctx context.Context, visitId string) ([]types.Gift, error)
 		GetAll(ctx context.Context) ([]types.Gift, error)
 		Create(ctx context.Context, gift types.Gift) (string, error)
 		Update(ctx context.Context, gift types.Gift) error
@@ -42,6 +43,18 @@ func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	respond.JSON(w, http.StatusOK, gift)
+}
+
+// GetByVisitID handle get gifts HTTP Request by visitID
+func (h *Handler) GetByVisitID(w http.ResponseWriter, r *http.Request) {
+	acts, err := h.srv.GetByVisitID(r.Context(),mux.Vars(r)["id"])
+	if err != nil {
+		respond.Error(w, err, http.StatusInternalServerError)
+		return
+	}
+	
+	respond.JSON(w, http.StatusOK, acts)
+
 }
 
 // GetAll handle get gifts HTTP Request

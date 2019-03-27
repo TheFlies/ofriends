@@ -1,17 +1,17 @@
 <template>
-  <div class="show-customer">
-    <FriendList />
+  <div class="show-visit">
+    <VisitList />
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import FriendList from '@/components/friends/FriendList.vue'
+import VisitList from '@/components/visits/VisitList.vue'
 
 export default {
   name: 'Show',
   components: {
-    FriendList
+    VisitList
   }
 }
 </script>

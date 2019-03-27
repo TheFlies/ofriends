@@ -10,4 +10,5 @@ type Gift struct {
 	Price       float64     `json:"price"`
 	Link        string 		`json:"link"`
 	Description string 		`json:"description"`
+	VisitID		string		`json:"visitId,omitempty" bson:"_visit_id"`
 }

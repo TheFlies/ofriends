@@ -1,10 +1,21 @@
 <template>
   <el-container>
+    <el-header style="width: 80%; margin:auto">
+      <el-button
+        type="primary"
+        icon="el-icon-plus"
+        plain
+        style="float:right"
+        @click="isVisibleAdd = !isVisibleAdd"
+      >
+        New visit
+      </el-button>
+    </el-header>
     <el-main>
       <el-table
         v-loading="loading"
-        :data="tableData.filter(data => !search || data.lab.toLowerCase().includes(search.toLowerCase()))"
-        style="width: 100%; margin:auto"
+        :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
+        style="width: 80%; margin:auto"
       >
         <el-table-column type="expand">
           <template slot-scope="scope">
@@ -26,13 +37,6 @@
         <el-table-column label="Hotel Stayed" width="180" prop="hotelStayed" />
         <el-table-column label="Pickup" width="120" prop="pickup" />
         <el-table-column align="right">
-          <template slot="header" slot-scope="scope">
-            <el-input
-              v-model="search"
-              size="mini"
-              placeholder="Type to search based on lab"
-            />
-          </template>
           <VisitUpdate
             :is-visible-update.sync="isVisibleUpdate"
             :visit.sync="visit"
@@ -68,14 +72,14 @@ import VisitAdd from '@/components/visits/VisitAdd.vue'
 import ActivityListByVisit from '@/components/activity/ActivityListByVisit.vue'
 import GiftListByVisit from '@/components/gifts/GiftListByVisit.vue'
 import {
-  getAllVisits,
+  getAllVisitsByFriendID,
   createVisit,
   updateVisit,
   deleteVisitById
 } from '@/api/visit'
 
 export default {
-  name: 'VisitList',
+  name: 'VisitListByVisit',
   components: {
     VisitUpdate,
     VisitDelete,
@@ -96,8 +100,11 @@ export default {
       scopeVisit: {}
     }
   },
+  created() {
+    this.visit.friendID = this.$route.params.id
+  },
   mounted() {
-    getAllVisits()
+    getAllVisitsByFriendID(this.visit.friendID)
       .then(resp => {
         if (resp.data != null) {
           this.tableData = resp.data

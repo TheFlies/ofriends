@@ -177,7 +177,7 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			handler: actHandler.Get,
 		},
 		{
-			path:    "activity",
+			path:    "/activity",
 			method:  post,
 			handler: actHandler.Create,
 		},
@@ -230,6 +230,11 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			path:    "/gifts/{id:[a-z0-9-\\-]+}",
 			method:  delete,
 			handler: giftHandler.Delete,
+		},
+		{
+			path:    "/gifts/visit/{id:[a-z0-9-\\-]+}",
+			method:  get,
+			handler: giftHandler.GetByVisitID,
 		},
 		{
 			path:    "/api/v1/login",

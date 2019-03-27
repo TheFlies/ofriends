@@ -49,7 +49,7 @@ func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
 	respond.JSON(w, http.StatusOK, act)
 }
 
-// GetByFriendID handle get activities HTTP Request by visitID
+// GetByVisitID handle get activities HTTP Request by visitID
 func (h *Handler) GetByVisitID(w http.ResponseWriter, r *http.Request) {
 	acts, err := h.srv.GetByVisitID(r.Context(),mux.Vars(r)["id"])
 	if err != nil {
