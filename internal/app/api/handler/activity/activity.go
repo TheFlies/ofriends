@@ -1,4 +1,4 @@
-package friendhandler
+package activityhandler
 
 import (
 	"context"
@@ -16,21 +16,22 @@ import (
 
 type (
 	service interface {
-		Get(ctx context.Context, id string) (*types.Friend, error)
-		GetAll(ctx context.Context) ([]types.Friend, error)
-		Create(ctx context.Context, friend types.Friend) (string, error)
-		Update(ctx context.Context, friend types.Friend) error
+		Get(ctx context.Context, id string) (*types.Activity, error)
+		GetByVisitID(ctx context.Context, visitId string) ([]types.Activity, error)
+		GetAll(ctx context.Context) ([]types.Activity, error)
+		Create(ctx context.Context, visit types.Activity) (string, error)
+		Update(ctx context.Context, visit types.Activity) error
 		Delete(ctx context.Context, id string) error
 	}
 
-	// Handler is friend web handler
+	// Handler is visit web handler
 	Handler struct {
 		srv    service
 		logger glog.Logger
 	}
 )
 
-// New return new rest api friend handler
+// New return new rest api visit handler
 func New(s service, l glog.Logger) *Handler {
 	return &Handler{
 		srv:    s,
@@ -38,33 +39,45 @@ func New(s service, l glog.Logger) *Handler {
 	}
 }
 
-// Get handle get friend HTTP request
+// Get handle get activity HTTP request
 func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
-	friend, err := h.srv.Get(r.Context(), mux.Vars(r)["id"])
+	act, err := h.srv.Get(r.Context(), mux.Vars(r)["id"])
 	if err != nil {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
 	}
-	respond.JSON(w, http.StatusOK, friend)
+	respond.JSON(w, http.StatusOK, act)
 }
 
-// GetAll handle get friends HTTP Request
+// GetByFriendID handle get activities HTTP Request by visitID
+func (h *Handler) GetByVisitID(w http.ResponseWriter, r *http.Request) {
+	acts, err := h.srv.GetByVisitID(r.Context(),mux.Vars(r)["id"])
+	if err != nil {
+		respond.Error(w, err, http.StatusInternalServerError)
+		return
+	}
+	
+	respond.JSON(w, http.StatusOK, acts)
+
+}
+
+// GetAll handle get activities HTTP Request
 func (h *Handler) GetAll(w http.ResponseWriter, r *http.Request) {
-	friends, err := h.srv.GetAll(r.Context())
+	acts, err := h.srv.GetAll(r.Context())
 	if err != nil {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
 	}
 	
-	respond.JSON(w, http.StatusOK, friends)
+	respond.JSON(w, http.StatusOK, acts)
 
 }
 
-// Create handle insert friend HTTP Request
+// Create handle insert activity HTTP Request
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
-	var friend types.Friend
+	var act types.Activity
 	
-	if err := json.NewDecoder(r.Body).Decode(&friend); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&act); err != nil {
 		if err == io.EOF {
 			respond.Error(w, errors.New("Invalid request method"), http.StatusMethodNotAllowed)
 			return
@@ -75,21 +88,21 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close() 
 
-	if id, err := h.srv.Create(r.Context(), friend); err != nil {
+	if id, err := h.srv.Create(r.Context(), act); err != nil {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
 	} else {
-		friend.ID = id
+		act.ID = id
 	}
 
-	respond.JSON(w, http.StatusCreated, map[string]string{"id": friend.ID})
+	respond.JSON(w, http.StatusCreated, map[string]string{"id": act.ID})
 }
 
-// Update handle modify friend HTTP Request
+// Update handle modify actitity HTTP Request
 func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
-	var friend types.Friend
+	var act types.Activity
 
-	if err := json.NewDecoder(r.Body).Decode(&friend); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&act); err != nil {
 		if err == io.EOF {
 			respond.Error(w, errors.New("Invalid request method"), http.StatusMethodNotAllowed)
 			return
@@ -100,14 +113,14 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	
 	defer r.Body.Close() 
 
-	if err := h.srv.Update(r.Context(), friend); err != nil {
+	if err := h.srv.Update(r.Context(), act); err != nil {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
 	}
-	respond.JSON(w, http.StatusOK, map[string]string{"id": friend.ID})
+	respond.JSON(w, http.StatusOK, map[string]string{"id": act.ID})
 }
 
-// Delete handle delete friend HTTP Request
+// Delete handle delete activity HTTP Request
 func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 	if err := h.srv.Delete(r.Context(), mux.Vars(r)["id"]); err != nil {
 		respond.Error(w, err, http.StatusInternalServerError)

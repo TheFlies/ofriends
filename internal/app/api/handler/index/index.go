@@ -30,3 +30,4 @@ func (web *Handler) Index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+

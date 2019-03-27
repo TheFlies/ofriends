@@ -53,13 +53,13 @@ export const constantRouterMap = [
   },
 
   {
-    path: '/friend',
+    path: '/friends',
     component: Layout,
     children: [
       {
         path: '',
-        name: 'Friend',
-        component: () => import('./views/friends/Add.vue'),
+        name: 'Friends',
+        component: () => import('./views/friends/Show.vue'),
         meta: {
           title: 'Friends',
           icon: 'user-setting'
@@ -67,7 +67,21 @@ export const constantRouterMap = [
       }
     ]
   },
-
+  {
+    path: '/friend/:id',
+    component: Layout,
+    children: [
+      {
+        path: '',
+        name: 'Friend',
+        component: () => import('./views/friends/ShowDetail.vue'),
+        meta: {
+          title: 'Friends',
+          icon: 'user-setting'
+        }
+      }
+    ]
+  },
   {
     path: '/gifts',
     component: Layout,

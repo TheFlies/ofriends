@@ -1,25 +1,21 @@
 <template>
   <el-container>
-    <el-header>
+    <el-header class="gift-list-header">
       <el-row>
-        <el-col :span="12">
+        <el-col >
           <div style="text-align: left; font-size: 25px">
-            <span>Gift</span>
-          </div>
-        </el-col>
-        <el-col :span="12">
-          <div style="text-align: right; font-size: 25px">
             <el-tooltip
               class="item"
               effect="dark"
               content="Add gift"
               placement="right-start"
             >
-              <i
-                class="el-icon-plus"
-                style="margin-right: 15px"
-                @click="isVisibleAdd = !isVisibleAdd"
-              />
+            <el-button
+              type="primary"
+              icon="el-icon-plus"
+              plain
+              @click="isVisibleAdd = !isVisibleAdd"
+            >New Gift</el-button>
             </el-tooltip>
           </div>
         </el-col>
@@ -113,6 +109,8 @@
 import GiftUpdate from '@/components/gifts/GiftUpdate.vue'
 import GiftDelete from '@/components/gifts/GiftDelete.vue'
 import GiftAdd from '@/components/gifts/GiftAdd.vue'
+import { getAllGifts, createGifts, modifyGifts, deleteGiftById } from '@/api/gift'
+
 export default {
   name: 'ListGift',
   components: {
@@ -135,14 +133,12 @@ export default {
     }
   },
   mounted() {
-    // We already set the axios baseURL to the backend service in main.js file.
-    this.$http.get('/gifts')
-      .then(resp => {
-        if (resp.data != null) {
-          this.tableData = resp.data
-        }
-        this.loading = false
-      })
+    getAllGifts().then(resp => {
+      if (resp.data != null) {
+        this.tableData = resp.data
+      }
+      this.loading = false
+    })
       .catch(err => {
         console.log(err)
       })
@@ -152,16 +148,15 @@ export default {
     handleAdd: function(isAddGift, gift) {
       if (isAddGift) {
         this.loading = true
-        this.$http.post('/gifts', gift)
-          .then(resp => {
-            this.$notify({
-              title: 'Success',
-              message: 'Update successfully!',
-              type: 'success'
-            })
-            gift.id = resp.data.id
-            this.tableData.splice(0, 0, gift)
+        createGifts(gift).then(resp => {
+          this.$notify({
+            title: 'Success',
+            message: 'Update successfully!',
+            type: 'success'
           })
+          gift.id = resp.data.id
+          this.tableData.splice(0, 0, gift)
+        })
           .catch(err => {
             console.log(err)
             this.$notify.error({
@@ -175,15 +170,14 @@ export default {
     handleUpdate: function(isUpdateGift) {
       if (isUpdateGift) {
         this.loading = true
-        this.$http.put('/gifts', this.gift)
-          .then(resp => {
-            console.log(resp.data)
-            this.$notify({
-              title: 'Success',
-              message: 'Update successfully!',
-              type: 'success'
-            })
+        modifyGifts(this.gift).then(resp => {
+          console.log(resp.data)
+          this.$notify({
+            title: 'Success',
+            message: 'Update successfully!',
+            type: 'success'
           })
+        })
           .catch(err => {
             console.log(err)
             this.$notify.error({
@@ -197,15 +191,14 @@ export default {
     handleDelete: function(isDeleteGift) {
       if (isDeleteGift) {
         this.loading = true
-        this.$http.delete('/gifts/' + this.scopeGift.row.id)
-          .then(resp => {
-            this.tableData.splice(this.scopeGift.$index, 1)
-            this.$notify({
-              title: 'Success',
-              message: 'Delete successfully!',
-              type: 'success'
-            })
+        deleteGiftById(this.scopeGift.row.id).then(resp => {
+          this.tableData.splice(this.scopeGift.$index, 1)
+          this.$notify({
+            title: 'Success',
+            message: 'Delete successfully!',
+            type: 'success'
           })
+        })
           .catch(err => {
             console.log(err)
             this.$notify.error({
@@ -221,7 +214,7 @@ export default {
 </script>
 
 <style>
-  .el-header {
+  .gift-list-header {
     background-color: #E4E7ED;
     color: #333;
     line-height: 60px;
