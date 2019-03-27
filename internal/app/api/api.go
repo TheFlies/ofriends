@@ -2,24 +2,26 @@ package api
 
 import (
 	"fmt"
+	"github.com/TheFlies/ofriends/internal/app/api/handler/login"
 	"net/http"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 
+	"github.com/TheFlies/ofriends/internal/app/activity"
+	"github.com/TheFlies/ofriends/internal/app/api/handler/activity"
 	"github.com/TheFlies/ofriends/internal/app/api/handler/friend"
 	"github.com/TheFlies/ofriends/internal/app/api/handler/gift"
-	"github.com/TheFlies/ofriends/internal/app/api/handler/visit"
-	"github.com/TheFlies/ofriends/internal/app/api/handler/activity"
 	"github.com/TheFlies/ofriends/internal/app/api/handler/index"
-	"github.com/TheFlies/ofriends/internal/app/api/handler/login"
+	userhandler "github.com/TheFlies/ofriends/internal/app/api/handler/user"
+	"github.com/TheFlies/ofriends/internal/app/api/handler/visit"
 	"github.com/TheFlies/ofriends/internal/app/db"
+	"github.com/TheFlies/ofriends/internal/app/dbauth"
 	"github.com/TheFlies/ofriends/internal/app/friend"
 	"github.com/TheFlies/ofriends/internal/app/gift"
-	"github.com/TheFlies/ofriends/internal/app/visit"
-	"github.com/TheFlies/ofriends/internal/app/activity"
-	"github.com/TheFlies/ofriends/internal/app/ldap"
+	"github.com/TheFlies/ofriends/internal/app/ldapauth"
 	"github.com/TheFlies/ofriends/internal/app/user"
+	"github.com/TheFlies/ofriends/internal/app/visit"
 	"github.com/TheFlies/ofriends/internal/pkg/glog"
 	"github.com/TheFlies/ofriends/internal/pkg/health"
 	"github.com/TheFlies/ofriends/internal/pkg/middleware"
@@ -58,11 +60,14 @@ func Init(conns *InfraConns) (http.Handler, error) {
 
 	switch conns.Databases.Type {
 	case db.TypeMongoDB:
-		friendRepo 	= friend.NewMongoRepository(conns.Databases.MongoDB)
-		userRepo 	= user.NewUserMongoRepositoty(conns.Databases.MongoDB)
-		giftRepo 	= gift.NewMongoRepository(conns.Databases.MongoDB)
-		visitRepo 	= visit.NewMongoRepository(conns.Databases.MongoDB)
-		actRepo 	= activity.NewMongoRepository(conns.Databases.MongoDB)
+		friendRepo = friend.NewMongoRepository(conns.Databases.MongoDB)
+		userRepo = user.NewUserMongoRepository(conns.Databases.MongoDB)
+		giftRepo = gift.NewMongoRepository(conns.Databases.MongoDB)
+		visitRepo = visit.NewMongoRepository(conns.Databases.MongoDB)
+		actRepo = activity.NewMongoRepository(conns.Databases.MongoDB)
+		friendRepo = friend.NewMongoRepository(conns.Databases.MongoDB)
+		userRepo = user.NewUserMongoRepository(conns.Databases.MongoDB)
+		giftRepo = gift.NewMongoRepository(conns.Databases.MongoDB)
 	default:
 		return nil, fmt.Errorf("database type not supported: %s", conns.Databases.Type)
 	}
@@ -85,11 +90,14 @@ func Init(conns *InfraConns) (http.Handler, error) {
 
 	indexWebHandler := indexhandler.New()
 
-	userlogger := logger.WithField("package", "user")
-	userService := user.NewUserService(userRepo, userlogger)
-	loginservice := ldap.New(userService)
-	loginhandeler := login.NewLoginHandeler(userService, loginservice, userlogger)
+	userLogger := logger.WithField("package", "user")
+	dbLoginLogger := logger.WithField("package", "dbauth")
+	userService := user.NewUserService(userRepo, userLogger)
+	ldapLoginService := ldapauth.New(userService)
+	localLoginService := dbauth.NewDBAuthentication(dbLoginLogger, userService)
 
+	loginHandler := login.NewLoginHandler(localLoginService, ldapLoginService, userLogger)
+	userHandler := userhandler.NewUserHandler(userService, localLoginService, ldapLoginService)
 	routes := []route{
 		// infra
 		{
@@ -225,12 +233,32 @@ func Init(conns *InfraConns) (http.Handler, error) {
 		{
 			path:    "/api/v1/login",
 			method:  post,
-			handler: loginhandeler.Authenticate,
+			handler: loginHandler.Authenticate,
 		},
 		{
 			path:    "/api/v1/user/{username}",
 			method:  get,
-			handler: loginhandeler.GetUser,
+			handler: userHandler.GetUser,
+		},
+		{
+			path:    "/api/v1/user/{username}",
+			method:  post,
+			handler: userHandler.SetPassword,
+		},
+		{
+			path:    "/api/v1/user/{username}",
+			method:  put,
+			handler: userHandler.ChangePassword,
+		},
+		{
+			path:    "/api/v1/user",
+			method:  post,
+			handler: userHandler.Register,
+		},
+		{
+			path:    "/api/v1/user/{username}",
+			method:  put,
+			handler: userHandler.Update,
 		},
 	}
 
