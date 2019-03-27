@@ -2,26 +2,26 @@ package api
 
 import (
 	"fmt"
+	"github.com/TheFlies/ofriends/internal/app/api/handler/login"
 	"net/http"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 
+	"github.com/TheFlies/ofriends/internal/app/activity"
+	"github.com/TheFlies/ofriends/internal/app/api/handler/activity"
 	"github.com/TheFlies/ofriends/internal/app/api/handler/friend"
 	"github.com/TheFlies/ofriends/internal/app/api/handler/gift"
-	"github.com/TheFlies/ofriends/internal/app/api/handler/visit"
-	"github.com/TheFlies/ofriends/internal/app/api/handler/activity"
 	"github.com/TheFlies/ofriends/internal/app/api/handler/index"
 	userhandler "github.com/TheFlies/ofriends/internal/app/api/handler/user"
+	"github.com/TheFlies/ofriends/internal/app/api/handler/visit"
 	"github.com/TheFlies/ofriends/internal/app/db"
 	"github.com/TheFlies/ofriends/internal/app/dbauth"
 	"github.com/TheFlies/ofriends/internal/app/friend"
 	"github.com/TheFlies/ofriends/internal/app/gift"
-	"github.com/TheFlies/ofriends/internal/app/visit"
-	"github.com/TheFlies/ofriends/internal/app/activity"
-	"github.com/TheFlies/ofriends/internal/app/ldap"
 	"github.com/TheFlies/ofriends/internal/app/ldapauth"
 	"github.com/TheFlies/ofriends/internal/app/user"
+	"github.com/TheFlies/ofriends/internal/app/visit"
 	"github.com/TheFlies/ofriends/internal/pkg/glog"
 	"github.com/TheFlies/ofriends/internal/pkg/health"
 	"github.com/TheFlies/ofriends/internal/pkg/middleware"
@@ -60,11 +60,11 @@ func Init(conns *InfraConns) (http.Handler, error) {
 
 	switch conns.Databases.Type {
 	case db.TypeMongoDB:
-		friendRepo 	= friend.NewMongoRepository(conns.Databases.MongoDB)
-		userRepo 	= user.NewUserMongoRepositoty(conns.Databases.MongoDB)
-		giftRepo 	= gift.NewMongoRepository(conns.Databases.MongoDB)
-		visitRepo 	= visit.NewMongoRepository(conns.Databases.MongoDB)
-		actRepo 	= activity.NewMongoRepository(conns.Databases.MongoDB)
+		friendRepo = friend.NewMongoRepository(conns.Databases.MongoDB)
+		userRepo = user.NewUserMongoRepository(conns.Databases.MongoDB)
+		giftRepo = gift.NewMongoRepository(conns.Databases.MongoDB)
+		visitRepo = visit.NewMongoRepository(conns.Databases.MongoDB)
+		actRepo = activity.NewMongoRepository(conns.Databases.MongoDB)
 		friendRepo = friend.NewMongoRepository(conns.Databases.MongoDB)
 		userRepo = user.NewUserMongoRepository(conns.Databases.MongoDB)
 		giftRepo = gift.NewMongoRepository(conns.Databases.MongoDB)
