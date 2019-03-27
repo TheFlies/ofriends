@@ -1,15 +1,14 @@
-package ldap
+package ldapauth
 
 import (
 	"fmt"
 	"regexp"
 	"unicode"
 
-	"github.com/globalsign/mgo/bson"
 	"github.com/pkg/errors"
 	"gopkg.in/ldap.v3"
 
-	"github.com/TheFlies/ofriends/internal/app/api/handler/login"
+	"github.com/TheFlies/ofriends/internal/app/api/handler/user"
 	"github.com/TheFlies/ofriends/internal/app/types"
 	"github.com/TheFlies/ofriends/internal/pkg/config/env"
 	"github.com/TheFlies/ofriends/internal/pkg/glog"
@@ -27,15 +26,15 @@ type (
 	LdapAuthentication struct {
 		log      glog.Logger
 		conf     LDAPconf
-		userSvr  login.UserService
+		userSvr  user.UserService
 		LDAPConn *ldap.Conn
 	}
 )
 
-func New(svr login.UserService) *LdapAuthentication {
+func New(svr user.UserService) *LdapAuthentication {
 	var LDAPConf LDAPconf
 	log := glog.New()
-	l := log.WithField("package", "ldap")
+	l := log.WithField("package", "ldapauthen")
 	envconfig.Load(&LDAPConf)
 	return &LdapAuthentication{
 		log:     l,
@@ -44,10 +43,10 @@ func New(svr login.UserService) *LdapAuthentication {
 	}
 }
 func (l *LdapAuthentication) ConnectToServer() {
-	l.log.Infof("connecting to ldap server with addr: %v , port : %v", l.conf.LDAPAddr, l.conf.LDAPPort)
+	l.log.Infof("connecting to ldap authentication server with addr: %v , port : %v", l.conf.LDAPAddr, l.conf.LDAPPort)
 	connection, err := ldap.Dial("tcp", fmt.Sprintf("%s:%d", l.conf.LDAPAddr, l.conf.LDAPPort))
 	if err != nil {
-		l.log.Errorf("connect to ldap server fails %v", err)
+		l.log.Errorf("connect to ldap authentication server fails %v", err)
 	}
 	l.LDAPConn = connection
 }
@@ -64,7 +63,7 @@ func (l *LdapAuthentication) Authenticate(username string, password string) (int
 	l.ConnectToServer()
 	defer l.Close()
 	err := ldapAuthentication(username, password, l.conf, l.log, l.LDAPConn)
-	JWTGeneration := jwt.NewTokenGeneration()
+	jwtGeneration := jwt.NewTokenGeneration()
 	respondMap := make(map[string]interface{})
 	if err != nil {
 		l.log.Errorf("login fail %v ", err)
@@ -74,62 +73,60 @@ func (l *LdapAuthentication) Authenticate(username string, password string) (int
 	isExists := l.userSvr.CheckExistence(username)
 	if isExists {
 		l.log.Infof("query user information form database")
-		DBUser, err := l.userSvr.GetByName(username)
+		dbUser, err := l.userSvr.GetByName(username)
 		if err != nil {
 			l.log.Errorf("get user fail: %v", err)
 			return "", err
 		}
-
-		JWTToken, err := JWTGeneration.CreateToken(DBUser.Username, DBUser.FullName, DBUser.DeliveryCenter)
+		jwtToken, err := jwtGeneration.CreateToken(dbUser.Username, dbUser.FullName, dbUser.DeliveryCenter)
 		if err != nil {
 			l.log.Errorf("get user fail : %v", err)
 			return "", err
 		}
 		returnUser := types.User{
-			ID:             bson.NewObjectId(),
-			Username:       DBUser.Username,
-			FullName:       DBUser.FullName,
-			Email:          DBUser.Email,
-			DeliveryCenter: DBUser.DeliveryCenter,
+			ID:             dbUser.ID,
+			Username:       dbUser.Username,
+			FullName:       dbUser.FullName,
+			Email:          dbUser.Email,
+			DeliveryCenter: dbUser.DeliveryCenter,
 		}
 		l.log.Infof("returning token")
+		//remove password before return to UI
 		respondMap["userInformation"] = returnUser
-		respondMap["token"] = JWTToken
+		respondMap["token"] = jwtToken
 		return respondMap, nil
 	}
-	l.log.Infof("query user information in ldap server ")
-	LDAPUser, err := ldapQuery(username, l.conf, l.log, l.LDAPConn)
+	l.log.Infof("query user information in ldap authentication server ")
+	ldapUser, err := ldapQuery(username, l.conf, l.log, l.LDAPConn)
 	if err != nil {
 		l.log.Errorf("get user fail")
 		return "", err
 	}
-	LDAPUser.ID = bson.NewObjectId()
-	err = l.userSvr.AddUser(&LDAPUser)
+	err = l.userSvr.AddUser(&ldapUser)
 	if err != nil {
 		l.log.Errorf("can not add a user to mongodb %v", err)
 	}
-	JWTToken, err := JWTGeneration.CreateToken(LDAPUser.Username, LDAPUser.FullName, LDAPUser.DeliveryCenter)
+	jwtToken, err := jwtGeneration.CreateToken(ldapUser.Username, ldapUser.FullName, ldapUser.DeliveryCenter)
 	if err != nil {
 		l.log.Errorf("get token fail : %v", err)
 		return "", err
 	}
 	l.log.Infof("returning token")
-	respondMap["userInformation"] = LDAPUser
-	respondMap["token"] = JWTToken
+	respondMap["userInformation"] = ldapUser
+	respondMap["token"] = jwtToken
 	return respondMap, nil
 
 }
 func ldapAuthentication(username string, password string, cf LDAPconf, l glog.Logger, conn *ldap.Conn) error {
-	userDN, err := findUserDN(username, cf, l, conn)
-	l.Infof("login with user dn : %v and lens : %d", userDN, len(userDN))
+	userDNs, err := findUserDN(username, cf, l, conn)
+	l.Infof("login with user dn : %v and lens : %d", userDNs, len(userDNs))
 	if err != nil {
 		l.Errorf("find user dn fail %v", err)
 		return err
 	}
-
 	//try login with list dn is queried
 	//if all userDN fails, login will fail
-	for i, dn := range userDN {
+	for i, dn := range userDNs {
 		l.Infof("authenticating with id: %d dn : %v", i, dn)
 		if dn == "" {
 			continue
@@ -147,7 +144,7 @@ func ldapAuthentication(username string, password string, cf LDAPconf, l glog.Lo
 
 }
 func ldapQuery(username string, cf LDAPconf, l glog.Logger, conn *ldap.Conn) (types.User, error) {
-	l.Infof("query user information form ldap server by user name : %v ", username)
+	l.Infof("query user information form ldap authentication server by user name : %v ", username)
 	err := conn.Bind(cf.LDAPFirstBindUsername, cf.LDAPFirstBindPassword)
 	l.Infof("bind  user to query data with user : %v", cf.LDAPFirstBindUsername)
 	if err != nil {
@@ -164,7 +161,7 @@ func ldapQuery(username string, cf LDAPconf, l glog.Logger, conn *ldap.Conn) (ty
 	)
 	searchResult, err := conn.Search(searchRequest)
 	if err != nil {
-		l.Errorf("ldap query search fail %v", err)
+		l.Errorf("ldap authentication query search fail %v", err)
 		return types.User{}, err
 	}
 	l.Infof("query success")
@@ -174,13 +171,13 @@ func ldapQuery(username string, cf LDAPconf, l glog.Logger, conn *ldap.Conn) (ty
 		return types.User{}, err
 	}
 	l.Infof("passer user information ")
-	for _, entries := range searchResult.Entries {
-		if isUserInfoCN(entries.GetAttributeValue("cn")) {
-			emailAddress := entries.GetAttributeValue("mail")
-			description := entries.GetAttributeValue("description")
+	for _, entry := range searchResult.Entries {
+		if isUserInfoCN(entry.GetAttributeValue("cn")) {
+			emailAddress := entry.GetAttributeValue("mail")
+			description := entry.GetAttributeValue("description")
 			// try to get DC name form description value
 			deliveryCenter := getDCFormDescription(description, "DC[\\s,\\-]*[0-9]+", l)
-			fulName := entries.GetAttributeValues("displayName")
+			fulName := entry.GetAttributeValues("displayName")
 			var name string
 			if len(fulName) == 0 {
 				name = ""
@@ -196,14 +193,14 @@ func ldapQuery(username string, cf LDAPconf, l glog.Logger, conn *ldap.Conn) (ty
 			}, nil
 		}
 	}
-	l.Errorf("can't get user information form ldap")
-	return types.User{}, errors.New("can't get user information form ldap")
+	l.Errorf("can't get user information form ldap authentication")
+	return types.User{}, errors.New("can't get user information form ldap authentication")
 }
 func findUserDN(username string, cf LDAPconf, l glog.Logger, conn *ldap.Conn) ([]string, error) {
-	l.Infof("find user distinguishedName form ldap server by user name : %v ", username)
+	l.Infof("find user distinguishedName form ldap authentication server by user name : %v ", username)
 	err := conn.Bind(cf.LDAPFirstBindUsername, cf.LDAPFirstBindPassword)
 	if err != nil {
-		l.Errorf("can't first bind to ldap database to query user distinguishedName %v", err)
+		l.Errorf("can't first bind to ldap authentication database to query user distinguishedName %v", err)
 		return nil, err
 	}
 	l.Infof("query user by base dn : %s", cf.BaseDN)
@@ -224,7 +221,7 @@ func findUserDN(username string, cf LDAPconf, l glog.Logger, conn *ldap.Conn) ([
 		err := errors.New("user does not exist")
 		return nil, err
 	}
-	l.Infof("len of distinguishedName: %d", len(searchResult.Entries))
+	l.Infof("len of distinguished name: %d", len(searchResult.Entries))
 	distinguishedName := make([]string, len(searchResult.Entries))
 
 	for _, dn := range searchResult.Entries {
@@ -236,6 +233,7 @@ func findUserDN(username string, cf LDAPconf, l glog.Logger, conn *ldap.Conn) ([
 }
 
 // the method just is used in here
+//try get dc name form ldap description
 func getDCFormDescription(s string, r string, l glog.Logger) []string {
 	l.Infof("the description : %s", s)
 	re := regexp.MustCompile(r)
