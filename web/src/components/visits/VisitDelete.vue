@@ -5,7 +5,7 @@
     width="30%"
     append-to-body
     :before-close="handleBackdropClick">
-    <span>Do you want to delete: {{ visitInfo }}?</span>
+    <span>Do you want to delete?</span>
     <span slot="footer" class="dialog-footer">
         <el-button @click="handleBackdropClick">Cancel</el-button>
         <el-button type="primary" @click="deleteVisit">Confirm</el-button>

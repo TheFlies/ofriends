@@ -57,6 +57,7 @@ func (s *Service) Create(ctx context.Context, friend types.Friend) (string, erro
 // Update a friend
 func (s *Service) Update(ctx context.Context, friend types.Friend) error {
 	if err := validation.ValidateStruct(&friend,
+		validation.Field(&friend.ID, validation.Required),
 		validation.Field(&friend.Name, validation.Required),
 		validation.Field(&friend.Title, validation.Required),
 		validation.Field(&friend.Position, validation.Required),

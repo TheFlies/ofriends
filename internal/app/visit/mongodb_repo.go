@@ -33,6 +33,18 @@ func (r *MongoRepository) FindByID(ctx context.Context, id string) (*types.Visit
 	return visit, nil
 }
 
+// Find all visits by all friend ID
+func (r *MongoRepository) FindByFriendID(ctx context.Context, friendId string) ([]types.Visit, error) {
+	s := r.session.Clone()
+	defer s.Close()
+	var visit []types.Visit
+	if err := r.collection(s).Find(bson.M{"_friend_id": friendId}).All(&visit); err != nil {
+		return nil, errors.Wrap(err, "failed to fetch all visit from database")
+	}
+	
+	return visit, nil
+}
+
 // FindAll return all visits
 func (r *MongoRepository) FindAll(ctx context.Context) ([]types.Visit, error) {
 	s := r.session.Clone()

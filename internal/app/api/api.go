@@ -9,11 +9,15 @@ import (
 
 	"github.com/TheFlies/ofriends/internal/app/api/handler/friend"
 	"github.com/TheFlies/ofriends/internal/app/api/handler/gift"
+	"github.com/TheFlies/ofriends/internal/app/api/handler/visit"
+	"github.com/TheFlies/ofriends/internal/app/api/handler/activity"
 	"github.com/TheFlies/ofriends/internal/app/api/handler/index"
 	"github.com/TheFlies/ofriends/internal/app/api/handler/login"
 	"github.com/TheFlies/ofriends/internal/app/db"
 	"github.com/TheFlies/ofriends/internal/app/friend"
 	"github.com/TheFlies/ofriends/internal/app/gift"
+	"github.com/TheFlies/ofriends/internal/app/visit"
+	"github.com/TheFlies/ofriends/internal/app/activity"
 	"github.com/TheFlies/ofriends/internal/app/ldap"
 	"github.com/TheFlies/ofriends/internal/app/user"
 	"github.com/TheFlies/ofriends/internal/pkg/glog"
@@ -49,11 +53,16 @@ func Init(conns *InfraConns) (http.Handler, error) {
 	var friendRepo friend.Repository
 	var userRepo user.UserRepository
 	var giftRepo gift.Repository
+	var visitRepo visit.Repository
+	var actRepo activity.Repository
+
 	switch conns.Databases.Type {
 	case db.TypeMongoDB:
-		friendRepo = friend.NewMongoRepository(conns.Databases.MongoDB)
-		userRepo = user.NewUserMongoRepositoty(conns.Databases.MongoDB)
-		giftRepo = gift.NewMongoRepository(conns.Databases.MongoDB)
+		friendRepo 	= friend.NewMongoRepository(conns.Databases.MongoDB)
+		userRepo 	= user.NewUserMongoRepositoty(conns.Databases.MongoDB)
+		giftRepo 	= gift.NewMongoRepository(conns.Databases.MongoDB)
+		visitRepo 	= visit.NewMongoRepository(conns.Databases.MongoDB)
+		actRepo 	= activity.NewMongoRepository(conns.Databases.MongoDB)
 	default:
 		return nil, fmt.Errorf("database type not supported: %s", conns.Databases.Type)
 	}
@@ -65,6 +74,14 @@ func Init(conns *InfraConns) (http.Handler, error) {
 	giftLogger := logger.WithField("package", "gift")
 	giftSrv := gift.NewService(giftRepo, giftLogger)
 	giftHandler := gifthandler.New(giftSrv, giftLogger)
+
+	visitLogger := logger.WithField("package", "visit")
+	visitSrv := visit.NewService(visitRepo, visitLogger)
+	visitHandler := visithandler.New(visitSrv, visitLogger)
+
+	actLogger := logger.WithField("package", "activity")
+	actSrv := activity.NewService(actRepo, actLogger)
+	actHandler := activityhandler.New(actSrv, actLogger)
 
 	indexWebHandler := indexhandler.New()
 
@@ -86,7 +103,7 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			method:  get,
 			handler: indexWebHandler.Index,
 		},
-		// services
+		// Friend services
 		{
 			path:    "/friends/{id:[a-z0-9-\\-]+}",
 			method:  get,
@@ -113,6 +130,68 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			handler: friendHandler.Delete,
 		},
 
+		// Visit services
+		{
+			path:    "/visits/{id:[a-z0-9-\\-]+}",
+			method:  get,
+			handler: visitHandler.Get,
+		},
+		{
+			path:    "/visits",
+			method:  post,
+			handler: visitHandler.Create,
+		},
+		{
+			path:    "/visits",
+			method:  put,
+			handler: visitHandler.Update,
+		},
+		{
+			path:    "/visits",
+			method:  get,
+			handler: visitHandler.GetAll,
+		},
+		{
+			path:    "/visits/{id:[a-z0-9-\\-]+}",
+			method:  delete,
+			handler: visitHandler.Delete,
+		},
+		{
+			path:    "/visits/friend/{id:[a-z0-9-\\-]+}",
+			method:  get,
+			handler: visitHandler.GetByFriendID,
+		},
+		// Activity services
+		{
+			path:    "/activity/{id:[a-z0-9-\\-]+}",
+			method:  get,
+			handler: actHandler.Get,
+		},
+		{
+			path:    "activity",
+			method:  post,
+			handler: actHandler.Create,
+		},
+		{
+			path:    "/activity",
+			method:  put,
+			handler: actHandler.Update,
+		},
+		{
+			path:    "/activity",
+			method:  get,
+			handler: actHandler.GetAll,
+		},
+		{
+			path:    "/activity/{id:[a-z0-9-\\-]+}",
+			method:  delete,
+			handler: actHandler.Delete,
+		},
+		{
+			path:    "/activity/visit/{id:[a-z0-9-\\-]+}",
+			method:  get,
+			handler: actHandler.GetByVisitID,
+		},
 		// Gift services
 		{
 			path:    "/gifts/{id:[a-z0-9-\\-]+}",
