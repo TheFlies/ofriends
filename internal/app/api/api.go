@@ -160,17 +160,17 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			handler: userHandler.GetUser,
 		},
 		{
-			path:    "/api/v1/user/{username}/password",
+			path:    "/api/v1/user/{username}",
 			method:  post,
 			handler: userHandler.SetPassword,
 		},
 		{
-			path:    "/api/v1/user/{username}/password",
+			path:    "/api/v1/user/{username}",
 			method:  put,
 			handler: userHandler.ChangePassword,
 		},
 		{
-			path:    "/api/v1/user/register",
+			path:    "/api/v1/user",
 			method:  post,
 			handler: userHandler.Register,
 		},
