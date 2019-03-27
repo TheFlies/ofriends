@@ -81,14 +81,7 @@
 </template>
 
 <script>
-export default {
-  name: 'GiftAdd',
-  props: {
-    isVisibleAdd: { type: Boolean, default: false }
-  },
-  data() {
-    return {
-      gift: {
+const giftDefault = {
         name: '',
         idea: '',
         size: '',
@@ -96,12 +89,32 @@ export default {
         price: 0,
         link: '',
         description: ''
-      },
+      }
+export default {
+  name: 'GiftAdd',
+  
+  props: {
+    isVisibleAdd: { type: Boolean, default: false }
+  },
+  data() {
+    return {
+      gift: giftDefault,
       rules: {
         name: [
           { required: true, message: 'Please input Gift name', trigger: 'blur' }
         ]
       }
+    }
+  },
+  mounted() {
+    this.gift =  {
+      name: '',
+      idea: '',
+      size: '',
+      quantity: 0,
+      price: 0,
+      link: '',
+      description: ''
     }
   },
   methods: {
@@ -118,6 +131,7 @@ export default {
           return false
         }
       })
+      this.gift = giftDefault
     },
     resetForm(formName) {
       this.$refs[formName].resetFields()
