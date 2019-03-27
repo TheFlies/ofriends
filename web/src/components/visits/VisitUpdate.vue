@@ -87,14 +87,7 @@ export default {
       passportInfo: "",
       createdBy: "",
       hotelStayed: "",
-      pickup: 50,
-      activities: {
-        startDate: "",
-        endDate: "",
-        detail: "",
-        participant: "",
-        hotel: ""
-      }
+      pickup: 50
     }
   },
   data() {

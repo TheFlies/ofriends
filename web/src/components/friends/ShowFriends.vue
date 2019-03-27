@@ -68,6 +68,13 @@
 import EditFriend from "@/components/friends/FriendUpdate.vue";
 import DeleteFriend from "@/components/friends/FriendDelete.vue";
 import AddFriend from "@/components/friends/FriendAdd.vue";
+import {
+  getAllFriends,
+  createFriend,
+  updateFriend,
+  deleteFriendById
+} from "@/api/friend";
+
 export default {
   name: "ListFriends",
   components: {
@@ -89,9 +96,7 @@ export default {
     };
   },
   mounted() {
-    // We already set the axios baseURL to the backend service in main.js file.
-    this.$http
-      .get("/friends")
+    getAllFriends()
       .then(resp => {
         if (resp.data != null) {
           this.tableData = resp.data;
@@ -106,20 +111,8 @@ export default {
     handleAdd: function(isAddFriend, friend) {
       if (isAddFriend) {
         this.loading = true;
-        this.$http
-          .post("http://localhost:8080/friends", {
-            Name: friend.name,
-            Title: friend.title,
-            Position: friend.position,
-            Project: friend.project,
-            Age: parseInt(friend.age, 10),
-            Company: friend.company,
-            Country: friend.country,
-            City: friend.city,
-            FoodNote: friend.foodNote,
-            FamilyNote: friend.familyNote,
-            NextVisitNote: friend.nextVisitNote
-          })
+        friend.age = parseInt(friend.age, 10);
+        createFriend(friend)
           .then(resp => {
             this.$notify({
               title: "Success",
@@ -142,8 +135,8 @@ export default {
     handleUpdate: function(isUpdateFriend) {
       if (isUpdateFriend) {
         this.loading = true;
-        this.$http
-          .put("http://localhost:8080/friends", this.friend)
+        this.friend.age = parseInt(this.friend.age, 10);
+        updateFriend(this.friend)
           .then(resp => {
             console.log(resp.data);
             this.$notify({
@@ -165,9 +158,7 @@ export default {
     handleDelete: function(isDeleteFriend) {
       if (isDeleteFriend) {
         this.loading = true;
-        console.log(this.scopeFriend.row);
-        this.$http
-          .delete("http://localhost:8080/friends/" + this.scopeFriend.row.id)
+        deleteFriendById(this.scopeFriend.row.id)
           .then(resp => {
             this.tableData.splice(this.scopeFriend.$index, 1);
             this.$notify({

@@ -176,7 +176,7 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			handler: actHandler.Get,
 		},
 		{
-			path:    "activity",
+			path:    "/activity",
 			method:  post,
 			handler: actHandler.Create,
 		},

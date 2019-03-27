@@ -15,6 +15,11 @@
         :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
         style="width: 80%; margin:auto"
       >
+        <el-table-column type="expand">
+          <template slot-scope="scope">
+            <ActivityList :visitId="scope.row.id"/>
+          </template>
+        </el-table-column>
         <el-table-column type="index" :index="indexMethod"></el-table-column>
         <el-table-column label="Lab" width="70" sortable prop="lab"></el-table-column>
         <el-table-column label="Arrived Date" width="130" prop="arrivedTime"></el-table-column>
@@ -57,12 +62,21 @@
 import VisitUpdate from "@/components/visits/VisitUpdate.vue";
 import VisitDelete from "@/components/visits/VisitDelete.vue";
 import VisitAdd from "@/components/visits/VisitAdd.vue";
+import ActivityList from "@/components/activity/ActivityList.vue";
+import {
+  getAllVisitsByFriendID,
+  createVisit,
+  updateVisit,
+  deleteVisitById
+} from "@/api/visit";
+
 export default {
   name: "VisitList",
   components: {
     VisitUpdate,
     VisitDelete,
-    VisitAdd
+    VisitAdd,
+    ActivityList
   },
   data() {
     return {
@@ -73,6 +87,7 @@ export default {
       search: "",
       loading: false, // need to be true need fix
       visit: {},
+      activities: {},
       scopeVisit: {}
     };
   },
@@ -80,9 +95,7 @@ export default {
     this.visit.friendID = this.$route.params.id;
   },
   mounted() {
-    // We already set the axios baseURL to the backend service in main.js file.
-    this.$http
-      .get("/visits/friend/" + this.visit.friendID)
+    getAllVisitsByFriendID(this.visit.friendID)
       .then(resp => {
         if (resp.data != null) {
           this.tableData = resp.data;
@@ -97,18 +110,9 @@ export default {
     handleAdd: function(isAddVisit, visit) {
       if (isAddVisit) {
         this.loading = true;
-        this.$http
-          .post("http://localhost:8080/visits", {
-            Lab: visit.lab,
-            ArrivedTime: visit.arrivedTime.toString(),
-            DepartureTime: visit.departureTime.toString(),
-            PreApproveVisa: visit.preApproveVisa,
-            PassportInfo: visit.passportInfo,
-            CreatedBy: visit.createdBy,
-            HotelStayed: visit.hotelStayed,
-            Pickup: visit.pickup,
-            FriendID: visit.friendID
-          })
+        visit.arrivedTime = visit.arrivedTime.toString();
+        visit.departureTime = visit.departureTime.toString();
+        createVisit(visit)
           .then(resp => {
             this.$notify({
               title: "Success",
@@ -133,10 +137,8 @@ export default {
     handleUpdate: function(isUpdateVisit) {
       if (isUpdateVisit) {
         this.loading = true;
-        this.$http
-          .put("http://localhost:8080/visits", this.visit)
+        updateVisit(this.visit)
           .then(resp => {
-            console.log(resp.data);
             this.$notify({
               title: "Success",
               message: "Update successfully!",
@@ -156,9 +158,7 @@ export default {
     handleDelete: function(isDeleteVisit) {
       if (isDeleteVisit) {
         this.loading = true;
-        console.log(this.scopeVisit.row);
-        this.$http
-          .delete("http://localhost:8080/visits/" + this.scopeVisit.row.id)
+        deleteVisitById(this.scopeVisit.row.id)
           .then(resp => {
             this.tableData.splice(this.scopeVisit.$index, 1);
             this.$notify({
