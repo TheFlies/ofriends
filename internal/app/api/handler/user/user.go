@@ -21,7 +21,7 @@ type (
 	}
 	UserService interface {
 		GetByName(username string) (*types.User, error)
-		AddUser(u *types.User) error
+		AddUser(u *types.User) (string, error)
 		CheckExistence(username string) bool
 		ChangePassword(username string, oldPassword string, newPassword string) error
 		SetNewPassword(username string, password string) error
@@ -41,7 +41,7 @@ func (u *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	username := vars["username"]
 	user, err := u.srv.GetByName(username)
-	user.Password = ""
+	user.Password = " "
 	if err != nil {
 		respond.JSON(w, http.StatusNotFound, map[string]string{"status": "404", "message": "user is not found"})
 		return
@@ -62,12 +62,12 @@ func (u *UserHandler) Register(w http.ResponseWriter, r *http.Request) {
 		u.logger.Errorf("some field of new user is malformed, &v", err)
 		respond.JSON(w, http.StatusBadRequest, map[string]string{"status": "400", "message": fmt.Sprintf("input must type correctly input %v", err)})
 	}
-	err = u.srv.AddUser(&requestData)
+	userID, err := u.srv.AddUser(&requestData)
 	if err != nil {
 		respond.JSON(w, http.StatusInternalServerError, map[string]string{"status": "500", "message": "have an error when register for you"})
 		return
 	}
-	respond.JSON(w, http.StatusOK, map[string]string{"status": "200", "message": "your username is saved in database"})
+	respond.JSON(w, http.StatusOK, map[string]string{"status": "200", "userID": userID})
 	return
 }
 func (u *UserHandler) ChangePassword(w http.ResponseWriter, r *http.Request) {

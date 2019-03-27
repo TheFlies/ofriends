@@ -10,7 +10,7 @@ import (
 type (
 	UserRepository interface {
 		FindUserByUserName(username string) (*types.User, error)
-		InsertUser(user *types.User) error
+		InsertUser(user *types.User) (string, error)
 		CheckUserByUsername(username string) bool
 		UpdateUser(user *types.User) error
 	}
@@ -29,14 +29,14 @@ func NewUserService(r UserRepository, l glog.Logger) *UserService {
 func (s *UserService) GetByName(username string) (*types.User, error) {
 	return s.repo.FindUserByUserName(username)
 }
-func (s *UserService) AddUser(u *types.User) error {
+func (s *UserService) AddUser(u *types.User) (string, error) {
 	if u.Password == "" {
 		return s.repo.InsertUser(u)
 	}
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(u.Password), 14)
 	if err != nil {
 		s.logger.Errorf("hash password fail err: %v", err)
-		return err
+		return "", err
 	}
 	u.Password = string(hashedPassword)
 	return s.repo.InsertUser(u)

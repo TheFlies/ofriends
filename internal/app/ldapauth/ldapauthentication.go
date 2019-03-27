@@ -102,7 +102,7 @@ func (l *LdapAuthentication) Authenticate(username string, password string) (int
 		l.log.Errorf("get user fail")
 		return "", err
 	}
-	err = l.userSvr.AddUser(&ldapUser)
+	_, err = l.userSvr.AddUser(&ldapUser)
 	if err != nil {
 		l.log.Errorf("can not add a user to mongodb %v", err)
 	}

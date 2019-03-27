@@ -29,14 +29,14 @@ func (r *UserMongoRepository) FindUserByUserName(username string) (*types.User, 
 	}
 	return user, nil
 }
-func (r *UserMongoRepository) InsertUser(u *types.User) error {
+func (r *UserMongoRepository) InsertUser(u *types.User) (string, error) {
 	s := r.session.Clone()
 	defer s.Close()
 	u.ID = uuid.New()
 	if err := r.collection(s).Insert(&u); err != nil {
-		return errors.Wrap(err, "insert u to database is fail")
+		return "", errors.Wrap(err, "insert u to database is fail")
 	}
-	return nil
+	return u.ID, nil
 }
 func (r *UserMongoRepository) CheckUserByUsername(username string) bool {
 	s := r.session.Clone()
