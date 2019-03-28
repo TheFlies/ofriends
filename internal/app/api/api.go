@@ -237,6 +237,11 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			handler: loginHandler.Authenticate,
 		},
 		{
+			path:    "/api/v1/register",
+			method:  post,
+			handler: userHandler.Register,
+		},
+		{
 			path:    "/api/v1/user/{username}",
 			method:  get,
 			handler: userHandler.GetUser,
@@ -250,11 +255,6 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			path:    "/api/v1/user/{username}",
 			method:  put,
 			handler: userHandler.ChangePassword,
-		},
-		{
-			path:    "/api/v1/user",
-			method:  post,
-			handler: userHandler.Register,
 		},
 		{
 			path:    "/api/v1/user/{username}",
