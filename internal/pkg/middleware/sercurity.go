@@ -22,7 +22,7 @@ func Security(h http.Handler) http.Handler {
 	logger := glog.New().WithField("package", "middleware")
 	var whiteList []string
 	whiteList = append(whiteList, "/api/v1/login")
-	whiteList = append(whiteList, "/api/v1/user/register")
+	whiteList = append(whiteList, "/api/v1/user")
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		for _, a := range whiteList {
 			if a == r.RequestURI {

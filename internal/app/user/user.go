@@ -30,6 +30,9 @@ func (s *UserService) GetByName(username string) (*types.User, error) {
 	return s.repo.FindUserByUserName(username)
 }
 func (s *UserService) AddUser(u *types.User) (string, error) {
+	if ok := s.repo.CheckUserByUsername(u.Username); ok {
+		return "", errors.New("the user already exist")
+	}
 	if u.Password == "" {
 		return s.repo.InsertUser(u)
 	}
@@ -86,7 +89,7 @@ func (s *UserService) UpdateUser(u *types.User) error {
 	ok := s.repo.CheckUserByUsername(u.Username)
 	if !ok {
 		s.logger.Errorf("u not found form database")
-		return errors.New("u is not exits")
+		return errors.New("user is not exits")
 	}
 	return s.repo.UpdateUser(u)
 }

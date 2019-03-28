@@ -50,7 +50,7 @@ func (u *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	return
 }
 func (u *UserHandler) Register(w http.ResponseWriter, r *http.Request) {
-	u.logger.Infof("Registering user")
+	u.logger.Infof("registering user")
 	requestData := types.User{}
 	err := marshal.ParseRequest(r, &requestData)
 	if err != nil {
@@ -62,12 +62,12 @@ func (u *UserHandler) Register(w http.ResponseWriter, r *http.Request) {
 		u.logger.Errorf("some field of new user is malformed, &v", err)
 		respond.JSON(w, http.StatusBadRequest, map[string]string{"status": "400", "message": fmt.Sprintf("input must type correctly input %v", err)})
 	}
-	userID, err := u.srv.AddUser(&requestData)
+	username, err := u.srv.AddUser(&requestData)
 	if err != nil {
-		respond.JSON(w, http.StatusInternalServerError, map[string]string{"status": "500", "message": "have an error when register for you"})
+		respond.JSON(w, http.StatusInternalServerError, map[string]string{"status": "500", "message": fmt.Sprintf("username %v: %v", requestData.Username, err)})
 		return
 	}
-	respond.JSON(w, http.StatusOK, map[string]string{"status": "200", "userID": userID})
+	respond.JSON(w, http.StatusOK, map[string]string{"status": "200", "userID": username})
 	return
 }
 func (u *UserHandler) ChangePassword(w http.ResponseWriter, r *http.Request) {
