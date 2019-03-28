@@ -2,8 +2,9 @@ package api
 
 import (
 	"fmt"
-	"github.com/TheFlies/ofriends/internal/app/api/handler/login"
 	"net/http"
+
+	"github.com/TheFlies/ofriends/internal/app/api/handler/login"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"

@@ -2,8 +2,9 @@ package user
 
 import (
 	"fmt"
-	"github.com/gorilla/mux"
 	"net/http"
+
+	"github.com/gorilla/mux"
 
 	"github.com/TheFlies/ofriends/internal/app/api/handler/login"
 	"github.com/TheFlies/ofriends/internal/app/types"
@@ -62,13 +63,19 @@ func (u *UserHandler) Register(w http.ResponseWriter, r *http.Request) {
 		u.logger.Errorf("some field of new user is malformed, &v", err)
 		respond.JSON(w, http.StatusBadRequest, map[string]string{"status": "400", "message": fmt.Sprintf("input must type correctly input %v", err)})
 	}
-	userID, err := u.srv.AddUser(&requestData)
-	if err != nil {
-		respond.JSON(w, http.StatusInternalServerError, map[string]string{"status": "500", "message": "have an error when register for you"})
+	isExists := u.srv.CheckExistence(requestData.Username)
+	if !isExists {
+		userID, err := u.srv.AddUser(&requestData)
+		if err != nil {
+			respond.JSON(w, http.StatusInternalServerError, map[string]string{"status": "500", "message": "have an error when register for you"})
+			return
+		}
+		respond.JSON(w, http.StatusOK, map[string]string{"status": "200", "userID": userID})
+		return
+	} else {
+		respond.JSON(w, http.StatusConflict, map[string]string{"status": "409", "message": "user already existed"})
 		return
 	}
-	respond.JSON(w, http.StatusOK, map[string]string{"status": "200", "userID": userID})
-	return
 }
 func (u *UserHandler) ChangePassword(w http.ResponseWriter, r *http.Request) {
 	var varList = mux.Vars(r)
