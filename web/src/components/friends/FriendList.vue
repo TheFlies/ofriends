@@ -35,7 +35,7 @@
         <el-table-column label="Family Note" width="120" prop="familyNote" />
         <el-table-column label="Next Visit Note" width="120" prop="nextVisitNote" />
         <el-table-column align="right">
-          <template slot="header" slot-scope="scope">
+          <template slot="header">
             <el-input v-model="search" size="mini" placeholder="Type to search" />
           </template>
           <EditFriend

@@ -2,11 +2,11 @@
 #timeline
   s-cards(:data="items"
     :outer-margin="30"
-    :card-height="230"
+    :card-height="190"
     :card-width="540"
-    marker-color="red"
-    :number-size="35"
-    marker-border-color="#3b2c11" :stagger="60" :arrow-size="5")
+    marker-color="rgb(0,230,10)"
+    :number-size="15"
+    marker-border-color="rgba(0,230,10,.32)" :stagger="120" :arrow-size="12")
 </template>
 
 <script>
