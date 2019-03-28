@@ -63,7 +63,14 @@
         el-form-item(prop="delivery_center")
           span.svg-container
             svg-icon(name="delivery")
-          el-input(v-model="loginForm.delivery_center" name="delivery_center" type="text" placeholder="delivery center")
+          el-select(v-model="loginForm.delivery_center" multiple filterable allow-create default-first-option
+            placeholder="delivery center"
+          )
+            el-option(v-for="item in loginForm.delivery_center"
+              :key="item"
+              :label="item"
+              :value="item"
+            )
         el-form-item
           el-button(:loading="loading" type="primary" style="width:100%" @click.native.prevent="handleRegister") Create
         span
@@ -239,6 +246,28 @@ $bg=#2d3a4b
 $light_gray=#eee
 
 .login-container
+  .el-select
+    display inline-block
+    height 47px
+    width 85%
+    .el-input.el-input--suffix
+      position relative
+    .el-tag
+      background transparent
+      font-size inherit
+      color $light_gray
+    .el-select__input
+      background transparent
+      border 0px
+      -webkit-appearance none
+      border-radius 0px
+      padding 12px 15px 12px 15px
+      margin-left 0
+      color $light_gray
+      height 47px
+      &:-webkit-autofill
+        -webkit-box-shadow 0 0 0px 1000px $bg inset !important
+        -webkit-text-fill-color #fff !important
   .el-input
     display inline-block
     height 47px
@@ -249,6 +278,7 @@ $light_gray=#eee
       -webkit-appearance none
       border-radius 0px
       padding 12px 15px 12px 15px
+      margin-left 0
       color $light_gray
       height 47px
       &:-webkit-autofill
