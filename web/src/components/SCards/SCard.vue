@@ -1,11 +1,40 @@
 <template lang="pug">
 .s-card(:class="classProps" :style="cssProps")
-  slot
+  s-card-head(
+    :title="item.title"
+    :sub-title="item.subtitle"
+  )
+    .number-box
+      span {{ item.dc }}
+  s-card-body
+    span {{ item.familyNote }}
+    br
+    span {{ item.footNote }}
+    br
+    span {{ item.nextVisitNote }}
+    br
+    span {{ item.country }}
+    br
+    span {{ item.city }}
+    .footer
+      svg-icon(name="gift")
+      | &nbsp;
+      svg-icon(name="places")
+      | &nbsp;
+      svg-icon(name="hobby")
 </template>
 
 <script>
+import SCardHead from './SCardHead.vue'
+import SCardBody from './SCardBody.vue'
+
 export default {
+  components: { SCardHead, SCardBody },
   props: {
+    item: {
+      type: Object,
+      required: true,
+    },
     step: {
       type: Number,
       required: true
@@ -13,10 +42,6 @@ export default {
     color: {
       type: String,
       default: '#332211'
-    },
-    bgColor: {
-      type: String,
-      default: '#ffffff'
     },
     total: {
       type: Number,
@@ -26,19 +51,21 @@ export default {
       type: Number,
       default: 180
     },
-    cardWidth: {
+    titleSize: {
       type: Number,
-      default: 450
+      default: 1.3
+    },
+    subTitleSize: {
+      type: Number,
+      default: 0.6
     }
   },
   computed: {
     cssProps() {
       const props = {
         backgroundColor: this.color,
-        // this is variable for the css
         '--bg-color': this.color,
         '--margin': `${(this.stagger)}px`,
-        '--left-marker-dist': '',
         order: this.calculateOrder()
       }
       return props
@@ -75,5 +102,22 @@ export default {
 .head::after {
   border-color: var(--bg-color);
 }
+</style>
+
+<style lang="stylus" scoped>
+.body
+  position relative
+  margin-top 10px
+  padding-top 35px
+  .footer
+    text-align left
+    width 100%
+    position absolute
+    display inline-block
+    bottom 0
+    padding 8px 16px 8px 16px
+    left 0
+    height 34px
+    overflow hidden
 </style>
 

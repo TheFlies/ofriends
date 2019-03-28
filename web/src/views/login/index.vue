@@ -240,7 +240,6 @@ export default {
 }
 </style>
 
-
 <style lang="stylus">
 $bg=#2d3a4b
 $light_gray=#eee
