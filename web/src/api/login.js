@@ -10,5 +10,5 @@ export function login(username, password) {
 }
 
 export function register(user) {
-  return axios.post('/api/v1/user', user)
+  return axios.post('/api/v1/register', user)
 }
