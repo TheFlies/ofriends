@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <img alt="Vue logo" src="../assets/logo.png">
-    <AddFriend msg="Welcome d tosss Your Vue.js App"/>
+    <AddFriend msg="Welcome d tosss Your Vue.js App" />
   </div>
 </template>
 
@@ -10,7 +10,7 @@
 import AddFriend from '@/components/friends/FriendAdd.vue'
 
 export default {
-  name: 'home',
+  name: 'Home',
   components: {
     AddFriend
   }

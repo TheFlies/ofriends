@@ -50,8 +50,8 @@ func (s *Service) GetAll(ctx context.Context) ([]types.Activity, error) {
 // Create a activity
 func (s *Service) Create(ctx context.Context, act types.Activity) (string, error) {
 	if err := validation.ValidateStruct(&act,
-		validation.Field(&act.StartDate, validation.Required),
-		validation.Field(&act.EndDate, validation.Required),
+		validation.Field(&act.StartTime, validation.Required),
+		validation.Field(&act.EndTime, validation.Required),
 		validation.Field(&act.VisitID, validation.Required),
 	); err != nil {
 		return "",err
@@ -63,8 +63,8 @@ func (s *Service) Create(ctx context.Context, act types.Activity) (string, error
 func (s *Service) Update(ctx context.Context, act types.Activity) error {
 	if err := validation.ValidateStruct(&act,
 		validation.Field(&act.ID, validation.Required),
-		validation.Field(&act.StartDate, validation.Required),
-		validation.Field(&act.EndDate, validation.Required),
+		validation.Field(&act.StartTime, validation.Required),
+		validation.Field(&act.EndTime, validation.Required),
 		validation.Field(&act.VisitID, validation.Required),
 	); err != nil {
 		return err

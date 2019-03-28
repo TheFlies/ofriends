@@ -82,17 +82,17 @@
 
 <script>
 const giftDefault = {
-        name: '',
-        idea: '',
-        size: '',
-        quantity: 0,
-        price: 0,
-        link: '',
-        description: ''
-      }
+  name: '',
+  idea: '',
+  size: '',
+  quantity: 0,
+  price: 0,
+  link: '',
+  description: ''
+}
 export default {
   name: 'GiftAdd',
-  
+
   props: {
     isVisibleAdd: { type: Boolean, default: false }
   },
@@ -107,7 +107,7 @@ export default {
     }
   },
   mounted() {
-    this.gift =  {
+    this.gift = {
       name: '',
       idea: '',
       size: '',

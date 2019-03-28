@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    title=""
+    title
     :visible.sync="isVisibleDelete"
     width="30%"
     append-to-body
@@ -9,26 +9,25 @@
     <span>Do you want to delete?</span>
     <span slot="footer" class="dialog-footer">
       <el-button @click="handleBackdropClick">Cancel</el-button>
-      <el-button type="primary" @click="deleteVisit">Confirm</el-button>
+      <el-button type="primary" @click="deleteAct">Confirm</el-button>
     </span>
   </el-dialog>
 </template>
 
 <script>
 export default {
-  name: 'VisitDelete',
+  name: 'ActivityDelete',
   props: {
     isVisibleDelete: { type: Boolean, default: false },
-    visitInfo: { type: String, default: '' },
-    isDeleteVisit: { type: Boolean, default: false }
+    isDeleteAct: { type: Boolean, default: false }
   },
   methods: {
     handleBackdropClick() {
       this.$emit('update:isVisibleDelete', false)
     },
-    deleteVisit() {
+    deleteAct() {
       this.$emit('update:isVisibleDelete', false)
-      this.$emit('isDeleteVisit', true)
+      this.$emit('isDeleteAct', true)
     }
   }
 }

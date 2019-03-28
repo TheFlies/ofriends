@@ -81,5 +81,5 @@ func (r *MongoRepository) Delete(ctx context.Context, id string) error {
 }
 
 func (r *MongoRepository) collection(s *mgo.Session) *mgo.Collection {
-	return s.DB("ofriends").C("friends")
+	return s.DB("ofriends").C("visits")
 }

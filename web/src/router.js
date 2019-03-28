@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Gifts from './views/Gifts.vue'
 import Hello from '@/components/Hello'
 
 Vue.use(Router)
@@ -81,16 +80,46 @@ export const constantRouterMap = [
     ]
   },
   {
+    path: '/visits',
+    component: Layout,
+    children: [
+      {
+        path: '',
+        name: 'visit',
+        component: () => import('./views/visits/Show.vue'),
+        meta: {
+          title: 'Visit',
+          icon: 'visit'
+        }
+      }
+    ]
+  },
+  {
     path: '/gifts',
     component: Layout,
     children: [
       {
         path: '',
         name: 'gifts',
-        component: Gifts,
+        component: () => import('./views/Gifts.vue'),
         meta: {
           title: 'Gifts',
           icon: 'gift'
+        }
+      }
+    ]
+  },
+  {
+    path: '/activites',
+    component: Layout,
+    children: [
+      {
+        path: '',
+        name: 'activity',
+        component: () => import('./views/activity/Show.vue'),
+        meta: {
+          title: 'Activity',
+          icon: 'hiking'
         }
       }
     ]
