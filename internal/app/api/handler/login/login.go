@@ -33,11 +33,10 @@ func (h *LoginHandler) Authenticate(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		respondValue, err = h.ldapLoginSrv.Authenticate(username, password)
 		if err != nil {
-			respond.JSON(w, http.StatusUnauthorized, map[string]string{"status": "401", "message": "your username and password incorrect"})
+			respond.JSON(w, http.StatusForbidden, map[string]string{"status": "403", "message": "your username and password incorrect"})
 			return
 		}
 	}
 	respond.JSON(w, http.StatusAccepted, respondValue)
 	return
-
 }

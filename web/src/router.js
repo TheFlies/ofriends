@@ -55,6 +55,10 @@ export const constantRouterMap = [
   {
     path: '/friends',
     component: Layout,
+    meta: {
+      title: 'Friends',
+      icon: 'user-setting'
+    },
     children: [
       {
         path: '',
@@ -64,20 +68,14 @@ export const constantRouterMap = [
           title: 'Friends',
           icon: 'user-setting'
         }
-      }
-    ]
-  },
-  {
-    path: '/friend/:id',
-    component: Layout,
-    children: [
+      },
       {
-        path: '',
+        path: '/friends/:id',
         name: 'Friend',
         component: () => import('./views/friends/ShowDetail.vue'),
+        hidden: true,
         meta: {
-          title: 'Friends',
-          icon: 'user-setting'
+          title: 'Friend Profile'
         }
       }
     ]
