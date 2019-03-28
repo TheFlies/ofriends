@@ -14,8 +14,12 @@
         </el-table-column>
         <el-table-column type="index" :index="indexMethod" />
         <el-table-column label="Lab" width="70" sortable prop="lab" />
-        <el-table-column label="Arrived Date" width="130" prop="arrivedTime" />
-        <el-table-column label="Departure Date" width="150" prop="departureTime" />
+        <el-table-column label="Arrived Date" width="200" prop="arrivedTime" >
+           <template slot-scope="scope">{{getHumanDate(scope.row.arrivedTime)}}</template>
+        </el-table-column>
+        <el-table-column label="Departure Date" width="200" prop="departureTime">
+           <template slot-scope="scope">{{getHumanDate(scope.row.departureTime)}}</template>
+        </el-table-column>
         <el-table-column label="Pre-approved visa" width="120">
           <template slot-scope="scope">
             <el-checkbox v-model="scope.row.preApproveVisa" />
@@ -39,7 +43,6 @@
             @isUpdateVisit="handleUpdate"
           />
           <VisitDelete :is-visible-delete.sync="isVisibleDelete" @isDeleteVisit="handleDelete" />
-          <VisitAdd :is-visible-add.sync="isVisibleAdd" @isAddVisit="handleAdd" />
           <template slot-scope="scope">
             <el-button
               size="mini"
@@ -67,6 +70,7 @@ import VisitDelete from '@/components/visits/VisitDelete.vue'
 import VisitAdd from '@/components/visits/VisitAdd.vue'
 import ActivityListByVisit from '@/components/activity/ActivityListByVisit.vue'
 import GiftListByVisit from '@/components/gifts/GiftListByVisit.vue'
+import {getHumanDate} from "@/utils/convert";
 import {
   getAllVisits,
   createVisit,
@@ -109,33 +113,6 @@ export default {
       })
   },
   methods: {
-    handleAdd: function(isAddVisit, visit) {
-      if (isAddVisit) {
-        this.loading = true
-        visit.arrivedTime = visit.arrivedTime.toString()
-        visit.departureTime = visit.departureTime.toString()
-        createVisit(visit)
-          .then(resp => {
-            this.$notify({
-              title: 'Success',
-              message: 'Update successfully!',
-              type: 'success'
-            })
-            visit.id = resp.data.id
-            visit.arrivedTime = visit.arrivedTime.toString()
-            visit.departureTime = visit.departureTime.toString()
-            this.tableData.splice(0, 0, visit)
-          })
-          .catch(err => {
-            console.log(err)
-            this.$notify.error({
-              title: 'Error',
-              message: err
-            })
-          })
-        this.loading = false
-      }
-    },
     handleUpdate: function(isUpdateVisit) {
       if (isUpdateVisit) {
         this.loading = true
@@ -181,7 +158,8 @@ export default {
     },
     indexMethod(index) {
       return index * 1
-    }
+    },
+    getHumanDate
   }
 }
 </script>

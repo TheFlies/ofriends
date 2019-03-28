@@ -26,6 +26,7 @@
               type="datetime"
               placeholder="Pick arrived time"
               format="yyyy/MM/dd HH:mm"
+              value-format="timestamp"
               style="width: 100%;"
             />
           </el-form-item>
@@ -39,6 +40,7 @@
               type="datetime"
               placeholder="Pick Departure Time"
               format="yyyy/MM/dd HH:mm"
+              value-format="timestamp"
               style="width: 100%;"
             />
           </el-form-item>
@@ -89,9 +91,9 @@ export default {
     return {
       visit: {
         lab: '',
-        arrivedTime: '',
-        departureTime: '',
-        preApproveVisa: '',
+        arrivedTime: new Date().getTime(),
+        departureTime: new Date().getTime(),
+        preApproveVisa: false,
         passportInfo: '',
         createdBy: '',
         hotelStayed: '',

@@ -87,9 +87,9 @@ export default {
       default: () => ({
         id: '',
         lab: '',
-        arrivedTime: '',
-        departureTime: '',
-        preApproveVisa: '',
+        arrivedTime: new Date().getTime(),
+        departureTime: new Date().getTime(),
+        preApproveVisa: false,
         passportInfo: '',
         createdBy: '',
         hotelStayed: '',
