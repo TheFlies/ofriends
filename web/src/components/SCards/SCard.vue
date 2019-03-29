@@ -50,6 +50,8 @@
                 )
                   div family food etc ...
                   svg-icon(name="hobby" @click.native="notes" slot="reference")
+          el-col(:span="6")
+            span {{ data.project }}
           el-col(:span="4")
             el-row(justify="end" :gutter="5")
               el-col(:span="20" style="text-align: right")

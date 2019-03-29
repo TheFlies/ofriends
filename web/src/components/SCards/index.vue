@@ -84,6 +84,7 @@ export default {
         '--outer-margin': `${this.outerMargin}px`,
         '--half-outer-margin': `${this.outerMargin / 2}px`,
         '--marker-size': `${this.markerSize}px`,
+        '--half-marker-size': `-${this.markerSize / 2 - 1}px`,
         '--marker-dist-add': `${this.markerDist() + 1}px`,
         '--marker-dist-sub': `${this.markerDist() - 1}px`,
         '--timeline': this.markerColor,
