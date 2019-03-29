@@ -1,9 +1,10 @@
 <template lang="pug">
   .head()
     slot
-    h2
-      span.small {{ subTitle }}
-      |  {{ title }}
+    a(:href="`/friends/${id}`")
+      h2
+        span.small {{ subTitle }}
+        |  {{ title }}
     .left
       svg-icon(:name="companyIcon(icon)")
     .btm(v-if="attime")
@@ -15,6 +16,10 @@
 <script>
 export default {
   props: {
+    id: {
+      type: String,
+      required: true
+    },
     title: {
       type: String,
       required: true
