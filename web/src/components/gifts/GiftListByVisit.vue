@@ -112,6 +112,7 @@ export default {
     handleAdd: function(isAddGift, gift) {
       if (isAddGift) {
         this.loading = true
+        gift.visitID = this.visitId
         createGifts(gift)
           .then(resp => {
             this.$notify({

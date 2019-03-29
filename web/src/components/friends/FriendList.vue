@@ -1,6 +1,6 @@
 <template>
   <el-container>
-    <el-header style="width: 80%; margin:auto">
+    <el-header style="width: 100%; margin:auto">
       <el-button
         type="primary"
         icon="el-icon-plus"
@@ -15,7 +15,7 @@
       <el-table
         v-loading="loading"
         :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
-        style="width: 80%; margin:auto"
+        style="width: 100%; margin:auto"
       >
         <el-table-column type="index" :index="indexMethod" />
         <el-table-column label="Name" width="120" sortable prop="name">

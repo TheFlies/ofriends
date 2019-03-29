@@ -15,6 +15,7 @@
               type="datetime"
               placeholder="Pick start time"
               format="yyyy/MM/dd HH:mm"
+              value-format="timestamp"
               style="width: 100%;"
             />
           </el-form-item>
@@ -28,6 +29,7 @@
               type="datetime"
               placeholder="Pick End Time"
               format="yyyy/MM/dd HH:mm"
+              value-format="timestamp"
               style="width: 100%;"
             />
           </el-form-item>
@@ -67,8 +69,8 @@ export default {
   data() {
     return {
       activity: {
-        startTime: '',
-        endTime: '',
+        startTime: new Date().getTime(),
+        endTime: new Date().getTime(),
         detail: '',
         participant: '',
         hotel: '',

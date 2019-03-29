@@ -18,8 +18,12 @@
         style="width: 100%; margin:auto"
       >
         <el-table-column type="index" :index="indexMethod" />
-        <el-table-column label="Start Time" width="130" sortable prop="startTime" />
-        <el-table-column label="End Time" width="130" sortable prop="endTime" />
+        <el-table-column label="Start Time" width="130" sortable prop="startTime" >
+           <template slot-scope="scope">{{getHumanDate(scope.row.startTime)}}</template>
+        </el-table-column>
+        <el-table-column label="End Time" width="130" sortable prop="endTime" >
+           <template slot-scope="scope">{{getHumanDate(scope.row.endTime)}}</template>
+        </el-table-column>
         <el-table-column label="Detail" width="300" prop="detail" />
         <el-table-column label="Participant" prop="participant" width="150" />
         <el-table-column label="Hotel" width="280" prop="hotel" />
@@ -56,6 +60,7 @@
 import ActivityUpdate from '@/components/activity/ActivityUpdate.vue'
 import ActivityDelete from '@/components/activity/ActivityDelete.vue'
 import ActivityAdd from '@/components/activity/ActivityAdd.vue'
+import {getHumanDate} from "@/utils/convert";
 
 import {
   getAllActivitiesByVisitID,
@@ -106,8 +111,6 @@ export default {
       activity.visitID = this.activity.visitID
       if (isAddAct) {
         this.loading = true
-        activity.startTime = activity.startTime.toString()
-        activity.endTime = activity.endTime.toString()
         createActivity(activity)
           .then(resp => {
             this.$notify({
@@ -116,8 +119,6 @@ export default {
               type: 'success'
             })
             activity.id = resp.data.id
-            activity.startTime = activity.startTime.toString()
-            activity.endTime = activity.endTime.toString()
             this.tableData.splice(0, 0, activity)
           })
           .catch(err => {
@@ -176,7 +177,8 @@ export default {
     },
     indexMethod(index) {
       return index * 1
-    }
+    },
+    getHumanDate
   }
 }
 </script>
