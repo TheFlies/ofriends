@@ -3,6 +3,7 @@
   .s-card(:class="classProps" :style="cssProps" v-loading="loading")
     s-card-head(
       v-if="data"
+      :id="data.friendId"
       :title="`${data.title}. ${data.name}`"
       :sub-title="`${data.position} at ${data.company}`"
       :icon="data.company"
