@@ -1,14 +1,17 @@
 <template lang="pug">
-  .s-card-wrapper(:style="cssProps")
-    s-card(
-      v-for="(item, i) in data"
-      :color="item.color"
-      :total="data.length"
-      :step="i + 1"
-      :stagger="i===1?stagger:0"
-      :key="item.id"
-      :item="item"
-    )
+  #s-card-list
+    div(v-if="!data.length")
+      span.title No data
+    .s-card-wrapper(v-else :style="cssProps")
+      s-card(
+        v-for="(item, i) in data"
+        :color="item.color"
+        :total="data.length"
+        :step="i + 1"
+        :stagger="i===1?stagger:0"
+        :key="item.id"
+        :item="item"
+      )
 </template>
 
 <script>
@@ -92,7 +95,7 @@ export default {
         // this is variable for the css
         '--left-marker-dist': '',
         '--title-size': `${this.titleSize}rem`,
-        '--sub-title-size': `${this.subTitleSize}rem`,
+        '--sub-title-size': `${this.subTitleSize}rem`
       }
     }
   },
@@ -103,6 +106,7 @@ export default {
       return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n
     },
     containerHeight() {
+      console.log(this.data.length)
       const rows = Math.ceil(this.data.length / 2)
       return rows * (this.cardHeight + this.outerMargin) + this.stagger
     },

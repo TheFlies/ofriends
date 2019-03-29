@@ -1,8 +1,8 @@
 <template lang="pug">
-#timeline
+#timeline(v-loading="loading")
   s-cards(:data="items"
     :outer-margin="30"
-    :card-height="190"
+    :card-height="220"
     :card-width="540"
     marker-color="rgb(0,230,10)"
     :number-size="15"
@@ -12,42 +12,30 @@
 <script>
 import SCards from '@/components/SCards'
 
+import { getAllVisits } from '@/api/visit'
+
+const colorTable = {
+  lab3: '#777777'
+}
+
 export default {
   components: { SCards },
   data() {
     return {
-      items: [
-        {
-          title: 'Mr. Park Heo',
-          color: '#3ee9d1',
-          subtitle: 'CEO from Samsung',
-          content: 'He working with TNTVU',
-          dc: '14',
-          arrival: '15 March 2019'
-        },
-        {
-          title: 'Kin Khung Ah',
-          color: '#4d92eb',
-          subtitle: 'VP',
-          content: 'Scary boss and dog lover',
-          dc: '12A'
-        },
-        {
-          title: 'Tam Tran',
-          color: '#ce43eb',
-          subtitle: 'Junior Engineer',
-          content: 'NA',
-          dc: '1'
-        },
-        {
-          title: 'Hai 3b',
-          color: '#3ee9d1',
-          subtitle: 'Junior Engineer',
-          content: 'NA',
-          dc: '14'
-        }
-      ]
+      items: [],
+      loading: false
     }
+  },
+  mounted() {
+    this.loading = true
+    getAllVisits()
+      .then(res => {
+        this.items = res.data
+          .map(i => Object.assign(i, { color: colorTable[i.lab] || '#111122' }))
+      })
+      .finally(() => {
+        this.loading = false
+      })
   }
 }
 </script>

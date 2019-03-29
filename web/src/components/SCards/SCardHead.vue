@@ -6,10 +6,10 @@
       |  {{ title }}
     .left
       svg-icon(:name="companyIcon(icon)")
-    .btm
+    .btm(v-if="attime")
       svg-icon(v-if="arrival" name="arrival")
       svg-icon(v-else name="departure")
-      | &nbsp; in 2 more days
+      | &nbsp; {{ attime }}
 </template>
 
 <script>
@@ -30,6 +30,10 @@ export default {
     arrival: {
       type: Boolean,
       default: true
+    },
+    attime: {
+      type: String,
+      default: ''
     }
   },
   methods: {

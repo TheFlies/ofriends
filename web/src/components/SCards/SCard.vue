@@ -1,39 +1,74 @@
 <template lang="pug">
-.s-card(:class="classProps" :style="cssProps")
-  s-card-head(
-    :title="item.title"
-    :sub-title="item.subtitle"
-  )
-    .number-box
-      span {{ item.dc }}
-  s-card-body
-    span {{ item.familyNote }}
-    br
-    span {{ item.footNote }}
-    br
-    span {{ item.nextVisitNote }}
-    br
-    span {{ item.country }}
-    br
-    span {{ item.city }}
-    .footer
-      svg-icon(name="gift")
-      | &nbsp;
-      svg-icon(name="places")
-      | &nbsp;
-      svg-icon(name="hobby")
+  //- el-container(v-loading="loading")
+  .s-card(:class="classProps" :style="cssProps" v-loading="loading")
+    s-card-head(
+      v-if="data"
+      :title="`${data.title}. ${data.name}`"
+      :sub-title="`${data.position} at ${data.company}`"
+      :icon="data.company"
+      key="head"
+      arrival
+      :attime="data.arrivedTime"
+    )
+      .number-box
+        span {{ data.lab.toUpperCase() }}
+    s-card-body(v-if="data" key="body")
+      span {{ data.familyNote }}
+      br
+      span {{ data.footNote }}
+      br
+      span {{ data.nextVisitNote }}
+      .footer
+        el-row(type="flex" justify="space-between")
+          el-col(:span="6")
+            el-row
+              el-col(:span="8")
+                el-popover(
+                  placement="bottom-start"
+                  trigger="click"
+                  title="gifts"
+                  :offset="-17"
+                )
+                  div gifts gifts ...
+                  svg-icon(name="gift" @click.native="gifts" slot="reference")
+              el-col(:span="8")
+                el-popover(
+                  placement="bottom-start"
+                  trigger="click"
+                  title="places"
+                  :offset="-17"
+                )
+                  div activity activity ...
+                  svg-icon(name="places" @click.native="activities" slot="reference")
+              el-col(:span="8")
+                el-popover(
+                  placement="bottom-start"
+                  trigger="click"
+                  title="hobbies"
+                  :offset="-17"
+                )
+                  div family food etc ...
+                  svg-icon(name="hobby" @click.native="notes" slot="reference")
+          el-col(:span="4")
+            el-row(justify="end" :gutter="5")
+              el-col(:span="20" style="text-align: right")
+                div {{data.city}}
+              el-col(:span="4")
+                svg-icon(:name="data.country")
 </template>
 
 <script>
 import SCardHead from './SCardHead.vue'
 import SCardBody from './SCardBody.vue'
 
+import { getFriendById } from '@/api/friend'
+
 export default {
   components: { SCardHead, SCardBody },
   props: {
     item: {
       type: Object,
-      required: true,
+      required: true
     },
     step: {
       type: Number,
@@ -60,6 +95,12 @@ export default {
       default: 0.6
     }
   },
+  data() {
+    return {
+      loading: false,
+      data: null
+    }
+  },
   computed: {
     cssProps() {
       const props = {
@@ -78,6 +119,16 @@ export default {
       return props
     }
   },
+  mounted() {
+    this.loading = true
+    getFriendById(this.item.friendId)
+      .then(res => {
+        this.data = Object.assign({}, this.item, res.data)
+      })
+      .finally(() => {
+        this.loading = false
+      })
+  },
   methods: {
     calculateOrder() {
       const items = this.total
@@ -88,6 +139,18 @@ export default {
         ord += counter
       }
       return ord
+    },
+    gifts() {
+      // TODO
+      console.log('give him gifts, show previous gifts')
+    },
+    activities() {
+      // TODO
+      console.log('add/remove activities, show planned activities')
+    },
+    notes() {
+      // TODO
+      console.log('not sure :D')
     }
   }
 }
@@ -105,6 +168,8 @@ export default {
 </style>
 
 <style lang="stylus" scoped>
+.svg-icon
+  cursor pointer
 .body
   position relative
   margin-top 10px
