@@ -32,20 +32,20 @@ export const constantRouterMap = [
       icon: 'dashboard'
     },
     children: [
+      // {
+      //   path: 'home',
+      //   component: Hello,
+      //   meta: {
+      //     title: 'Hello',
+      //     icon: 'form'
+      //   }
+      // },
       {
         path: 'home',
-        component: Hello,
-        meta: {
-          title: 'Hello',
-          icon: 'form'
-        }
-      },
-      {
-        path: 'thome',
         component: () => import('./views/home-tmpl/index.vue'),
         meta: {
-          title: 'Testing home',
-          icon: 'example'
+          title: 'Timeline',
+          icon: 'dashboard'
         }
       }
     ]

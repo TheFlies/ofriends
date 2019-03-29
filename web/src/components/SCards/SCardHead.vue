@@ -10,10 +10,12 @@
     .btm(v-if="attime")
       svg-icon(v-if="arrival" name="arrival")
       svg-icon(v-else name="departure")
-      | &nbsp; {{ attime }}
+      | &nbsp; {{ calculateTillNow(attime) }}
 </template>
 
 <script>
+import { calculateTillNow } from '@/utils/convert'
+
 export default {
   props: {
     id: {
@@ -37,11 +39,12 @@ export default {
       default: true
     },
     attime: {
-      type: String,
-      default: ''
+      type: Number,
+      required: true
     }
   },
   methods: {
+    calculateTillNow,
     companyIcon(company) {
       return (company || 'example').toLowerCase()
     }

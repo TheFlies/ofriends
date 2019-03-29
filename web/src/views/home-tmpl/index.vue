@@ -15,7 +15,8 @@ import SCards from '@/components/SCards'
 import { getAllVisits } from '@/api/visit'
 
 const colorTable = {
-  lab3: '#777777'
+  lab3: '#777777',
+  lab4: '#4e2422'
 }
 
 export default {
