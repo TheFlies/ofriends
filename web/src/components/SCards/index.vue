@@ -31,7 +31,7 @@ export default {
     cardHeight: {
       type: Number,
       default: 400,
-      validator: val => val >= 190
+      validator: val => val && val >= 190
     },
     cardWidth: {
       type: Number,
@@ -107,7 +107,6 @@ export default {
       return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n
     },
     containerHeight() {
-      console.log(this.data.length)
       const rows = Math.ceil(this.data.length / 2)
       return rows * (this.cardHeight + this.outerMargin) + this.stagger
     },

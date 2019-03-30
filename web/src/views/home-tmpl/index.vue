@@ -15,8 +15,9 @@ import SCards from '@/components/SCards'
 import { getAllVisits } from '@/api/visit'
 
 const colorTable = {
-  lab3: '#777777',
-  lab4: '#4e2422'
+  lab3: '#3ee9d1',
+  lab4: '#4d92eb',
+  lab8: '#5e7fc1'
 }
 
 export default {
@@ -32,7 +33,7 @@ export default {
     getAllVisits()
       .then(res => {
         this.items = res.data
-          .map(i => Object.assign(i, { color: colorTable[i.lab] || '#111122' }))
+          .map(i => Object.assign(i, { color: colorTable[i.lab] || '#11f3c8' }))
       })
       .finally(() => {
         this.loading = false

@@ -7,11 +7,15 @@
         style="width: 100%; margin:auto"
       >
         <el-table-column type="index" :index="indexMethod" />
-        <el-table-column label="Start Time" width="130" sortable prop="startTime" >
-          <template slot-scope="scope">{{getHumanDate(scope.row.startTime)}}</template>
+        <el-table-column label="Start Time" width="130" sortable prop="startTime">
+          <template slot-scope="scope">
+            {{ getHumanDate(scope.row.startTime) }}
+          </template>
         </el-table-column>
-        <el-table-column label="End Time" width="130" sortable prop="endTime" >
-          <template slot-scope="scope">{{getHumanDate(scope.row.endTime)}}</template>
+        <el-table-column label="End Time" width="130" sortable prop="endTime">
+          <template slot-scope="scope">
+            {{ getHumanDate(scope.row.endTime) }}
+          </template>
         </el-table-column>
         <el-table-column label="Detail" width="300" prop="detail" />
         <el-table-column label="Participant" prop="participant" width="150" />
@@ -56,7 +60,7 @@
 import ActivityUpdate from '@/components/activity/ActivityUpdate.vue'
 import ActivityDelete from '@/components/activity/ActivityDelete.vue'
 import ActivityAdd from '@/components/activity/ActivityAdd.vue'
-import {getHumanDate} from "@/utils/convert";
+import { getHumanDate } from '@/utils/convert'
 
 import {
   getAllActivites,

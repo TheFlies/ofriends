@@ -8,8 +8,8 @@
       :sub-title="`${data.position} at ${data.company}`"
       :icon="data.company"
       key="head"
-      arrival
-      :attime="data.arrivedTime"
+      :arrival="todayIsAfter(data.arrivedTime)"
+      :attime="todayIsAfter(data.arrivedTime)? data.departureTime : data.arrivedTime"
     )
       .number-box
         span {{ data.lab.toUpperCase() }}
@@ -65,6 +65,8 @@ import SCardHead from './SCardHead.vue'
 import SCardBody from './SCardBody.vue'
 
 import { getFriendById } from '@/api/friend'
+
+import { todayIsAfter } from '@/utils/convert'
 
 export default {
   components: { SCardHead, SCardBody },
@@ -133,6 +135,7 @@ export default {
       })
   },
   methods: {
+    todayIsAfter,
     calculateOrder() {
       const items = this.total
       const counter = Math.ceil(items / 2)

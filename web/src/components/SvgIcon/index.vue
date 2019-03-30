@@ -1,5 +1,5 @@
 <template>
-  <svg :class="className" xmlns="http://www.w3.org/2000/svg">
+  <svg :class="className" xmlns="http://www.w3.org/2000/svg" :style="cssVars">
     <title v-if="title">{{ title }}</title>
     <use :xlink:href="iconPath" xmlns:xlink="http://www.w3.org/1999/xlink" />
   </svg>
@@ -16,15 +16,38 @@ export default {
     title: {
       type: String,
       default: null
+    },
+    width: {
+      type: Number,
+      required: false,
+      default: 1
+    },
+    height: {
+      type: Number,
+      required: false,
+      default: 1
     }
   },
   computed: {
     iconPath() {
-      return require(`@/icons/svg/${this.name}.svg`).default.url
+      let data
+      try {
+        data = require(`@/icons/svg/${this.name}.svg`).default.url
+      } catch(err) {
+        data = require(`@/icons/svg/example.svg`).default.url
+      }
+      return data
     },
 
     className() {
       return `svg-icon svg-icon--${this.name}`
+    },
+
+    cssVars() {
+      return {
+        '--icon-width': `${this.width}em`,
+        '--icon-height': `${this.height}em`,
+      }
     }
   }
 }
@@ -32,8 +55,8 @@ export default {
 
 <style>
 .svg-icon {
-  width: 1em;
-  height: 1em;
+  width: var(--icon-width);
+  height: var(--icon-width);
   vertical-align: -0.15em;
   fill: currentColor;
   overflow: hidden;
