@@ -313,7 +313,7 @@ $light_gray = #eeeeee
     width: 520px
     max-width: 100%
     padding: 35px 35px 15px 35px
-    margin: 120px auto
+    margin: auto auto
   .tips
     font-size: 14px
     color: #fff
