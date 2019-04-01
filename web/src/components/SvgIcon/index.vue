@@ -33,7 +33,7 @@ export default {
       let data
       try {
         data = require(`@/icons/svg/${this.name}.svg`).default.url
-      } catch(err) {
+      } catch (err) {
         data = require(`@/icons/svg/example.svg`).default.url
       }
       return data
@@ -46,7 +46,7 @@ export default {
     cssVars() {
       return {
         '--icon-width': `${this.width}em`,
-        '--icon-height': `${this.height}em`,
+        '--icon-height': `${this.height}em`
       }
     }
   }

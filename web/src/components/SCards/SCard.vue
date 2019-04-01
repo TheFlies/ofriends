@@ -8,7 +8,7 @@
       :sub-title="`${data.position} at ${data.company}`"
       :icon="data.company"
       key="head"
-      :arrival="todayIsAfter(data.arrivedTime)"
+      :arrival="!todayIsAfter(data.arrivedTime)"
       :attime="todayIsAfter(data.arrivedTime)? data.departureTime : data.arrivedTime"
     )
       .number-box
