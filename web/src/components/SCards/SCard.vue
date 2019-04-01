@@ -123,6 +123,7 @@ export default {
         '--background': this.markerBorderColor,
         '--margin': `${(this.stagger)}px`,
         '--dark-timeline': this.calculateMarker(),
+        '--marker-glowing': this.calculateMarkerGlowing(),
         order: this.calculateOrder()
       }
       return props
@@ -159,9 +160,15 @@ export default {
     },
     calculateMarker() {
       if (!this.data || !this.todayIsAfter(this.data.departureTime)) {
-        return 'brightness(100%)'
+        return 'invert(0)'
       }
-      return 'brightness(60%)'
+      return 'invert(.5)'
+    },
+    calculateMarkerGlowing() {
+      if (!this.data || !this.todayIsAfter(this.data.departureTime)) {
+        return 'glowing 1500ms infinite'
+      }
+      return 'none'
     },
     gifts() {
       // TODO

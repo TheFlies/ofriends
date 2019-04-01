@@ -41,7 +41,7 @@ export const constantRouterMap = [
       // },
       {
         path: 'home',
-        component: () => import('./views/home-tmpl/index.vue'),
+        component: () => import('./views/home/index.vue'),
         meta: {
           title: 'Timeline',
           icon: 'dashboard'
