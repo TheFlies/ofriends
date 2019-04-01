@@ -31,9 +31,9 @@ el-container
             | Edit
           el-button(size="mini" type="danger" @click="isVisibleDelete = !isVisibleDelete; scopeFriend = scope; friendName = scope.row.name")
             | Delete
-  edit-friend(:is-visible-update.sync="isVisibleUpdate" :friend.sync="friend" @isupdatefriend="handleUpdate")
-  delete-friend(:is-visible-delete.sync="isVisibleDelete" :friend-name.sync="friendName" @isdeletefriend="handleDelete")
-  add-friend(:is-visible-add.sync="isVisibleAdd" @isaddfriend="handleAdd")
+  edit-friend(:is-visible-update.sync="isVisibleUpdate" :friend.sync="friend" @isUpdateFriend="handleUpdate")
+  delete-friend(:is-visible-delete.sync="isVisibleDelete" :friend-name.sync="friendName" @isDeleteFriend="handleDelete")
+  add-friend(:is-visible-add.sync="isVisibleAdd" @isAddFriend="handleAdd")
 </template>
 
 <script>
