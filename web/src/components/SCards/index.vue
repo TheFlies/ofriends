@@ -11,6 +11,8 @@
         :stagger="i===1?stagger:0"
         :key="item.id"
         :item="item"
+        :marker-color="markerColor"
+        :marker-border-color="markerBorderColor"
       )
 </template>
 
@@ -44,6 +46,10 @@ export default {
     markerSize: {
       type: Number,
       default: 9
+    },
+    timeLineColor: {
+      type: String,
+      default: '#bdbdbd'
     },
     markerColor: {
       type: String,
@@ -87,8 +93,7 @@ export default {
         '--half-marker-size': `-${this.markerSize / 2 - 1}px`,
         '--marker-dist-add': `${this.markerDist() + 1}px`,
         '--marker-dist-sub': `${this.markerDist() - 1}px`,
-        '--timeline': this.markerColor,
-        '--background': this.markerBorderColor,
+        '--time-line-color': this.timeLineColor,
         '--arrow-size': `${this.arrowSize}px`,
         '--inner-margin': `${this.innerMargin}px`,
         '--number-size': `${this.numberSize}px`,

@@ -83,6 +83,14 @@ export default {
       type: String,
       default: '#332211'
     },
+    markerColor: {
+      type: String,
+      default: '#bdbdbd'
+    },
+    markerBorderColor: {
+      type: String,
+      default: '#f7f7f7'
+    },
     total: {
       type: Number,
       required: true
@@ -111,7 +119,10 @@ export default {
       const props = {
         backgroundColor: this.color,
         '--bg-color': this.color,
+        '--timeline': this.markerColor,
+        '--background': this.markerBorderColor,
         '--margin': `${(this.stagger)}px`,
+        '--dark-timeline': this.calculateMarker(),
         order: this.calculateOrder()
       }
       return props
@@ -145,6 +156,12 @@ export default {
         ord += counter
       }
       return ord
+    },
+    calculateMarker() {
+      if (!this.data || !this.todayIsAfter(this.data.departureTime)) {
+        return 'brightness(100%)'
+      }
+      return 'brightness(60%)'
     },
     gifts() {
       // TODO

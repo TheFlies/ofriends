@@ -13,7 +13,7 @@ mq-lg()
     {block}
 
 $box-shadow = 0px 1px 22px 4px rgba(0, 0, 0, 0.07)
-$border = 1px solid var(--timeline)
+$border = 1px solid var(--time-line-color)
 
 *
   box-sizing: border-box
@@ -44,6 +44,7 @@ $omarker
   background-color: var(--timeline)
   border-radius var(--marker-size)
   animation glowing 1500ms infinite
+  filter var(--dark-timeline)
 
 .s-card-wrapper
   position: relative
@@ -63,7 +64,7 @@ $omarker
     left: 50%
     border-left: $border
     +mq-lg()
-      border-left: 1px solid var(--timeline)
+      border-left: 1px solid var(--time-line-color)
 .s-card
   position: relative
   display: block
