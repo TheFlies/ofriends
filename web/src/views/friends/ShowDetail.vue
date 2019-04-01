@@ -1,8 +1,10 @@
-<template>
-  <div class="add-customer">
-    <FriendShowDetail />
-    <VisitListByFriend />
-  </div>
+<template lang="pug">
+  el-row
+    el-col(:span="24")
+      el-row
+        friend-show-detail
+      el-row
+        visit-list-by-friend
 </template>
 
 <script>

@@ -1,73 +1,39 @@
-<template>
-  <el-container>
-    <el-header style="width: 100%; margin:auto">
-      <el-button
-        type="primary"
-        icon="el-icon-plus"
-        plain
-        style="float:right"
-        @click="isVisibleAdd = !isVisibleAdd"
-      >
-        New friend
-      </el-button>
-    </el-header>
-    <el-main>
-      <el-table
-        v-loading="loading"
-        :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
-        style="width: 100%; margin:auto"
-      >
-        <el-table-column type="index" :index="indexMethod" />
-        <el-table-column label="Name" width="120" sortable prop="name">
-          <template slot-scope="scope">
-            <router-link :to="{ name: 'Friend', params: { id: scope.row.id }}" class="link-type">
-              <span>{{ scope.row.name }}</span>
-            </router-link>
-          </template>
-        </el-table-column>
-        <el-table-column label="Position" width="120" sortable prop="position" />
-        <el-table-column label="Project" width="120" sortable prop="project" />
-        <el-table-column label="Age" width="120" sortable prop="age" />
-        <el-table-column label="Company" width="120" sortable prop="company" />
-        <el-table-column label="Country" width="120" sortable prop="country" />
-        <el-table-column label="City" width="120" sortable prop="city" />
-        <el-table-column label="Food Note" width="120" prop="foodNote" />
-        <el-table-column label="Family Note" width="120" prop="familyNote" />
-        <el-table-column label="Next Visit Note" width="120" prop="nextVisitNote" />
-        <el-table-column align="right">
-          <template slot="header" slot-scope="scope">
-            <el-input v-model="search" size="mini" placeholder="Type to search" />
-          </template>
-          <EditFriend
-            :is-visible-update.sync="isVisibleUpdate"
-            :friend.sync="friend"
-            @isUpdateFriend="handleUpdate"
-          />
-          <DeleteFriend
-            :is-visible-delete.sync="isVisibleDelete"
-            :friend-name.sync="friendName"
-            @isDeleteFriend="handleDelete"
-          />
-          <AddFriend :is-visible-add.sync="isVisibleAdd" @isAddFriend="handleAdd" />
-          <template slot-scope="scope">
-            <el-button
-              size="mini"
-              @click="friend = scope.row; isVisibleUpdate = !isVisibleUpdate"
-            >
-              Edit
-            </el-button>
-            <el-button
-              size="mini"
-              type="danger"
-              @click="isVisibleDelete = !isVisibleDelete; scopeFriend = scope; friendName = scope.row.name"
-            >
-              Delete
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-main>
-  </el-container>
+<template lang="pug">
+el-container
+  el-header(style="width: 100%; margin:auto")
+    el-button(type="primary" icon="el-icon-plus" plain="" style="float:right" @click="isVisibleAdd = !isVisibleAdd")
+      | New friend
+  el-main
+    el-table(v-loading="loading"
+      :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
+      style="width: 100%; margin:auto")
+      el-table-column(type="index" :index="indexMethod")
+      el-table-column(label="Name" width="120" sortable="" prop="name")
+        template(slot-scope="scope")
+          router-link.link-type(:to="{ name: 'Friend', params: { id: scope.row.id }}")
+            span {{ scope.row.name }}
+      el-table-column(label="Position" width="120" sortable="" prop="position")
+      el-table-column(label="Project" width="120" sortable="" prop="project")
+      el-table-column(label="Age" width="120" sortable="" prop="age")
+      el-table-column(label="Company" width="120" sortable="" prop="company")
+      el-table-column(label="Country" width="120" sortable="" prop="country")
+        template(slot-scope="scope")
+          span {{ ($countries.find(it => it.code === scope.row.country) || { name: null }).name }}
+      el-table-column(label="City" width="120" sortable="" prop="city")
+      el-table-column(label="Food Note" width="120" prop="foodNote")
+      el-table-column(label="Family Note" width="120" prop="familyNote")
+      el-table-column(label="Next Visit Note" width="120" prop="nextVisitNote")
+      el-table-column(align="right")
+        template(slot="header")
+          el-input(v-model="search" size="mini" placeholder="Type to search")
+        template(slot-scope="scope")
+          el-button(size="mini" @click="friend = scope.row; isVisibleUpdate = !isVisibleUpdate")
+            | Edit
+          el-button(size="mini" type="danger" @click="isVisibleDelete = !isVisibleDelete; scopeFriend = scope; friendName = scope.row.name")
+            | Delete
+  edit-friend(:is-visible-update.sync="isVisibleUpdate" :friend.sync="friend" @isupdatefriend="handleUpdate")
+  delete-friend(:is-visible-delete.sync="isVisibleDelete" :friend-name.sync="friendName" @isdeletefriend="handleDelete")
+  add-friend(:is-visible-add.sync="isVisibleAdd" @isaddfriend="handleAdd")
 </template>
 
 <script>

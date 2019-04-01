@@ -1,15 +1,27 @@
 <template lang="pug">
-  .head(:style="cssProps")
+  .head()
     slot
-    h2
-      span.small {{ subTitle }}
-      |  {{ title }}
-    .left hello
+    a(:href="`/friends/${id}`")
+      h2
+        span.small {{ subTitle }}
+        |  {{ title }}
+    .left
+      svg-icon(:name="companyIcon(icon)")
+    .btm(v-if="attime")
+      svg-icon(v-if="arrival" name="arrival")
+      svg-icon(v-else name="departure")
+      | &nbsp; {{ calculateTillNow(attime) }}
 </template>
 
 <script>
+import { calculateTillNow } from '@/utils/convert'
+
 export default {
   props: {
+    id: {
+      type: String,
+      required: true
+    },
     title: {
       type: String,
       required: true
@@ -18,36 +30,23 @@ export default {
       type: String,
       default: null
     },
-    innerMargin: {
-      type: Number,
-      default: 15
-    },
-    numberSize: {
-      type: Number,
-      default: 35
-    },
-    titleSize: {
-      type: Number,
-      default: 1.3
-    },
-    subTitleSize: {
-      type: Number,
-      default: 0.6
-    },
-    color: {
+    icon: {
       type: String,
-      default: '#fff'
+      default: null
+    },
+    arrival: {
+      type: Boolean,
+      default: true
+    },
+    attime: {
+      type: Number,
+      required: true
     }
   },
-  computed: {
-    cssProps() {
-      return {
-        '--inner-margin': `${this.innerMargin}px`,
-        '--number-size': `${this.numberSize}px`,
-        '--title-size': `${this.titleSize}rem`,
-        '--sub-title-size': `${this.subTitleSize}rem`,
-        '--bg-color': this.color
-      }
+  methods: {
+    calculateTillNow,
+    companyIcon(company) {
+      return (company || 'example').toLowerCase()
     }
   }
 }
@@ -100,4 +99,20 @@ mq-sm()
     height 30px
     right 5px
     top 5px
+  .btm
+    text-align right
+    padding-left 15px
+    padding-right 10px
+    padding-bottom 10px
+    display inline
+    position absolute
+    background-color var(--bg-color)
+    height 28px
+    font-size 14px
+    right 0px
+    bottom -35px
+    border-radius 0 0 0 15px
+    z-index 1
+    font-family 'Courier New', Courier, monospace
+    font-weight 600
 </style>

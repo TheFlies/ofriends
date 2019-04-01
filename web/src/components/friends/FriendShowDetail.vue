@@ -1,77 +1,47 @@
-<template>
-  <div class="showFriendDetail">
-    <el-form ref="form" :model="form" :rules="rules" label-width="110px">
-      <h3 style="align:center;">
-        Friend Detail Infomation
-      </h3>
-      <el-col :span="11">
-        <el-form-item label="Name" prop="name">
-          <el-input v-model="form.name" type="success" placeholder="Fistname and last name" />
-        </el-form-item>
-      </el-col>
-      <el-col :span="11">
-        <el-form-item label="Title" prop="title">
-          <el-select
-            v-model="form.title"
-            style="width: 100%;"
-            placeholder="please select customer title"
-          >
-            <el-option label="Mr" value="Mr" />
-            <el-option label="Mrs" value="Mrs" />
-          </el-select>
-        </el-form-item>
-      </el-col>
-      <el-col :span="11">
-        <el-form-item label="Position" prop="position">
-          <el-input v-model="form.position" />
-        </el-form-item>
-      </el-col>
-      <el-col :span="11">
-        <el-form-item label="Project" prop="project">
-          <el-input v-model="form.project" />
-        </el-form-item>
-      </el-col>
-      <el-col :span="11">
-        <el-form-item label="Age" prop="age">
-          <el-input v-model="form.age" :min="20" />
-        </el-form-item>
-      </el-col>
-      <el-col :span="11">
-        <el-form-item label="Company" prop="company">
-          <el-input v-model="form.company" />
-        </el-form-item>
-      </el-col>
-      <el-col :span="11">
-        <el-form-item label="Country" prop="country">
-          <el-input v-model="form.country" />
-        </el-form-item>
-      </el-col>
-      <el-col :span="11">
-        <el-form-item label="City" prop="city">
-          <el-input v-model="form.city" />
-        </el-form-item>
-      </el-col>
-      <el-col :span="22">
-        <el-form-item label="Food Note" prop="foodNote">
-          <el-input v-model="form.foodNote" type="textarea" />
-        </el-form-item>
-      </el-col>
-      <el-col :span="22">
-        <el-form-item label="Family Note" prop="familyNote">
-          <el-input
-            v-model="form.familyNote"
-            type="textarea"
-          />
-        </el-form-item>
-      </el-col>
-      <el-col :span="22">
-        <el-form-item label="Next visit Note" prop="nextVisitNote">
-          <el-input v-model="form.nextVisitNote" type="textarea" />
-        </el-form-item>
-      </el-col>
-      <el-form-item />
-    </el-form>
-  </div>
+<template lang="pug">
+.showFriendDetail
+  el-form(ref="form" :model="form" :rules="rules" label-width="110px")
+    h3(style="align:center;")
+      | Friend Detail Infomation
+    el-col(:span="11")
+      el-form-item(label="Name" prop="name")
+        el-input(v-model="form.name" type="success" placeholder="Fistname and last name")
+    el-col(:span="11")
+      el-form-item(label="Title" prop="title")
+        el-select(v-model="form.title" style="width: 100%;" placeholder="please select customer title")
+          el-option(label="Mr" value="Mr")
+            el-option(label="Mrs" value="Mrs")
+    el-col(:span="11")
+      el-form-item(label="Position" prop="position")
+        el-input(v-model="form.position")
+    el-col(:span="11")
+      el-form-item(label="Project" prop="project")
+        el-input(v-model="form.project")
+    el-col(:span="11")
+      el-form-item(label="Age" prop="age")
+        el-input(v-model="form.age" :min="20")
+    el-col(:span="11")
+      el-form-item(label="Company" prop="company")
+        el-input(v-model="form.company")
+    el-col(:span="11")
+      el-form-item(label="Country" prop="country")
+        el-select(v-model="form.country" placeholder="Country where customer live..." filterable="" style="width: 100%;")
+          el-option(v-for="item in $countries" :key="item.code" :label="item.name" :value="item.code")
+            flag(:iso="item.code")
+            span(style="margin-left: 20px")
+              | {{ item.name }}
+    el-col(:span="11")
+      el-form-item(label="City" prop="city")
+        el-input(v-model="form.city")
+    el-col(:span="22")
+      el-form-item(label="Food Note" prop="foodNote")
+        el-input(v-model="form.foodNote" type="textarea")
+    el-col(:span="22")
+      el-form-item(label="Family Note" prop="familyNote")
+        el-input(v-model="form.familyNote" type="textarea")
+    el-col(:span="22")
+      el-form-item(label="Next visit Note" prop="nextVisitNote")
+        el-input(v-model="form.nextVisitNote" type="textarea")
 </template>
 
 <script>
@@ -131,16 +101,19 @@ export default {
   },
   mounted() {
     // We already set the axios baseURL to the backend service in main.js file.
+    this.loading = true
     this.$http
       .get('/friends/' + this.id)
       .then(resp => {
         if (resp.data != null) {
           this.form = resp.data
         }
-        this.loading = false
       })
       .catch(err => {
         console.log(err)
+      })
+      .finally(() => {
+        this.loading = false
       })
   },
   methods: {

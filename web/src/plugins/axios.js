@@ -52,11 +52,11 @@ axios.interceptors.response.use(
         showClose: true,
         type: 'error',
         onClose: () => {
-          store.dispatch('FedLogOut').then(() => {
-            if (router.currentRoute.path !== '/login') {
-              router.replace(`/login?redirect=${router.currentRoute.path}`)
-            }
-          })
+          // store.dispatch('FedLogOut').then(() => {
+          //   if (router.currentRoute.path !== '/login') {
+          //     router.replace(`/login?redirect=${router.currentRoute.path}`)
+          //   }
+          // })
         }
       })
     }

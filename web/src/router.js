@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Hello from '@/components/Hello'
 
 Vue.use(Router)
 
@@ -32,20 +31,20 @@ export const constantRouterMap = [
       icon: 'dashboard'
     },
     children: [
+      // {
+      //   path: 'home',
+      //   component: Hello,
+      //   meta: {
+      //     title: 'Hello',
+      //     icon: 'form'
+      //   }
+      // },
       {
         path: 'home',
-        component: Hello,
+        component: () => import('./views/home/index.vue'),
         meta: {
-          title: 'Hello',
-          icon: 'form'
-        }
-      },
-      {
-        path: 'thome',
-        component: () => import('./views/home-tmpl/index.vue'),
-        meta: {
-          title: 'Testing home',
-          icon: 'example'
+          title: 'Timeline',
+          icon: 'dashboard'
         }
       }
     ]

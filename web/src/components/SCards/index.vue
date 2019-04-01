@@ -1,28 +1,26 @@
 <template lang="pug">
-  .s-card-wrapper(:style="cssProps")
-    s-card(v-for="(item, i) in data" :color="item.color" :total="data.length" :step="i + 1" :stagger="i===1?stagger:0" :key="item.title")
-      s-card-head(
-        :title="item.title"
-        :sub-title="item.subtitle"
-        :inner-margin="innerMargin"
-        :number-size="numberSize"
+  #s-card-list
+    div(v-if="!data.length")
+      span.title No data
+    .s-card-wrapper(v-else :style="cssProps")
+      s-card(
+        v-for="(item, i) in data"
         :color="item.color"
-        :title-size="titleSize"
-        :sub-title-size="subTitleSize"
+        :total="data.length"
+        :step="i + 1"
+        :stagger="i===1?stagger:0"
+        :key="item.id"
+        :item="item"
+        :marker-color="markerColor"
+        :marker-border-color="markerBorderColor"
       )
-        .number-box
-          span {{ item.dc }}
-      s-card-body(:card-height="cardHeight" :card-width="cardWidth" :inner-margin="innerMargin" :number-size="numberSize")
-        span TBD
 </template>
 
 <script>
 import SCard from './SCard.vue'
-import SCardHead from './SCardHead.vue'
-import SCardBody from './SCardBody.vue'
 
 export default {
-  components: { SCard, SCardHead, SCardBody },
+  components: { SCard },
   props: {
     data: {
       type: Array,
@@ -34,7 +32,8 @@ export default {
     },
     cardHeight: {
       type: Number,
-      default: 400
+      default: 400,
+      validator: val => val && val >= 190
     },
     cardWidth: {
       type: Number,
@@ -47,6 +46,10 @@ export default {
     markerSize: {
       type: Number,
       default: 9
+    },
+    timeLineColor: {
+      type: String,
+      default: '#bdbdbd'
     },
     markerColor: {
       type: String,
@@ -87,11 +90,18 @@ export default {
         '--outer-margin': `${this.outerMargin}px`,
         '--half-outer-margin': `${this.outerMargin / 2}px`,
         '--marker-size': `${this.markerSize}px`,
+        '--half-marker-size': `-${this.markerSize / 2 - 1}px`,
         '--marker-dist-add': `${this.markerDist() + 1}px`,
         '--marker-dist-sub': `${this.markerDist() - 1}px`,
-        '--timeline': this.markerColor,
-        '--background': this.markerBorderColor,
-        '--arrow-size': `${this.arrowSize}px`
+        '--time-line-color': this.timeLineColor,
+        '--arrow-size': `${this.arrowSize}px`,
+        '--inner-margin': `${this.innerMargin}px`,
+        '--number-size': `${this.numberSize}px`,
+        '--body-height': `${this.bodyHeight()}px`,
+        // this is variable for the css
+        '--left-marker-dist': '',
+        '--title-size': `${this.titleSize}rem`,
+        '--sub-title-size': `${this.subTitleSize}rem`
       }
     }
   },
@@ -110,10 +120,14 @@ export default {
     },
     markerDist() {
       return this.cardWidth + this.outerMargin / 2 - this.markerSize / 2
+    },
+    bodyHeight() {
+      const headHeight = this.numberSize + 50
+      return this.cardHeight - headHeight
     }
   }
 }
 </script>
 
-<style lang="stylus" scoped src="@/styles/scard.styl">
+<style lang="stylus" src="@/styles/scard.styl">
 </style>
