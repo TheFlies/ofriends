@@ -1,66 +1,45 @@
-<template>
-  <el-dialog
-    title="Add Friend"
-    :visible.sync="isVisibleAdd"
-    width="30%"
-    append-to-body
-    :before-close="handleBackdropClick"
-  >
-    <el-form ref="friend" :model="friend" :rules="rules" label-width="120px" class="friend-form">
-      <el-form-item label="Name" prop="name">
-        <el-input v-model="friend.name" type="success" placeholder="Fistname and last name" />
-      </el-form-item>
-      <el-form-item label="Title" prop="title">
-        <el-select
-          v-model="friend.title"
-          style="width: 100%;"
-          placeholder="please select customer title"
-        >
-          <el-option label="Mr" value="Mr" />
-          <el-option label="Mrs" value="Mrs" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="Position" prop="position">
-        <el-input v-model="friend.position" placeholder="e.g Project manager" />
-      </el-form-item>
-      <el-form-item label="Project" prop="project">
-        <el-input v-model="friend.project" placeholder="Project name..." />
-      </el-form-item>
-      <el-form-item label="Age" prop="age">
-        <el-input v-model="friend.age" placeholder="Age of customer" :min="20" />
-      </el-form-item>
-      <el-form-item label="Company" prop="company">
-        <el-input v-model="friend.company" placeholder="Company name..." />
-      </el-form-item>
-      <el-form-item label="Country" prop="country">
-        <el-input v-model="friend.country" placeholder="Country where customer live..." />
-      </el-form-item>
-      <el-form-item label="City" prop="city">
-        <el-input v-model="friend.city" placeholder="City where customer live..." />
-      </el-form-item>
-      <el-form-item label="Food Note" prop="foodNote">
-        <el-input v-model="friend.foodNote" type="textarea" placeholder="is a vegetarian..." />
-      </el-form-item>
-      <el-form-item label="Family Note" prop="familyNote">
-        <el-input
-          v-model="friend.familyNote"
-          type="textarea"
-          placeholder="Wife 34 years old, have two boys in 10 and 15 ..."
-        />
-      </el-form-item>
-      <el-form-item label="Next visit Note" prop="nextVisitNote">
-        <el-input v-model="friend.nextVisitNote" type="textarea" placeholder="..." />
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="submitForm('friend')">
-          Save
-        </el-button>
-        <el-button @click="resetForm('friend')">
-          Cancel
-        </el-button>
-      </el-form-item>
-    </el-form>
-  </el-dialog>
+<template lang="pug">
+el-dialog(title="Add Friend" :visible.sync="isVisibleAdd" width="30%" append-to-body="" :before-close="handleBackdropClick")
+  el-form.friend-form(ref="friend" :model="friend" :rules="rules" label-width="120px")
+    el-form-item(label="Name" prop="name")
+      el-input(v-model="friend.name" type="success" placeholder="Fistname and last name")
+    el-form-item(label="Title" prop="title")
+      el-select(v-model="friend.title" style="width: 100%;" placeholder="please select customer title")
+        el-option(label="Mr" value="Mr")
+          el-option(label="Mrs" value="Mrs")
+    el-form-item(label="Position" prop="position")
+      el-input(v-model="friend.position" placeholder="e.g Project manager")
+    el-form-item(label="Project" prop="project")
+      el-input(v-model="friend.project" placeholder="Project name...")
+    el-form-item(label="Age" prop="age")
+      el-input(v-model="friend.age" placeholder="Age of customer" :min="20")
+    el-form-item(label="Company" prop="company")
+      el-input(v-model="friend.company" placeholder="Company name...")
+    el-form-item(label="Country" prop="country")
+      el-select(v-model="friend.country" placeholder="Country where customer live..."
+        filterable
+        style="width: 100%;"
+      )
+        el-option(v-for="item in $countries"
+          :key="item.code"
+          :label="item.name"
+          :value="item.code"
+        )
+          flag(:iso="item.code")
+          span(style="margin-left: 20px") {{ item.name }}
+    el-form-item(label="City" prop="city")
+      el-input(v-model="friend.city" placeholder="City where customer live...")
+    el-form-item(label="Food Note" prop="foodNote")
+      el-input(v-model="friend.foodNote" type="textarea" placeholder="is a vegetarian...")
+    el-form-item(label="Family Note" prop="familyNote")
+      el-input(v-model="friend.familyNote" type="textarea" placeholder="Wife 34 years old, have two boys in 10 and 15 ...")
+    el-form-item(label="Next visit Note" prop="nextVisitNote")
+      el-input(v-model="friend.nextVisitNote" type="textarea" placeholder="...")
+    el-form-item
+      el-button(type="primary" @click="submitForm('friend')")
+        | Save
+      el-button(@click="resetForm('friend')")
+        | Cancel
 </template>
 
 <script>

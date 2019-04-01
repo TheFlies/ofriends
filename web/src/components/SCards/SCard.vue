@@ -57,7 +57,7 @@
               el-col(:span="20" style="text-align: right")
                 div {{data.city}}
               el-col(:span="4")
-                svg-icon(:name="data.country")
+                flag(:iso="data.country")
 </template>
 
 <script>

@@ -2,6 +2,7 @@ import Vue from 'vue'
 
 import 'normalize.css/normalize.css'
 
+import '@/plugins/flag-icon'
 import '@/plugins/element'
 
 import '@/styles/index.styl'
