@@ -34,7 +34,7 @@
         <el-table-column label="Hotel Stayed" width="180" prop="hotelStayed" />
         <el-table-column label="Pickup" width="120" prop="pickup" />
         <el-table-column align="right">
-          <template slot="header">
+          <template slot="header" slot-scope="scope">
             <el-input
               v-model="search"
               size="mini"
