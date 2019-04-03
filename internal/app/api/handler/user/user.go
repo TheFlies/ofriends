@@ -3,12 +3,14 @@ package user
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/gorilla/mux"
 
 	"github.com/TheFlies/ofriends/internal/app/api/handler/login"
 	"github.com/TheFlies/ofriends/internal/app/types"
 	"github.com/TheFlies/ofriends/internal/pkg/glog"
+	"github.com/TheFlies/ofriends/internal/pkg/jwt"
 	"github.com/TheFlies/ofriends/internal/pkg/marshal"
 	"github.com/TheFlies/ofriends/internal/pkg/respond"
 )
@@ -70,7 +72,7 @@ func (u *UserHandler) Register(w http.ResponseWriter, r *http.Request) {
 			respond.JSON(w, http.StatusInternalServerError, map[string]string{"status": "500", "message": "have an error when register for you"})
 			return
 		}
-		respond.JSON(w, http.StatusOK, map[string]string{"status": "200", "userID": userID})
+		respond.JSON(w, http.StatusOK, map[string]string{"status": "200", "userName": userID})
 		return
 	} else {
 		respond.JSON(w, http.StatusConflict, map[string]string{"status": "409", "message": "user already existed"})
@@ -150,5 +152,30 @@ func (u *UserHandler) Update(w http.ResponseWriter, r *http.Request) {
 	}
 	respond.JSON(w, http.StatusOK, map[string]string{"status": "200", "message": "updating user information is successful"})
 	return
-
+}
+func (u *UserHandler) GetMe(w http.ResponseWriter, r *http.Request) {
+	theBearerToken := r.Header.Get("Authorization")
+	tokenArray := strings.Split(theBearerToken, " ")
+	if len(tokenArray) != 2 {
+		u.logger.Infof("the request isn't contain bearer token")
+		respond.JSON(w, http.StatusUnauthorized, "Unauthorized")
+		return
+	}
+	jwtToken := strings.Split(theBearerToken, " ")[1]
+	JWTGeneration := jwt.NewTokenGeneration()
+	notExpire := JWTGeneration.CheckExp(jwtToken)
+	if !notExpire || !JWTGeneration.CheckValib(jwtToken) {
+		u.logger.Errorf("the token is expire or token signature is not valid ")
+		respond.JSON(w, http.StatusUnauthorized, map[string]string{"status": "401", "message": "Unauthorized"})
+		return
+	}
+	userName := JWTGeneration.GetPayload(jwtToken).UserName
+	user, err := u.srv.GetByName(userName)
+	if err != nil {
+		respond.JSON(w, http.StatusNotFound, map[string]string{"status": "404", "message": "user is not found"})
+		return
+	}
+	user.Password = ""
+	respond.JSON(w, http.StatusOK, user)
+	return
 }

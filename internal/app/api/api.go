@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/TheFlies/ofriends/internal/app/api/handler/login"
-
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 
@@ -14,6 +12,7 @@ import (
 	"github.com/TheFlies/ofriends/internal/app/api/handler/friend"
 	"github.com/TheFlies/ofriends/internal/app/api/handler/gift"
 	"github.com/TheFlies/ofriends/internal/app/api/handler/index"
+	"github.com/TheFlies/ofriends/internal/app/api/handler/login"
 	userhandler "github.com/TheFlies/ofriends/internal/app/api/handler/user"
 	"github.com/TheFlies/ofriends/internal/app/api/handler/visit"
 	"github.com/TheFlies/ofriends/internal/app/db"
@@ -245,6 +244,10 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			path:    "/api/v1/register",
 			method:  post,
 			handler: userHandler.Register,
+		}, {
+			path:    "/api/v1/getme",
+			method:  get,
+			handler: userHandler.GetMe,
 		},
 		{
 			path:    "/api/v1/user/{username}",
