@@ -41,6 +41,7 @@
         />
         <el-table-column
           align="right"
+          width="320"
         >
           <template slot="header" slot-scope="scope">
             <el-input

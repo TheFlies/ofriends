@@ -38,7 +38,7 @@
             <el-input
               v-model="search"
               size="mini"
-              placeholder="Type to search based on lab"
+              placeholder="Type to search"
             />
           </template>
           <VisitUpdate
