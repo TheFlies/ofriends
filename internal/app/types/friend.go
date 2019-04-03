@@ -1,7 +1,7 @@
 package types
 
-// Friend hold information of a friend
-type Friend struct {
+// Customer hold information of a customer
+type Customer struct {
 	ID    		    string  `json:"id,omitempty" bson:"_id"`
 	Name        	string  `json:"name,omitempty"`
 	Title       	string  `json:"title,omitempty"`

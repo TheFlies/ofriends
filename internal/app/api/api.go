@@ -11,14 +11,14 @@ import (
 
 	"github.com/TheFlies/ofriends/internal/app/activity"
 	"github.com/TheFlies/ofriends/internal/app/api/handler/activity"
-	"github.com/TheFlies/ofriends/internal/app/api/handler/friend"
+	"github.com/TheFlies/ofriends/internal/app/api/handler/customer"
 	"github.com/TheFlies/ofriends/internal/app/api/handler/gift"
 	"github.com/TheFlies/ofriends/internal/app/api/handler/index"
 	userhandler "github.com/TheFlies/ofriends/internal/app/api/handler/user"
 	"github.com/TheFlies/ofriends/internal/app/api/handler/visit"
 	"github.com/TheFlies/ofriends/internal/app/db"
 	"github.com/TheFlies/ofriends/internal/app/dbauth"
-	"github.com/TheFlies/ofriends/internal/app/friend"
+	"github.com/TheFlies/ofriends/internal/app/customer"
 	"github.com/TheFlies/ofriends/internal/app/gift"
 	"github.com/TheFlies/ofriends/internal/app/ldapauth"
 	"github.com/TheFlies/ofriends/internal/app/user"
@@ -53,7 +53,7 @@ const (
 // Init init all handlers
 func Init(conns *InfraConns) (http.Handler, error) {
 	logger := glog.New()
-	var friendRepo friend.Repository
+	var customerRepo customer.Repository
 	var userRepo user.UserRepository
 	var giftRepo gift.Repository
 	var visitRepo visit.Repository
@@ -61,21 +61,21 @@ func Init(conns *InfraConns) (http.Handler, error) {
 
 	switch conns.Databases.Type {
 	case db.TypeMongoDB:
-		friendRepo = friend.NewMongoRepository(conns.Databases.MongoDB)
+		customerRepo = customer.NewMongoRepository(conns.Databases.MongoDB)
 		userRepo = user.NewUserMongoRepository(conns.Databases.MongoDB)
 		giftRepo = gift.NewMongoRepository(conns.Databases.MongoDB)
 		visitRepo = visit.NewMongoRepository(conns.Databases.MongoDB)
 		actRepo = activity.NewMongoRepository(conns.Databases.MongoDB)
-		friendRepo = friend.NewMongoRepository(conns.Databases.MongoDB)
+		customerRepo = customer.NewMongoRepository(conns.Databases.MongoDB)
 		userRepo = user.NewUserMongoRepository(conns.Databases.MongoDB)
 		giftRepo = gift.NewMongoRepository(conns.Databases.MongoDB)
 	default:
 		return nil, fmt.Errorf("database type not supported: %s", conns.Databases.Type)
 	}
 
-	friendLogger := logger.WithField("package", "friend")
-	friendSrv := friend.NewService(friendRepo, friendLogger)
-	friendHandler := friendhandler.New(friendSrv, friendLogger)
+	customerLogger := logger.WithField("package", "customer")
+	customerSrv := customer.NewService(customerRepo, customerLogger)
+	customerHandler := customerhandler.New(customerSrv, customerLogger)
 
 	giftLogger := logger.WithField("package", "gift")
 	giftSrv := gift.NewService(giftRepo, giftLogger)
@@ -112,31 +112,31 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			method:  get,
 			handler: indexWebHandler.Index,
 		},
-		// Friend services
+		// Customer services
 		{
-			path:    "/friends/{id:[a-z0-9-\\-]+}",
+			path:    "/customers/{id:[a-z0-9-\\-]+}",
 			method:  get,
-			handler: friendHandler.Get,
+			handler: customerHandler.Get,
 		},
 		{
-			path:    "/friends",
+			path:    "/customers",
 			method:  post,
-			handler: friendHandler.Create,
+			handler: customerHandler.Create,
 		},
 		{
-			path:    "/friends",
+			path:    "/customers",
 			method:  put,
-			handler: friendHandler.Update,
+			handler: customerHandler.Update,
 		},
 		{
-			path:    "/friends",
+			path:    "/customers",
 			method:  get,
-			handler: friendHandler.GetAll,
+			handler: customerHandler.GetAll,
 		},
 		{
-			path:    "/friends/{id:[a-z0-9-\\-]+}",
+			path:    "/customers/{id:[a-z0-9-\\-]+}",
 			method:  delete,
-			handler: friendHandler.Delete,
+			handler: customerHandler.Delete,
 		},
 
 		// Visit services
@@ -166,9 +166,9 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			handler: visitHandler.Delete,
 		},
 		{
-			path:    "/visits/friend/{id:[a-z0-9-\\-]+}",
+			path:    "/visits/customer/{id:[a-z0-9-\\-]+}",
 			method:  get,
-			handler: visitHandler.GetByFriendID,
+			handler: visitHandler.GetByCustomerID,
 		},
 		// Activity services
 		{

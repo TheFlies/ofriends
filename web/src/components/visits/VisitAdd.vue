@@ -55,7 +55,7 @@
         <el-input
           v-model="visit.passportInfo"
           type="textarea"
-          placeholder="Passport info of friend"
+          placeholder="Passport info of customer"
         />
       </el-form-item>
       <el-form-item label="Created By" prop="createdBy">
@@ -63,11 +63,11 @@
       </el-form-item>
 
       <el-form-item label="Hotel Stayed" prop="hotelStayed">
-        <el-input v-model="visit.hotelStayed" placeholder="Where hotel friend stayed?" />
+        <el-input v-model="visit.hotelStayed" placeholder="Where hotel customer stayed?" />
       </el-form-item>
 
       <el-form-item label="Pickup" prop="pickup">
-        <el-input v-model="visit.pickup" placeholder="Who pickup friend?" />
+        <el-input v-model="visit.pickup" placeholder="Who pickup customer?" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submitForm('visit')">
@@ -98,7 +98,7 @@ export default {
         createdBy: '',
         hotelStayed: '',
         pickup: '',
-        friendID: ''
+        customerID: ''
       },
       rules: {
         lab: [
@@ -126,7 +126,7 @@ export default {
     }
   },
   created() {
-    this.visit.friendID = this.$route.params.id
+    this.visit.customerID = this.$route.params.id
   },
   methods: {
     handleBackdropClick() {

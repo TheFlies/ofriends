@@ -17,7 +17,7 @@ import (
 type (
 	service interface {
 		Get(ctx context.Context, id string) (*types.Visit, error)
-		GetByFriendID(ctx context.Context, friendId string) ([]types.Visit, error)
+		GetByCustomerID(ctx context.Context, customerId string) ([]types.Visit, error)
 		GetAll(ctx context.Context) ([]types.Visit, error)
 		Create(ctx context.Context, visit types.Visit) (string, error)
 		Update(ctx context.Context, visit types.Visit) error
@@ -49,9 +49,9 @@ func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
 	respond.JSON(w, http.StatusOK, visit)
 }
 
-// GetByFriendID handle get visits HTTP Request by friendID
-func (h *Handler) GetByFriendID(w http.ResponseWriter, r *http.Request) {
-	visits, err := h.srv.GetByFriendID(r.Context(),mux.Vars(r)["id"])
+// GetByCustomerID handle get visits HTTP Request by customerID
+func (h *Handler) GetByCustomerID(w http.ResponseWriter, r *http.Request) {
+	visits, err := h.srv.GetByCustomerID(r.Context(),mux.Vars(r)["id"])
 	if err != nil {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return

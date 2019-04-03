@@ -22,7 +22,7 @@ func NewMongoRepository(s *mgo.Session) *MongoRepository {
 	}
 }
 
-// FindByID return friend base on given id
+// FindByID return customer base on given id
 func (r *MongoRepository) FindByID(ctx context.Context, id string) (*types.Visit, error) {
 	s := r.session.Clone()
 	defer s.Close()
@@ -33,12 +33,12 @@ func (r *MongoRepository) FindByID(ctx context.Context, id string) (*types.Visit
 	return visit, nil
 }
 
-// Find all visits by all friend ID
-func (r *MongoRepository) FindByFriendID(ctx context.Context, friendId string) ([]types.Visit, error) {
+// Find all visits by all customer ID
+func (r *MongoRepository) FindByCustomerID(ctx context.Context, customerId string) ([]types.Visit, error) {
 	s := r.session.Clone()
 	defer s.Close()
 	var visit []types.Visit
-	if err := r.collection(s).Find(bson.M{"_friend_id": friendId}).All(&visit); err != nil {
+	if err := r.collection(s).Find(bson.M{"_customer_id": customerId}).All(&visit); err != nil {
 		return nil, errors.Wrap(err, "failed to fetch all visit from database")
 	}
 	
