@@ -43,7 +43,7 @@ func Security(h http.Handler) http.Handler {
 		notExpire := JWTGeneration.CheckExp(jwtToken)
 		if notExpire && JWTGeneration.CheckValib(jwtToken) {
 			payload := JWTGeneration.GetPayload(jwtToken)
-			logger.Infof("the payload owner is %v", payload.UserFullname)
+			logger.Infof("the payload owner is %v", payload.UserName)
 			logger.Infof("the request is continue treatment")
 			h.ServeHTTP(w, r)
 			return
