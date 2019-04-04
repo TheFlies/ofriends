@@ -67,12 +67,12 @@ func (u *UserHandler) Register(w http.ResponseWriter, r *http.Request) {
 	}
 	isExists := u.srv.CheckExistence(requestData.Username)
 	if !isExists {
-		userID, err := u.srv.AddUser(&requestData)
+		userName, err := u.srv.AddUser(&requestData)
 		if err != nil {
 			respond.JSON(w, http.StatusInternalServerError, map[string]string{"status": "500", "message": "have an error when register for you"})
 			return
 		}
-		respond.JSON(w, http.StatusOK, map[string]string{"status": "200", "userName": userID})
+		respond.JSON(w, http.StatusOK, map[string]string{"status": "200", "username": userName})
 		return
 	} else {
 		respond.JSON(w, http.StatusConflict, map[string]string{"status": "409", "message": "user already existed"})
