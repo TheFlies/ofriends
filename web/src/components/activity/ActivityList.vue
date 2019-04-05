@@ -21,7 +21,7 @@
         <el-table-column label="Participant" prop="participant" width="150" />
         <el-table-column label="Hotel" width="280" prop="hotel" />
         <el-table-column align="right">
-          <template slot="header">
+          <template slot="header" slot-scope="scope">
             <el-input
               v-model="search"
               size="mini"
