@@ -36,7 +36,7 @@ func (r *UserMongoRepository) InsertUser(u *types.User) (string, error) {
 	if err := r.collection(s).Insert(&u); err != nil {
 		return "", errors.Wrap(err, "insert u to database is fail")
 	}
-	return u.ID, nil
+	return u.Username, nil
 }
 func (r *UserMongoRepository) CheckUserByUsername(username string) bool {
 	s := r.session.Clone()
