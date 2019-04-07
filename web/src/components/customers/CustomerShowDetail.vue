@@ -171,15 +171,12 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="stylus">
-.showustomerDetail {
-  max-width: 800px;
-  margin: auto;
-  border: 1px solid #ebebeb;
-  border-radius: 3px;
-  transition: 0.2s;
-}
-
-.showCustomerDetail .el-form {
-  padding: 24px;
-}
+.showCustomerDetail
+  max-width 800px
+  margin auto
+  border 1px solid #ebebeb
+  border-radius 3px
+  transition 0.2s
+  .el-form
+    padding: 24px;
 </style>
