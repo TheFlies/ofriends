@@ -19,7 +19,7 @@
       >
         <el-table-column type="expand">
           <template slot-scope="scope">
-            <GiftListByVisit :visit-id="scope.row.id" />
+            <GiftListByVisit :visit-id="scope.row.id" :friend-id="visit.friendID" :friend-name="visit.friendname" />
             <ActivityListByVisit :visit-id="scope.row.id" />
           </template>
         </el-table-column>
@@ -111,6 +111,7 @@ export default {
   },
   created() {
     this.visit.friendID = this.$route.params.id
+    this.visit.friendName = this.$route.params.friendname
   },
   mounted() {
     getAllVisitsByFriendID(this.visit.friendID)

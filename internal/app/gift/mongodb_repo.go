@@ -37,18 +37,6 @@ func (r *MongoRepository) collection(s *mgo.Session) *mgo.Collection {
 	return s.DB("ofriends").C("gifts")
 }
 
-// Find all gifts by visit ID
-func (r *MongoRepository) FindByVisitID(ctx context.Context, visitId string) ([]types.Gift, error) {
-	s := r.session.Clone()
-	defer s.Close()
-	var gifts []types.Gift
-	if err := r.collection(s).Find(bson.M{"_visit_id": visitId}).All(&gifts); err != nil {
-		return nil, errors.Wrap(err, "failed to fetch all activities from database")
-	}
-	
-	return gifts, nil
-}
-
 // FindAll return all gifts
 func (r *MongoRepository) FindAll(ctx context.Context) ([]types.Gift, error) {
 	s := r.session.Clone()
@@ -57,7 +45,7 @@ func (r *MongoRepository) FindAll(ctx context.Context) ([]types.Gift, error) {
 	if err := r.collection(s).Find(bson.M{}).All(&gifts); err != nil {
 		return nil, errors.Wrap(err, "failed to fetch all gifts from database")
 	}
-	
+
 	return gifts, nil
 }
 

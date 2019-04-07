@@ -15,44 +15,22 @@
     >
       <el-form-item
         label="Name"
-        prop="name"
+        prop="giftName"
       >
-        <el-input v-model="gift.name" />
+        <el-input v-model="gift.giftName" :disabled="true" />
       </el-form-item>
       <el-form-item
-        label="Idea"
-        prop="idea"
+        label="Quantity"
+        prop="quantity"
       >
-        <el-input v-model="gift.idea" />
+        <el-input-number v-model="gift.quantity" :min="1" />
       </el-form-item>
       <el-form-item
-        label="Size"
-        prop="size"
-      >
-        <el-input v-model="gift.size" />
-      </el-form-item>
-      <el-form-item
-        label="Price"
-        prop="price"
-      >
-        <el-input-number
-          v-model="gift.price"
-          :precision="2"
-          :step="0.1"
-        />
-      </el-form-item>
-      <el-form-item
-        label="Link"
-        prop="link"
-      >
-        <el-input v-model="gift.link" />
-      </el-form-item>
-      <el-form-item
-        label="Description"
-        prop="description"
+        label="Note"
+        prop="note"
       >
         <el-input
-          v-model="gift.description"
+          v-model="gift.note"
           type="textarea"
         />
       </el-form-item>

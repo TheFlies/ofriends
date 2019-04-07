@@ -5,17 +5,19 @@ import (
 	"net/http"
 
 	"github.com/TheFlies/ofriends/internal/app/api/handler/login"
+	"github.com/TheFlies/ofriends/internal/app/giftassociate"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 
 	"github.com/TheFlies/ofriends/internal/app/activity"
-	"github.com/TheFlies/ofriends/internal/app/api/handler/activity"
-	"github.com/TheFlies/ofriends/internal/app/api/handler/friend"
-	"github.com/TheFlies/ofriends/internal/app/api/handler/gift"
-	"github.com/TheFlies/ofriends/internal/app/api/handler/index"
+	activityhandler "github.com/TheFlies/ofriends/internal/app/api/handler/activity"
+	friendhandler "github.com/TheFlies/ofriends/internal/app/api/handler/friend"
+	gifthandler "github.com/TheFlies/ofriends/internal/app/api/handler/gift"
+	giftassociatehandler "github.com/TheFlies/ofriends/internal/app/api/handler/giftassociate"
+	indexhandler "github.com/TheFlies/ofriends/internal/app/api/handler/index"
 	userhandler "github.com/TheFlies/ofriends/internal/app/api/handler/user"
-	"github.com/TheFlies/ofriends/internal/app/api/handler/visit"
+	visithandler "github.com/TheFlies/ofriends/internal/app/api/handler/visit"
 	"github.com/TheFlies/ofriends/internal/app/db"
 	"github.com/TheFlies/ofriends/internal/app/dbauth"
 	"github.com/TheFlies/ofriends/internal/app/friend"
@@ -58,6 +60,7 @@ func Init(conns *InfraConns) (http.Handler, error) {
 	var giftRepo gift.Repository
 	var visitRepo visit.Repository
 	var actRepo activity.Repository
+	var giftAssociateRepo giftassociate.Repository
 
 	switch conns.Databases.Type {
 	case db.TypeMongoDB:
@@ -68,7 +71,7 @@ func Init(conns *InfraConns) (http.Handler, error) {
 		actRepo = activity.NewMongoRepository(conns.Databases.MongoDB)
 		friendRepo = friend.NewMongoRepository(conns.Databases.MongoDB)
 		userRepo = user.NewUserMongoRepository(conns.Databases.MongoDB)
-		giftRepo = gift.NewMongoRepository(conns.Databases.MongoDB)
+		giftAssociateRepo = giftassociate.NewMongoRepository(conns.Databases.MongoDB)
 	default:
 		return nil, fmt.Errorf("database type not supported: %s", conns.Databases.Type)
 	}
@@ -88,6 +91,10 @@ func Init(conns *InfraConns) (http.Handler, error) {
 	actLogger := logger.WithField("package", "activity")
 	actSrv := activity.NewService(actRepo, actLogger)
 	actHandler := activityhandler.New(actSrv, actLogger)
+
+	giftAssociateLogger := logger.WithField("package", "giftassociate")
+	giftAssociateSrv := giftassociate.NewService(giftAssociateRepo, giftAssociateLogger)
+	giftAssociateHandler := giftassociatehandler.New(giftAssociateSrv, giftAssociateLogger)
 
 	indexWebHandler := indexhandler.New()
 
@@ -232,11 +239,6 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			handler: giftHandler.Delete,
 		},
 		{
-			path:    "/gifts/visit/{id:[a-z0-9-\\-]+}",
-			method:  get,
-			handler: giftHandler.GetByVisitID,
-		},
-		{
 			path:    "/api/v1/login",
 			method:  post,
 			handler: loginHandler.Authenticate,
@@ -265,6 +267,42 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			path:    "/api/v1/user/{username}",
 			method:  put,
 			handler: userHandler.Update,
+		},
+		// Gift Associate services
+		{
+			path:    "/gifts/associates/{id:[a-z0-9-\\-]+}",
+			method:  get,
+			handler: giftAssociateHandler.Get,
+		},
+
+		{
+			path:    "/gifts/associates/visits/{visitID:[a-z0-9-\\-]+}",
+			method:  get,
+			handler: giftAssociateHandler.GetByVisitID,
+		},
+
+		{
+			path:    "/gifts/associates",
+			method:  get,
+			handler: giftAssociateHandler.GetAll,
+		},
+
+		{
+			path:    "/gifts/associates",
+			method:  post,
+			handler: giftAssociateHandler.Create,
+		},
+
+		{
+			path:    "/gifts/associates",
+			method:  put,
+			handler: giftAssociateHandler.Update,
+		},
+
+		{
+			path:    "/gifts/associates/{id:[a-z0-9-\\-]+}",
+			method:  delete,
+			handler: giftAssociateHandler.Delete,
 		},
 	}
 
