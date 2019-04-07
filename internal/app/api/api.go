@@ -247,6 +247,10 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			path:    "/api/v1/register",
 			method:  post,
 			handler: userHandler.Register,
+		}, {
+			path:    "/api/v1/getme",
+			method:  get,
+			handler: userHandler.GetMe,
 		},
 		{
 			path:    "/api/v1/user/{username}",

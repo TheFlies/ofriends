@@ -51,6 +51,11 @@ func (l *LdapAuthentication) ConnectToServer() {
 	l.LDAPConn = connection
 }
 func (l *LdapAuthentication) Close() {
+	defer func() {
+		if e := recover(); e != nil {
+			l.log.Errorf("have a error when close an ldap connection err:%v ", e)
+		}
+	}()
 	err := l.LDAPConn.UnauthenticatedBind(l.conf.LDAPFirstBindUsername)
 	if err != nil {
 		l.log.Errorf("can not unbind user : %s ", l.conf.LDAPFirstBindUsername)
@@ -78,7 +83,7 @@ func (l *LdapAuthentication) Authenticate(username string, password string) (int
 			l.log.Errorf("get user fail: %v", err)
 			return "", err
 		}
-		jwtToken, err := jwtGeneration.CreateToken(dbUser.Username, dbUser.FullName, dbUser.DeliveryCenter)
+		jwtToken, err := jwtGeneration.CreateToken(dbUser.Username)
 		if err != nil {
 			l.log.Errorf("get user fail : %v", err)
 			return "", err
@@ -106,7 +111,7 @@ func (l *LdapAuthentication) Authenticate(username string, password string) (int
 	if err != nil {
 		l.log.Errorf("can not add a user to mongodb %v", err)
 	}
-	jwtToken, err := jwtGeneration.CreateToken(ldapUser.Username, ldapUser.FullName, ldapUser.DeliveryCenter)
+	jwtToken, err := jwtGeneration.CreateToken(ldapUser.Username)
 	if err != nil {
 		l.log.Errorf("get token fail : %v", err)
 		return "", err
