@@ -84,11 +84,3 @@ func (r *MongoRepository) Delete(ctx context.Context, id string) error {
 	err := r.collection(s).Remove(bson.M{"_id": id})
 	return err
 }
-
-// DeleteByGiftNameVisitID a gift associate
-func (r *MongoRepository) DeleteByGiftNameVisitID(ctx context.Context, visitID string, giftNames []string) error {
-	s := r.session.Clone()
-	defer s.Close()
-	err := r.collection(s).Remove(bson.M{"giftName": {"$nin":["valueX", "valueY", "valueZ"]}})
-	return err
-}
