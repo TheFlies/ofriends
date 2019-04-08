@@ -1,4 +1,4 @@
-package friendhandler
+package customerhandler
 
 import (
 	"context"
@@ -16,21 +16,21 @@ import (
 
 type (
 	service interface {
-		Get(ctx context.Context, id string) (*types.Friend, error)
-		GetAll(ctx context.Context) ([]types.Friend, error)
-		Create(ctx context.Context, friend types.Friend) (string, error)
-		Update(ctx context.Context, friend types.Friend) error
+		Get(ctx context.Context, id string) (*types.Customer, error)
+		GetAll(ctx context.Context) ([]types.Customer, error)
+		Create(ctx context.Context, customer types.Customer) (string, error)
+		Update(ctx context.Context, customer types.Customer) error
 		Delete(ctx context.Context, id string) error
 	}
 
-	// Handler is friend web handler
+	// Handler is customer web handler
 	Handler struct {
 		srv    service
 		logger glog.Logger
 	}
 )
 
-// New return new rest api friend handler
+// New return new rest api customer handler
 func New(s service, l glog.Logger) *Handler {
 	return &Handler{
 		srv:    s,
@@ -38,33 +38,33 @@ func New(s service, l glog.Logger) *Handler {
 	}
 }
 
-// Get handle get friend HTTP request
+// Get handle get customer HTTP request
 func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
-	friend, err := h.srv.Get(r.Context(), mux.Vars(r)["id"])
+	customer, err := h.srv.Get(r.Context(), mux.Vars(r)["id"])
 	if err != nil {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
 	}
-	respond.JSON(w, http.StatusOK, friend)
+	respond.JSON(w, http.StatusOK, customer)
 }
 
-// GetAll handle get friends HTTP Request
+// GetAll handle get customer HTTP Request
 func (h *Handler) GetAll(w http.ResponseWriter, r *http.Request) {
-	friends, err := h.srv.GetAll(r.Context())
+	customers, err := h.srv.GetAll(r.Context())
 	if err != nil {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
 	}
 	
-	respond.JSON(w, http.StatusOK, friends)
+	respond.JSON(w, http.StatusOK, customers)
 
 }
 
-// Create handle insert friend HTTP Request
+// Create handle insert customer HTTP Request
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
-	var friend types.Friend
+	var customer types.Customer
 	
-	if err := json.NewDecoder(r.Body).Decode(&friend); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&customer); err != nil {
 		if err == io.EOF {
 			respond.Error(w, errors.New("Invalid request method"), http.StatusMethodNotAllowed)
 			return
@@ -75,21 +75,21 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close() 
 
-	if id, err := h.srv.Create(r.Context(), friend); err != nil {
+	if id, err := h.srv.Create(r.Context(), customer); err != nil {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
 	} else {
-		friend.ID = id
+		customer.ID = id
 	}
 
-	respond.JSON(w, http.StatusCreated, map[string]string{"id": friend.ID})
+	respond.JSON(w, http.StatusCreated, map[string]string{"id": customer.ID})
 }
 
-// Update handle modify friend HTTP Request
+// Update handle modify customer HTTP Request
 func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
-	var friend types.Friend
+	var customer types.Customer
 
-	if err := json.NewDecoder(r.Body).Decode(&friend); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&customer); err != nil {
 		if err == io.EOF {
 			respond.Error(w, errors.New("Invalid request method"), http.StatusMethodNotAllowed)
 			return
@@ -100,14 +100,14 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	
 	defer r.Body.Close() 
 
-	if err := h.srv.Update(r.Context(), friend); err != nil {
+	if err := h.srv.Update(r.Context(), customer); err != nil {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
 	}
-	respond.JSON(w, http.StatusOK, map[string]string{"id": friend.ID})
+	respond.JSON(w, http.StatusOK, map[string]string{"id": customer.ID})
 }
 
-// Delete handle delete friend HTTP Request
+// Delete handle delete customer HTTP Request
 func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 	if err := h.srv.Delete(r.Context(), mux.Vars(r)["id"]); err != nil {
 		respond.Error(w, err, http.StatusInternalServerError)

@@ -81,7 +81,7 @@ import ActivityListByVisit from '@/components/activity/ActivityListByVisit.vue'
 import GiftListByVisit from '@/components/gifts/GiftListByVisit.vue'
 import { getHumanDate } from '@/utils/convert'
 import {
-  getAllVisitsByFriendID,
+  getAllVisitsByCustomerID,
   createVisit,
   updateVisit,
   deleteVisitById
@@ -110,10 +110,10 @@ export default {
     }
   },
   created() {
-    this.visit.friendID = this.$route.params.id
+    this.visit.customerID = this.$route.params.id
   },
   mounted() {
-    getAllVisitsByFriendID(this.visit.friendID)
+    getAllVisitsByCustomerID(this.visit.customerID)
       .then(resp => {
         if (resp.data != null) {
           this.tableData = resp.data

@@ -3,7 +3,7 @@
   .s-card(:class="classProps" :style="cssProps" v-loading="loading")
     s-card-head(
       v-if="data"
-      :id="data.friendId"
+      :id="data.customerId"
       :title="`${data.title}. ${data.name}`"
       :sub-title="`${data.position} at ${data.company}`"
       :icon="data.company"
@@ -64,7 +64,7 @@
 import SCardHead from './SCardHead.vue'
 import SCardBody from './SCardBody.vue'
 
-import { getFriendById } from '@/api/friend'
+import { getCustomerById } from '@/api/customer'
 
 import { todayIsAfter } from '@/utils/convert'
 
@@ -138,7 +138,7 @@ export default {
   },
   mounted() {
     this.loading = true
-    getFriendById(this.item.friendId)
+    getCustomerById(this.item.customerId)
       .then(res => {
         this.data = Object.assign({}, this.item, res.data)
       })

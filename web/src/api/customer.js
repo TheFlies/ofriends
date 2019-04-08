@@ -9,24 +9,24 @@ function colorGeneration(dc) {
   }
 }
 
-export function getAllFriends() {
-  return axios.get('/friends')
+export function getAllCustomers() {
+  return axios.get('/customers')
 }
 
-export function getFriendById(id) {
-  return axios.get('/friends/' + id)
+export function getCustomerById(id) {
+  return axios.get('/customers/' + id)
 }
 
-export function createFriend(friend) {
-  return axios.post('/friends', friend)
+export function createCustomer(customer) {
+  return axios.post('/customers', customer)
 }
 
-export function updateFriend(friend) {
-  return axios.put('/friends', friend)
+export function updateCustomer(customer) {
+  return axios.put('/customers', customer)
 }
 
-export function deleteFriendById(id) {
-  return axios.delete('/friends/' + id)
+export function deleteCustomerById(id) {
+  return axios.delete('/customers/' + id)
 }
 
 export function transform(f) {

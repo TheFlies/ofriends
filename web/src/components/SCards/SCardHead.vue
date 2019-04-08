@@ -1,7 +1,7 @@
 <template lang="pug">
   .head()
     slot
-    a(:href="`/friends/${id}`")
+    a(:href="`/customers/${id}`")
       h2
         span.small {{ subTitle }}
         |  {{ title }}
