@@ -42,9 +42,11 @@ func (dba *DBAuthentication) Authenticate(username string, password string) (int
 		FullName:       user.FullName,
 		Email:          user.Email,
 		DeliveryCenter: user.DeliveryCenter,
+		RoleName:       user.RoleName,
+		Priority:       user.Priority,
 	}
 	tokenGeneration := jwt.NewTokenGeneration()
-	jwtToken, err := tokenGeneration.CreateToken(user.Username)
+	jwtToken, err := tokenGeneration.CreateToken(user.Username, user.RoleName, user.Priority)
 	if err != nil {
 		dba.log.Errorf("can't create token form user information err: %v ", err)
 		return nil, errors.Wrap(err, "create token fail ")

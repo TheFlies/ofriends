@@ -15,9 +15,9 @@ import (
 	"github.com/TheFlies/ofriends/internal/app/api/handler/login"
 	userhandler "github.com/TheFlies/ofriends/internal/app/api/handler/user"
 	"github.com/TheFlies/ofriends/internal/app/api/handler/visit"
+	"github.com/TheFlies/ofriends/internal/app/customer"
 	"github.com/TheFlies/ofriends/internal/app/db"
 	"github.com/TheFlies/ofriends/internal/app/dbauth"
-	"github.com/TheFlies/ofriends/internal/app/customer"
 	"github.com/TheFlies/ofriends/internal/app/gift"
 	"github.com/TheFlies/ofriends/internal/app/ldapauth"
 	"github.com/TheFlies/ofriends/internal/app/user"
@@ -43,10 +43,13 @@ type (
 )
 
 const (
-	get    = http.MethodGet
-	post   = http.MethodPost
-	put    = http.MethodPut
-	delete = http.MethodDelete
+	get       = http.MethodGet
+	post      = http.MethodPost
+	put       = http.MethodPut
+	delete    = http.MethodDelete
+	roleAdmin = 3
+	roleUser  = 2
+	none      = 1
 )
 
 // Init init all handlers
@@ -113,127 +116,150 @@ func Init(conns *InfraConns) (http.Handler, error) {
 		},
 		// Customer services
 		{
-			path:    "/customers/{id:[a-z0-9-\\-]+}",
-			method:  get,
-			handler: customerHandler.Get,
+			path:        "/customers/{id:[a-z0-9-\\-]+}",
+			method:      get,
+			handler:     customerHandler.Get,
+			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 		{
-			path:    "/customers",
-			method:  post,
-			handler: customerHandler.Create,
+			path:        "/customers",
+			method:      post,
+			handler:     customerHandler.Create,
+			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 		{
-			path:    "/customers",
-			method:  put,
-			handler: customerHandler.Update,
+			path:        "/customers",
+			method:      put,
+			handler:     customerHandler.Update,
+			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 		{
-			path:    "/customers",
-			method:  get,
-			handler: customerHandler.GetAll,
+			path:        "/customers",
+			method:      get,
+			handler:     customerHandler.GetAll,
+			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 		{
-			path:    "/customers/{id:[a-z0-9-\\-]+}",
-			method:  delete,
-			handler: customerHandler.Delete,
+			path:        "/customers/{id:[a-z0-9-\\-]+}",
+			method:      delete,
+			handler:     customerHandler.Delete,
+			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 
 		// Visit services
 		{
-			path:    "/visits/{id:[a-z0-9-\\-]+}",
-			method:  get,
-			handler: visitHandler.Get,
+			path:        "/visits/{id:[a-z0-9-\\-]+}",
+			method:      get,
+			handler:     visitHandler.Get,
+			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 		{
-			path:    "/visits",
-			method:  post,
-			handler: visitHandler.Create,
+			path:        "/visits",
+			method:      post,
+			handler:     visitHandler.Create,
+			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 		{
-			path:    "/visits",
-			method:  put,
-			handler: visitHandler.Update,
+			path:        "/visits",
+			method:      put,
+			handler:     visitHandler.Update,
+			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 		{
-			path:    "/visits",
-			method:  get,
-			handler: visitHandler.GetAll,
+			path:        "/visits",
+			method:      get,
+			handler:     visitHandler.GetAll,
+			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 		{
-			path:    "/visits/{id:[a-z0-9-\\-]+}",
-			method:  delete,
-			handler: visitHandler.Delete,
+			path:        "/visits/{id:[a-z0-9-\\-]+}",
+			method:      delete,
+			handler:     visitHandler.Delete,
+			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 		{
-			path:    "/visits/customer/{id:[a-z0-9-\\-]+}",
-			method:  get,
-			handler: visitHandler.GetByCustomerID,
+			path:        "/visits/customer/{id:[a-z0-9-\\-]+}",
+			method:      get,
+			handler:     visitHandler.GetByCustomerID,
+			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 		// Activity services
 		{
-			path:    "/activity/{id:[a-z0-9-\\-]+}",
-			method:  get,
-			handler: actHandler.Get,
+			path:        "/activity/{id:[a-z0-9-\\-]+}",
+			method:      get,
+			handler:     actHandler.Get,
+			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 		{
-			path:    "/activity",
-			method:  post,
-			handler: actHandler.Create,
+			path:        "/activity",
+			method:      post,
+			handler:     actHandler.Create,
+			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 		{
-			path:    "/activity",
-			method:  put,
-			handler: actHandler.Update,
+			path:        "/activity",
+			method:      put,
+			handler:     actHandler.Update,
+			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 		{
-			path:    "/activity",
-			method:  get,
-			handler: actHandler.GetAll,
+			path:        "/activity",
+			method:      get,
+			handler:     actHandler.GetAll,
+			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 		{
-			path:    "/activity/{id:[a-z0-9-\\-]+}",
-			method:  delete,
-			handler: actHandler.Delete,
+			path:        "/activity/{id:[a-z0-9-\\-]+}",
+			method:      delete,
+			handler:     actHandler.Delete,
+			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 		{
-			path:    "/activity/visit/{id:[a-z0-9-\\-]+}",
-			method:  get,
-			handler: actHandler.GetByVisitID,
+			path:        "/activity/visit/{id:[a-z0-9-\\-]+}",
+			method:      get,
+			handler:     actHandler.GetByVisitID,
+			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 		// Gift services
 		{
-			path:    "/gifts/{id:[a-z0-9-\\-]+}",
-			method:  get,
-			handler: giftHandler.Get,
+			path:        "/gifts/{id:[a-z0-9-\\-]+}",
+			method:      get,
+			handler:     giftHandler.Get,
+			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 
 		{
-			path:    "/gifts",
-			method:  get,
-			handler: giftHandler.GetAll,
+			path:        "/gifts",
+			method:      get,
+			handler:     giftHandler.GetAll,
+			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 
 		{
-			path:    "/gifts",
-			method:  post,
-			handler: giftHandler.Create,
+			path:        "/gifts",
+			method:      post,
+			handler:     giftHandler.Create,
+			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 
 		{
-			path:    "/gifts",
-			method:  put,
-			handler: giftHandler.Update,
+			path:        "/gifts",
+			method:      put,
+			handler:     giftHandler.Update,
+			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 
 		{
-			path:    "/gifts/{id:[a-z0-9-\\-]+}",
-			method:  delete,
-			handler: giftHandler.Delete,
+			path:        "/gifts/{id:[a-z0-9-\\-]+}",
+			method:      delete,
+			handler:     giftHandler.Delete,
+			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 		{
-			path:    "/gifts/visit/{id:[a-z0-9-\\-]+}",
-			method:  get,
-			handler: giftHandler.GetByVisitID,
+			path:        "/gifts/visit/{id:[a-z0-9-\\-]+}",
+			method:      get,
+			handler:     giftHandler.GetByVisitID,
+			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 		{
 			path:    "/api/v1/login",
@@ -241,33 +267,39 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			handler: loginHandler.Authenticate,
 		},
 		{
-			path:    "/api/v1/register",
-			method:  post,
-			handler: userHandler.Register,
+			path:        "/api/v1/register",
+			method:      post,
+			handler:     userHandler.Register,
+			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleAdmin)},
 		}, {
-			path:    "/api/v1/getme",
-			method:  get,
-			handler: userHandler.GetMe,
+			path:        "/api/v1/getme",
+			method:      get,
+			handler:     userHandler.GetMe,
+			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 		{
-			path:    "/api/v1/user/{username}",
-			method:  get,
-			handler: userHandler.GetUser,
+			path:        "/api/v1/user/{username}",
+			method:      get,
+			handler:     userHandler.GetUser,
+			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 		{
-			path:    "/api/v1/user/{username}",
-			method:  post,
-			handler: userHandler.SetPassword,
+			path:        "/api/v1/user/{username}",
+			method:      post,
+			handler:     userHandler.SetPassword,
+			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 		{
-			path:    "/api/v1/user/{username}",
-			method:  put,
-			handler: userHandler.ChangePassword,
+			path:        "/api/v1/user/{username}",
+			method:      put,
+			handler:     userHandler.ChangePassword,
+			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 		{
-			path:    "/api/v1/user/{username}",
-			method:  put,
-			handler: userHandler.Update,
+			path:        "/api/v1/user/{username}",
+			method:      put,
+			handler:     userHandler.Update,
+			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 	}
 
@@ -278,7 +310,6 @@ func Init(conns *InfraConns) (http.Handler, error) {
 	r.Use(middleware.StatusResponseWriter)
 	r.Use(loggingMW)
 	r.Use(handlers.CompressHandler)
-	r.Use(middleware.Security)
 
 	for _, rt := range routes {
 		h := rt.handler

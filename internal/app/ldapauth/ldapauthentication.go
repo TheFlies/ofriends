@@ -83,7 +83,7 @@ func (l *LdapAuthentication) Authenticate(username string, password string) (int
 			l.log.Errorf("get user fail: %v", err)
 			return "", err
 		}
-		jwtToken, err := jwtGeneration.CreateToken(dbUser.Username)
+		jwtToken, err := jwtGeneration.CreateToken(dbUser.Username, dbUser.RoleName, dbUser.Priority)
 		if err != nil {
 			l.log.Errorf("get user fail : %v", err)
 			return "", err
@@ -94,6 +94,8 @@ func (l *LdapAuthentication) Authenticate(username string, password string) (int
 			FullName:       dbUser.FullName,
 			Email:          dbUser.Email,
 			DeliveryCenter: dbUser.DeliveryCenter,
+			RoleName:       dbUser.RoleName,
+			Priority:       dbUser.Priority,
 		}
 		l.log.Infof("returning token")
 		//remove password before return to UI
@@ -111,7 +113,9 @@ func (l *LdapAuthentication) Authenticate(username string, password string) (int
 	if err != nil {
 		l.log.Errorf("can not add a user to mongodb %v", err)
 	}
-	jwtToken, err := jwtGeneration.CreateToken(ldapUser.Username)
+	ldapUser.RoleName = "none"
+	ldapUser.Priority = 1
+	jwtToken, err := jwtGeneration.CreateToken(ldapUser.Username, ldapUser.RoleName, ldapUser.Priority)
 	if err != nil {
 		l.log.Errorf("get token fail : %v", err)
 		return "", err
