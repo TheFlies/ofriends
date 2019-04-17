@@ -29,6 +29,11 @@ el-dialog(title="Add Customer" :visible.sync="isVisibleAdd" width="30%" append-t
           span(style="margin-left: 20px") {{ item.name }}
     el-form-item(label="City" prop="city")
       el-input(v-model="customer.city" placeholder="City where customer live...")
+    el-form-item(label="Pre-approve Visa" prop="preApproveVisa")
+      el-checkbox-group(v-model="customer.preApproveVisa")
+        el-checkbox(name="preApproveVisa")
+    el-form-item(label="Passport info" prop="passportInfo")
+        el-input(v-model="customer.passportInfo" type="textarea" placeholder="Passport info of customer")
     el-form-item(label="Food Note" prop="foodNote")
       el-input(v-model="customer.foodNote" type="textarea" placeholder="is a vegetarian...")
     el-form-item(label="Family Note" prop="familyNote")
@@ -59,6 +64,8 @@ export default {
         country: '',
         city: '',
         age: 50,
+        preApproveVisa: false,
+        passportInfo: '',
         foodNote: '',
         familyNote: '',
         nextVisitNote: '',

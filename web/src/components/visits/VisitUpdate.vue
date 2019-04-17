@@ -42,18 +42,6 @@
           </el-form-item>
         </el-col>
       </el-form-item>
-      <el-form-item label="Pre-approve Visa" prop="preApproveVisa">
-        <el-checkbox-group v-model="visit.preApproveVisa">
-          <el-checkbox name="preApproveVisa" />
-        </el-checkbox-group>
-      </el-form-item>
-      <el-form-item label="Passport info" prop="passportInfo">
-        <el-input
-          v-model="visit.passportInfo"
-          type="textarea"
-          placeholder="Passport info of customer"
-        />
-      </el-form-item>
       <el-form-item label="Created By" prop="createdBy">
         <el-input v-model="visit.createdBy" placeholder="Who in HR created the pre-approved visa?" />
       </el-form-item>
