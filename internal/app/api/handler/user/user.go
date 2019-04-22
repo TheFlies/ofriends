@@ -141,6 +141,7 @@ func (u *UserHandler) Update(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		u.logger.Errorf("some field of new user is malformed, &v", err)
 		respond.JSON(w, http.StatusBadRequest, map[string]string{"status": "400", "message": fmt.Sprintf("input must type correctly input %v", err)})
+		return
 	}
 	u.logger.Infof("update for username : %v", requestData.Username)
 	err = u.srv.UpdateUser(&requestData)

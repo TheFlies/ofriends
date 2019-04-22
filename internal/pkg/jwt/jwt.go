@@ -13,6 +13,8 @@ type (
 	Customeclaims struct {
 		jwt.StandardClaims
 		UserName string
+		Role     string
+		Priority int
 	}
 	JWTConf struct {
 		PrivateKey string `envconfig:"PRIVATE_KEY"`
@@ -33,7 +35,7 @@ func NewTokenGeneration() *TokenGeneration {
 		conf:   conf,
 	}
 }
-func New(standard jwt.StandardClaims, uid string) *Customeclaims {
+func New(standard jwt.StandardClaims, uid string, role string, priority int) *Customeclaims {
 	return &Customeclaims{
 		StandardClaims: jwt.StandardClaims{
 			Audience:  standard.Audience,
@@ -45,9 +47,11 @@ func New(standard jwt.StandardClaims, uid string) *Customeclaims {
 			Subject:   standard.Subject,
 		},
 		UserName: uid,
+		Role:     role,
+		Priority: priority,
 	}
 }
-func (tkg *TokenGeneration) CreateToken(uid string) (string, error) {
+func (tkg *TokenGeneration) CreateToken(uid string, role string, pri int) (string, error) {
 
 	tkg.logger.Infof("environment list [%v]", tkg.conf)
 	confDuration, err := time.ParseDuration(tkg.conf.Duration)
@@ -59,7 +63,7 @@ func (tkg *TokenGeneration) CreateToken(uid string) (string, error) {
 	payload := New(jwt.StandardClaims{
 		IssuedAt:  time.Now().Unix(),
 		ExpiresAt: duration,
-	}, uid)
+	}, uid, role, pri)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, payload)
 	JWTToken, err := token.SignedString([]byte(tkg.conf.PrivateKey))
 	if err != nil {
