@@ -1,8 +1,8 @@
 <template lang="pug">
-.showFriendDetail
+.showCustomerDetail
   el-form(ref="form" :model="form" :rules="rules" label-width="110px")
     h3(style="align:center;")
-      | Friend Detail Infomation
+      | Customer Detail Infomation
     el-col(:span="11")
       el-form-item(label="Name" prop="name")
         el-input(v-model="form.name" type="success" placeholder="Fistname and last name")
@@ -46,7 +46,7 @@
 
 <script>
 export default {
-  name: 'FriendShowDetail',
+  name: 'CustomerShowDetail',
   data() {
     return {
       form: {
@@ -68,21 +68,21 @@ export default {
         name: [
           {
             required: true,
-            message: 'Please input friend name',
+            message: 'Please input customer name',
             trigger: 'change'
           }
         ],
         title: [
           {
             required: true,
-            message: 'Please input friend title',
+            message: 'Please input customer title',
             trigger: 'change'
           }
         ],
         position: [
           {
             required: true,
-            message: 'Please input friend position',
+            message: 'Please input customer position',
             trigger: 'change'
           }
         ],
@@ -103,7 +103,7 @@ export default {
     // We already set the axios baseURL to the backend service in main.js file.
     this.loading = true
     this.$http
-      .get('/friends/' + this.id)
+      .get('/customers/' + this.id)
       .then(resp => {
         if (resp.data != null) {
           this.form = resp.data
@@ -121,7 +121,7 @@ export default {
       var mesgType = 'error'
       if (status === 201) {
         mesgType = 'success'
-        mesg = 'Create friend successfully!'
+        mesg = 'Create customer successfully!'
       }
       this.$message({
         message: mesg,
@@ -133,7 +133,7 @@ export default {
         if (valid) {
           var value = this.form
           this.$http
-            .post('/friends', {
+            .post('/customers', {
               Name: value.name,
               Title: value.title,
               Position: value.position,
@@ -171,15 +171,12 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="stylus">
-.showFriendDetail {
-  max-width: 800px;
-  margin: auto;
-  border: 1px solid #ebebeb;
-  border-radius: 3px;
-  transition: 0.2s;
-}
-
-.showFriendDetail .el-form {
-  padding: 24px;
-}
+.showCustomerDetail
+  max-width 800px
+  margin auto
+  border 1px solid #ebebeb
+  border-radius 3px
+  transition 0.2s
+  .el-form
+    padding: 24px;
 </style>

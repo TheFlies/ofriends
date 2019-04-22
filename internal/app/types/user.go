@@ -14,6 +14,8 @@ type (
 		DeliveryCenter []string `bson:"delivery_center" json:"delivery_center"`
 		Password       string   `bson:"password" json:"password"`
 		OldPassword    string   `boson:"old_password"json:"old_password"`
+		RoleName       string   `bson:"role" json:"role"`
+		Priority       int      `bson:"priority"json:"priority"`
 	}
 )
 

@@ -1,22 +1,22 @@
 <template lang="pug">
-el-dialog(title="Update Friend" :visible.sync="isVisibleUpdate" width="30%" append-to-body="" :before-close="handleBackdropClick")
-  el-form.demo-ruleForm(ref="friend" :model="friend" :rules="rules" label-width="120px")
+el-dialog(title="Update Customer" :visible.sync="isVisibleUpdate" width="30%" append-to-body="" :before-close="handleBackdropClick")
+  el-form.demo-ruleForm(ref="customer" :model="customer" :rules="rules" label-width="120px")
     el-form-item(label="Name" prop="name")
-      el-input(v-model="friend.name" type="success" placeholder="Fistname and last name")
+      el-input(v-model="customer.name" type="success" placeholder="Fistname and last name")
     el-form-item(label="Title" prop="title")
-      el-select(v-model="friend.title" style="width: 100%;" placeholder="please select customer title")
+      el-select(v-model="customer.title" style="width: 100%;" placeholder="please select customer title")
         el-option(label="Mr" value="Mr")
           el-option(label="Mrs" value="Mrs")
     el-form-item(label="Position" prop="position")
-      el-input(v-model="friend.position" placeholder="e.g Project manager")
+      el-input(v-model="customer.position" placeholder="e.g Project manager")
     el-form-item(label="Project" prop="project")
-      el-input(v-model="friend.project" placeholder="Project name...")
+      el-input(v-model="customer.project" placeholder="Project name...")
     el-form-item(label="Age" prop="age")
-      el-input(v-model="friend.age" placeholder="Age of customer" :min="20")
+      el-input(v-model="customer.age" placeholder="Age of customer" :min="20")
     el-form-item(label="Company" prop="company")
-      el-input(v-model="friend.company" placeholder="Company name...")
+      el-input(v-model="customer.company" placeholder="Company name...")
     el-form-item(label="Country" prop="country")
-      el-select(v-model="friend.country" placeholder="Country where customer live..."
+      el-select(v-model="customer.country" placeholder="Country where customer live..."
         filterable
         style="width: 100%;"
       )
@@ -28,26 +28,31 @@ el-dialog(title="Update Friend" :visible.sync="isVisibleUpdate" width="30%" appe
           flag(:iso="item.code")
           span(style="margin-left: 20px") {{ item.name }}
     el-form-item(label="City" prop="city")
-      el-input(v-model="friend.city" placeholder="City where customer live...")
+      el-input(v-model="customer.city" placeholder="City where customer live...")
+    el-form-item(label="Pre-approve Visa" prop="preApproveVisa")
+      el-checkbox-group(v-model="customer.preApproveVisa")
+        el-checkbox(name="preApproveVisa")
+    el-form-item(label="Passport info" prop="passportInfo")
+        el-input(v-model="customer.passportInfo" type="textarea" placeholder="Passport info of customer")
     el-form-item(label="Food Note" prop="foodNote")
-      el-input(v-model="friend.foodNote" type="textarea" placeholder="is a vegetarian...")
+      el-input(v-model="customer.foodNote" type="textarea" placeholder="is a vegetarian...")
     el-form-item(label="Family Note" prop="familyNote")
-      el-input(v-model="friend.familyNote" type="textarea" placeholder="Wife 34 years old, have two boys in 10 and 15 ...")
+      el-input(v-model="customer.familyNote" type="textarea" placeholder="Wife 34 years old, have two boys in 10 and 15 ...")
     el-form-item(label="Next visit Note" prop="nextVisitNote")
-      el-input(v-model="friend.nextVisitNote" type="textarea" placeholder="...")
+      el-input(v-model="customer.nextVisitNote" type="textarea" placeholder="...")
     el-form-item
-      el-button(type="primary" @click="submitForm('friend')")
+      el-button(type="primary" @click="submitForm('customer')")
         | Save
-      el-button(@click="resetForm('friend')")
+      el-button(@click="resetForm('customer')")
         | Cancel
 </template>
 
 <script>
 export default {
-  name: 'FriendUpdate',
+  name: 'CustomerUpdate',
   props: {
     isVisibleUpdate: { type: Boolean, default: false },
-    friend: {
+    customer: {
       type: Object,
       default: () => ({
         id: '',
@@ -71,21 +76,21 @@ export default {
         name: [
           {
             required: true,
-            message: 'Please input friend name',
+            message: 'Please input customer name',
             trigger: 'change'
           }
         ],
         title: [
           {
             required: true,
-            message: 'Please input friend title',
+            message: 'Please input customer title',
             trigger: 'change'
           }
         ],
         position: [
           {
             required: true,
-            message: 'Please input friend position',
+            message: 'Please input customer position',
             trigger: 'change'
           }
         ],
@@ -107,7 +112,7 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.$emit('update:isVisibleUpdate', false)
-          this.$emit('isUpdateFriend', true)
+          this.$emit('isUpdateCustomer', true)
         } else {
           console.log('error submit!!')
           return false

@@ -48,7 +48,7 @@
         <el-input v-model="activity.participant" placeholder="Who joint this activity?" />
       </el-form-item>
       <el-form-item label="Hotel Stayed" prop="hotel">
-        <el-input v-model="activity.hotel" placeholder="Where hotel friend stayed?" />
+        <el-input v-model="activity.hotel" placeholder="Where hotel customer stayed?" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submitForm('activity')">

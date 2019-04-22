@@ -4,8 +4,8 @@ export function getAllVisits() {
   return axios.get('/visits')
 }
 
-export function getAllVisitsByFriendID(friendId) {
-  return axios.get('/visits/friend/' + friendId)
+export function getAllVisitsByCustomerID(customerId) {
+  return axios.get('/visits/customer/' + customerId)
 }
 
 export function createVisit(visit) {

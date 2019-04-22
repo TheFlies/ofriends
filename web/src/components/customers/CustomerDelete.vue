@@ -6,29 +6,29 @@
     append-to-body
     :before-close="handleBackdropClick"
   >
-    <span>Do you want to delete: {{ friendName }}?</span>
+    <span>Do you want to delete: {{ customerName }}?</span>
     <span slot="footer" class="dialog-footer">
       <el-button @click="handleBackdropClick">Cancel</el-button>
-      <el-button type="primary" @click="deleteFriend">Confirm</el-button>
+      <el-button type="primary" @click="deleteCustomer">Confirm</el-button>
     </span>
   </el-dialog>
 </template>
 
 <script>
 export default {
-  name: 'FriendDelete',
+  name: 'CustomerDelete',
   props: {
     isVisibleDelete: { type: Boolean, default: false },
-    friendName: { type: String, default: '' },
-    isDeleteFriend: { type: Boolean, default: false }
+    customerName: { type: String, default: '' },
+    isDeleteCustomer: { type: Boolean, default: false }
   },
   methods: {
     handleBackdropClick() {
       this.$emit('update:isVisibleDelete', false)
     },
-    deleteFriend() {
+    deleteCustomer() {
       this.$emit('update:isVisibleDelete', false)
-      this.$emit('isDeleteFriend', true)
+      this.$emit('isDeleteCustomer', true)
     }
   }
 }

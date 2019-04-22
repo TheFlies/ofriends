@@ -9,7 +9,7 @@ export default {
   name: 'Hello',
   data() {
     return {
-      msg: 'Welcome to Friend Management App'
+      msg: 'Welcome to Customer Management App'
     }
   }
 }

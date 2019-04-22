@@ -19,7 +19,7 @@
       >
         <el-table-column type="expand">
           <template slot-scope="scope">
-            <GiftListByVisit :visit-id="scope.row.id" :friend-id="visit.friendID" :friend-name="visit.friendname" />
+            <GiftListByVisit :visit-id="scope.row.id" :friend-id="visit.customerID" :friend-name="visit.customername" />
             <ActivityListByVisit :visit-id="scope.row.id" />
           </template>
         </el-table-column>
@@ -81,7 +81,7 @@ import ActivityListByVisit from '@/components/activity/ActivityListByVisit.vue'
 import GiftListByVisit from '@/components/gifts/GiftListByVisit.vue'
 import { getHumanDate } from '@/utils/convert'
 import {
-  getAllVisitsByFriendID,
+  getAllVisitsByCustomerID,
   createVisit,
   updateVisit,
   deleteVisitById
@@ -110,11 +110,11 @@ export default {
     }
   },
   created() {
-    this.visit.friendID = this.$route.params.id
-    this.visit.friendName = this.$route.params.friendname
+    this.visit.customerID = this.$route.params.id
+    this.visit.customerName = this.$route.params.customername
   },
   mounted() {
-    getAllVisitsByFriendID(this.visit.friendID)
+    getAllVisitsByCustomerID(this.visit.customerID)
       .then(resp => {
         if (resp.data != null) {
           this.tableData = resp.data
