@@ -11,6 +11,8 @@ type Customer struct {
 	Company     	string  `json:"company"`
 	Country     	string  `json:"country"`
 	City        	string  `json:"city"`
+	PreApproveVisa  bool 	`json:"preApproveVisa"`
+	PassportInfo  	string 	`json:"passportInfo"`
 	FoodNote    	string  `json:"foodNote"`
 	FamilyNote      string  `json:"familyNote"`
 	NextVisitNote   string  `json:"nextVisitNote"`

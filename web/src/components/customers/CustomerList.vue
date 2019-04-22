@@ -20,6 +20,11 @@ el-container
         template(slot-scope="scope")
           span {{ ($countries.find(it => it.code === scope.row.country) || { name: null }).name }}
       el-table-column(label="City" width="120" sortable="" prop="city")
+      el-table-column(label="Pre-approved visa" width="120")
+          <template slot-scope="scope">
+            <el-checkbox v-model="scope.row.preApproveVisa" />
+          </template>
+      el-table-column(label="Passport Info" width="120" prop="passportInfo")
       el-table-column(label="Food Note" width="120" prop="foodNote")
       el-table-column(label="Family Note" width="120" prop="familyNote")
       el-table-column(label="Next Visit Note" width="120" prop="nextVisitNote")
