@@ -5,13 +5,12 @@ import (
 
 	"github.com/TheFlies/ofriends/internal/app/types"
 	"github.com/TheFlies/ofriends/internal/pkg/glog"
-	"github.com/go-ozzo/ozzo-validation"
+	validation "github.com/go-ozzo/ozzo-validation"
 )
 
 // Repository is an interface of a gift repository
 type Repository interface {
 	FindByID(ctx context.Context, id string) (*types.Gift, error)
-	FindByVisitID(ctx context.Context, visitId string) ([]types.Gift, error)
 	FindAll(ctx context.Context) ([]types.Gift, error)
 	Create(ctx context.Context, gift types.Gift) (string, error)
 	Update(ctx context.Context, gift types.Gift) error
@@ -37,12 +36,7 @@ func (s *Service) Get(ctx context.Context, id string) (*types.Gift, error) {
 	return s.repo.FindByID(ctx, id)
 }
 
-// Get all gifts from database by visit ID
-func (s *Service) GetByVisitID(ctx context.Context, visitId string) ([]types.Gift, error) {
-	return s.repo.FindByVisitID(ctx, visitId)
-}
-
-// Get All return all gifts from database
+// GetAll return all gifts from database
 func (s *Service) GetAll(ctx context.Context) ([]types.Gift, error) {
 	return s.repo.FindAll(ctx)
 }

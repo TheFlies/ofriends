@@ -32,15 +32,6 @@
         <el-input v-model="gift.size" />
       </el-form-item>
       <el-form-item
-        label="Quantity"
-        prop="quantity"
-      >
-        <el-input-number
-          v-model="gift.quantity"
-          :min="0"
-        />
-      </el-form-item>
-      <el-form-item
         label="Price"
         prop="price"
       >
@@ -85,7 +76,6 @@ const giftDefault = {
   name: '',
   idea: '',
   size: '',
-  quantity: 0,
   price: 0,
   link: '',
   description: ''
@@ -111,7 +101,6 @@ export default {
       name: '',
       idea: '',
       size: '',
-      quantity: 0,
       price: 0,
       link: '',
       description: ''

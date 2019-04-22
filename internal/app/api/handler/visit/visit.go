@@ -2,8 +2,8 @@ package visithandler
 
 import (
 	"context"
-	"net/http"
 	"encoding/json"
+	"net/http"
 
 	"errors"
 	"io"
@@ -51,12 +51,12 @@ func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
 
 // GetByCustomerID handle get visits HTTP Request by customerID
 func (h *Handler) GetByCustomerID(w http.ResponseWriter, r *http.Request) {
-	visits, err := h.srv.GetByCustomerID(r.Context(),mux.Vars(r)["id"])
+	visits, err := h.srv.GetByCustomerID(r.Context(), mux.Vars(r)["id"])
 	if err != nil {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
 	}
-	
+
 	respond.JSON(w, http.StatusOK, visits)
 
 }
@@ -68,7 +68,7 @@ func (h *Handler) GetAll(w http.ResponseWriter, r *http.Request) {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
 	}
-	
+
 	respond.JSON(w, http.StatusOK, visits)
 
 }
@@ -76,7 +76,7 @@ func (h *Handler) GetAll(w http.ResponseWriter, r *http.Request) {
 // Create handle insert visit HTTP Request
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	var visit types.Visit
-	
+
 	if err := json.NewDecoder(r.Body).Decode(&visit); err != nil {
 		if err == io.EOF {
 			respond.Error(w, errors.New("Invalid request method"), http.StatusMethodNotAllowed)
@@ -86,7 +86,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	defer r.Body.Close() 
+	defer r.Body.Close()
 
 	if id, err := h.srv.Create(r.Context(), visit); err != nil {
 		respond.Error(w, err, http.StatusInternalServerError)
@@ -110,8 +110,8 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
 	}
-	
-	defer r.Body.Close() 
+
+	defer r.Body.Close()
 
 	if err := h.srv.Update(r.Context(), visit); err != nil {
 		respond.Error(w, err, http.StatusInternalServerError)

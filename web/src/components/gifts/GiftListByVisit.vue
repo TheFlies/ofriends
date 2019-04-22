@@ -6,9 +6,9 @@
         icon="el-icon-plus"
         plain
         style="float:right"
-        @click="isVisibleAdd = !isVisibleAdd"
+        @click="getGiftAssociate"
       >
-        New gift
+        Assign gift
       </el-button>
     </el-header>
     <el-main>
@@ -17,36 +17,32 @@
         :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
         style="width: 100%"
       >
-        <el-table-column label="Name" prop="name" sortable />
-        <el-table-column label="Idea" prop="idea" sortable />
-        <el-table-column label="Size" prop="size" sortable />
+        <el-table-column label="Name" prop="giftName" sortable />
         <el-table-column label="Quantity" prop="quantity" sortable />
-        <el-table-column label="Price" prop="price" sortable />
-        <el-table-column label="Link" prop="link" />
-        <el-table-column label="Description" prop="description" />
+        <el-table-column label="Note" prop="note" sortable />
         <el-table-column align="right">
-          <GiftUpdate
+          <GiftAssociateUpdate
             :is-visible-update.sync="isVisibleUpdate"
             :gift.sync="gift"
-            @isUpdateGift="handleUpdate"
+            @isUpdateGift="handleGiftAssociateUpdate"
           />
-          <GiftDelete
+          <GiftAssociateDelete
             :is-visible-delete.sync="isVisibleDelete"
             :gift-name.sync="giftName"
-            @isDeleteGift="handleDelete"
+            @isDeleteGift="handleGiftAssociateDelete"
           />
-          <GiftAdd :is-visible-add.sync="isVisibleAdd" @isAddGift="handleAdd" />
+          <GiftAssociateAdd :assigned-gifts.sync="assignedGifts" :is-visible-assign.sync="isVisibleAssign" @isGiftAssociateAdd="handleGiftAssociateAdd" />
           <template slot-scope="scope">
             <el-button
               size="mini"
-              @click="gift = scope.row; isVisibleUpdate = !isVisibleUpdate"
+              @click="gift = scope.row; isVisibleUpdate = !isVisibleUpdate; "
             >
               Edit
             </el-button>
             <el-button
               size="mini"
               type="danger"
-              @click="isVisibleDelete = !isVisibleDelete; scopeGift = scope; giftName = scope.row.name"
+              @click="isVisibleDelete = !isVisibleDelete; scopeGift = scope; giftName = scope.row.giftName"
             >
               Delete
             </el-button>
@@ -58,25 +54,28 @@
 </template>
 
 <script>
-import GiftUpdate from '@/components/gifts/GiftUpdate.vue'
-import GiftDelete from '@/components/gifts/GiftDelete.vue'
-import GiftAdd from '@/components/gifts/GiftAdd.vue'
+import GiftAssociateUpdate from '@/components/giftAssocicates/GiftAssociateUpdate.vue'
+import GiftAssociateDelete from '@/components/giftAssocicates/GiftAssociateDelete.vue'
+import GiftAssociateAdd from '@/components/giftAssocicates/GiftAssociateAdd.vue'
+
 import {
-  getAllGiftsByVisitID,
-  createGifts,
-  modifyGifts,
-  deleteGiftById
-} from '@/api/gift'
+  getGiftAssociatesByVisitID,
+  createGiftAssociate,
+  deleteGiftAssociateById,
+  modifyGiftAssociates
+} from '@/api/giftAssociate'
 
 export default {
   name: 'GiftListByVisit',
   components: {
-    GiftUpdate,
-    GiftDelete,
-    GiftAdd
+    GiftAssociateUpdate,
+    GiftAssociateDelete,
+    GiftAssociateAdd
   },
   props: {
-    visitId: { type: String, default: '' }
+    visitId: { type: String, default: '' },
+    friendId: { type: String, default: '' },
+    friendName: { type: String, default: '' }
   },
 
   data() {
@@ -84,22 +83,24 @@ export default {
       tableData: [],
       isVisibleUpdate: false,
       isVisibleDelete: false,
-      isVisibleAdd: false,
+      isVisibleAssign: false,
       search: '',
-      gift: {},
+      giftAssociates: {},
       giftName: '',
       loading: true,
-      scopeGift: {}
+      scopeGift: {},
+      gift: {},
+      assignedGifts: []
     }
   },
-  created() {
-    this.gift.visitID = this.visitId
-  },
   mounted() {
-    getAllGiftsByVisitID(this.gift.visitID)
+    getGiftAssociatesByVisitID(this.visitId)
       .then(resp => {
         if (resp.data != null) {
           this.tableData = resp.data
+          this.tableData.forEach((gift, index) => {
+            this.assignedGifts.push(gift.id)
+          })
         }
         this.loading = false
       })
@@ -109,34 +110,85 @@ export default {
   },
 
   methods: {
-    handleAdd: function(isAddGift, gift) {
-      if (isAddGift) {
-        this.loading = true
-        gift.visitID = this.visitId
-        createGifts(gift)
-          .then(resp => {
-            this.$notify({
-              title: 'Success',
-              message: 'Update successfully!',
-              type: 'success'
-            })
-            gift.id = resp.data.id
-            this.tableData.splice(0, 0, gift)
+    getGiftAssociate: function() {
+      this.assignedGifts = []
+      this.tableData.forEach((gift, index) => {
+        this.assignedGifts.push(gift.giftId)
+      })
+      this.isVisibleAssign = !this.isVisibleAssign
+    },
+
+    // handleGiftAssociateAdd: Create if this gift is not exist in current assigned gifts.
+    // Delete if the current assigned gifts does not exist in updated assigned gifts.
+    handleGiftAssociateAdd: function(isGiftAssociateAdd, updatedGiftAssociates) {
+      if (isGiftAssociateAdd) {
+        var currentAssignedGifts = this.assignedGifts
+        updatedGiftAssociates.forEach((gift, index) => {
+          // If currentAssignedGifts doesn not include this gift, assign this gift
+          var position = currentAssignedGifts.indexOf(gift.initial)
+          if (position < 0) {
+            var giftAssociate = {}
+            giftAssociate.giftId = gift.initial
+            giftAssociate.visitId = this.visitId
+            giftAssociate.friendId = this.friendId
+            giftAssociate.giftName = gift.label
+            giftAssociate.friendName = this.friendName
+            giftAssociate.quantity = 1
+            giftAssociate.note = ''
+            createGiftAssociate(giftAssociate)
+              .then(resp => {
+                this.$notify({
+                  title: 'Success',
+                  message: 'Update successfully!',
+                  type: 'success'
+                })
+                giftAssociate.id = resp.data.id
+                this.tableData.splice(0, 0, giftAssociate)
+              })
+              .catch(err => {
+                console.log(err)
+                this.$notify.error({
+                  title: 'Error',
+                  message: err
+                })
+              })
+          } else {
+            // Remove this gifts are not in currentAssignedGifts
+            currentAssignedGifts.splice(position, 1)
+          }
+        })
+        // Current elements in currentAssignedGifts are gifts that is not in updated Gift
+        if (currentAssignedGifts.length > 0) {
+          currentAssignedGifts.forEach((id) => {
+            // Find to get gift associate ID, then delete this gift associate
+            var data = this.tableData.filter(data => !id || data.giftId.includes(id))
+            deleteGiftAssociateById(data[0].id)
+              .then(resp => {
+                var giftIndex = this.assignedGifts.indexOf(id)
+                this.tableData.splice(giftIndex, 1)
+                this.$notify({
+                  title: 'Success',
+                  message: 'Delete successfully!',
+                  type: 'success'
+                })
+              })
+              .catch(err => {
+                console.log(err)
+                this.$notify.error({
+                  title: 'Error',
+                  message: err
+                })
+              })
           })
-          .catch(err => {
-            console.log(err)
-            this.$notify.error({
-              title: 'Error',
-              message: err
-            })
-          })
+        }
         this.loading = false
       }
     },
-    handleUpdate: function(isUpdateGift) {
+
+    handleGiftAssociateUpdate: function(isUpdateGift) {
       if (isUpdateGift) {
         this.loading = true
-        modifyGifts(this.gift)
+        modifyGiftAssociates(this.gift)
           .then(resp => {
             console.log(resp.data)
             this.$notify({
@@ -155,10 +207,10 @@ export default {
         this.loading = false
       }
     },
-    handleDelete: function(isDeleteGift) {
+    handleGiftAssociateDelete: function(isDeleteGift) {
       if (isDeleteGift) {
         this.loading = true
-        deleteGiftById(this.scopeGift.row.id)
+        deleteGiftAssociateById(this.scopeGift.row.id)
           .then(resp => {
             this.tableData.splice(this.scopeGift.$index, 1)
             this.$notify({

@@ -1,5 +1,26 @@
 <template>
   <el-container>
+    <el-header class="gift-list-header">
+      <el-row>
+        <el-col >
+          <div style="text-align: left; font-size: 25px">
+            <el-tooltip
+              class="item"
+              effect="dark"
+              content="Add gift"
+              placement="right-start"
+            >
+            <el-button
+              type="primary"
+              icon="el-icon-plus"
+              plain
+              @click="isVisibleAdd = !isVisibleAdd"
+            >New Gift</el-button>
+            </el-tooltip>
+          </div>
+        </el-col>
+      </el-row>
+    </el-header>
     <el-main>
       <el-table
         v-loading="loading"
@@ -19,11 +40,6 @@
         <el-table-column
           label="Size"
           prop="size"
-          sortable
-        />
-        <el-table-column
-          label="Quantity"
-          prop="quantity"
           sortable
         />
         <el-table-column

@@ -3,17 +3,17 @@ package gifthandler
 import (
 	"context"
 	"encoding/json"
+	"net/http"
+
 	"github.com/TheFlies/ofriends/internal/app/types"
 	"github.com/TheFlies/ofriends/internal/pkg/glog"
 	"github.com/TheFlies/ofriends/internal/pkg/respond"
-	"net/http"
 	"github.com/gorilla/mux"
 )
 
 type (
 	service interface {
 		Get(ctx context.Context, id string) (*types.Gift, error)
-		GetByVisitID(ctx context.Context, visitId string) ([]types.Gift, error)
 		GetAll(ctx context.Context) ([]types.Gift, error)
 		Create(ctx context.Context, gift types.Gift) (string, error)
 		Update(ctx context.Context, gift types.Gift) error
@@ -45,18 +45,6 @@ func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
 	respond.JSON(w, http.StatusOK, gift)
 }
 
-// GetByVisitID handle get gifts HTTP Request by visitID
-func (h *Handler) GetByVisitID(w http.ResponseWriter, r *http.Request) {
-	acts, err := h.srv.GetByVisitID(r.Context(),mux.Vars(r)["id"])
-	if err != nil {
-		respond.Error(w, err, http.StatusInternalServerError)
-		return
-	}
-	
-	respond.JSON(w, http.StatusOK, acts)
-
-}
-
 // GetAll handle get gifts HTTP Request
 func (h *Handler) GetAll(w http.ResponseWriter, r *http.Request) {
 	gifts, err := h.srv.GetAll(r.Context())
@@ -64,7 +52,7 @@ func (h *Handler) GetAll(w http.ResponseWriter, r *http.Request) {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
 	}
-	
+
 	respond.JSON(w, http.StatusOK, gifts)
 }
 
@@ -98,7 +86,7 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
 	}
-	respond.JSON(w, http.StatusOK, map[string]string{"id": gift.ID, "status":"success"})
+	respond.JSON(w, http.StatusOK, map[string]string{"id": gift.ID, "status": "success"})
 }
 
 // Delete handle delete gift HTTP Request
