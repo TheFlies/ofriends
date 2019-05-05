@@ -43,8 +43,11 @@
     .el-submenu__title
       &:hover
         background-color: $menuHover !important
+        color: $subMenuActiveText !important
     .is-active>.el-submenu__title
       color: $subMenuActiveText !important
+    .is-active
+      background-color: $menuHover !important
     & .nest-menu .el-submenu > .el-submenu__title,
     & .el-submenu .el-menu-item
       min-width: $sideBarWidth !important

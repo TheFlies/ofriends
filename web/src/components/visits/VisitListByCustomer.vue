@@ -35,12 +35,6 @@
             {{ getHumanDate(scope.row.departureTime) }}
           </template>
         </el-table-column>
-        <el-table-column label="Pre-approved visa" width="120">
-          <template slot-scope="scope">
-            <el-checkbox v-model="scope.row.preApproveVisa" />
-          </template>
-        </el-table-column>
-        <el-table-column label="Passport Info" width="280" prop="passportInfo" />
         <el-table-column label="Created By" width="120" sortable prop="createdBy" />
         <el-table-column label="Hotel Stayed" width="180" prop="hotelStayed" />
         <el-table-column label="Pickup" width="120" prop="pickup" />
