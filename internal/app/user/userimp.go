@@ -20,6 +20,18 @@ func NewUserMongoRepository(s *mgo.Session) *UserMongoRepository {
 		session: s,
 	}
 }
+
+func (r *UserMongoRepository) FindAll() ([]types.User, error) {
+	s := r.session.Clone()
+	defer s.Close()
+	var users []types.User
+	if err := r.collection(s).Find(bson.M{}).All(&users); err != nil {
+		return nil, errors.Wrap(err, "failed to fetch all user from database")
+	}
+	
+	return users, nil
+}
+
 func (r *UserMongoRepository) FindUserByUserName(username string) (*types.User, error) {
 	s := r.session.Clone()
 	defer s.Close()

@@ -123,6 +123,21 @@ export const constantRouterMap = [
       }
     ]
   },
+  {
+    path: '/managements',
+    component: Layout,
+    children: [
+      {
+        path: '',
+        name: 'managements',
+        component: () => import('./views/user/Show.vue'),
+        meta: {
+          title: 'Management',
+          icon: 'mng'
+        }
+      }
+    ]
+  },
   { path: '*', redirect: '/404', hidden: true }
 ]
 

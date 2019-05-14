@@ -24,6 +24,7 @@ type (
 	}
 	UserService interface {
 		GetByName(username string) (*types.User, error)
+		GetAll() ([]types.User, error)
 		AddUser(u *types.User) (string, error)
 		CheckExistence(username string) bool
 		ChangePassword(username string, oldPassword string, newPassword string) error
@@ -39,6 +40,16 @@ func NewUserHandler(s UserService, localLogin login.LoginService, ldapLogin logi
 		localLoginSrv: localLogin,
 		ldapLoginSrv:  ldapLogin,
 	}
+}
+func (u *UserHandler) GetAll(w http.ResponseWriter, r *http.Request) {
+	users, err := u.srv.GetAll()
+	if err != nil {
+		respond.Error(w, err, http.StatusInternalServerError)
+		return
+	}
+	
+	respond.JSON(w, http.StatusOK, users)
+
 }
 func (u *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
