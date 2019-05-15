@@ -112,7 +112,8 @@ export default {
     }
   },
   created() {
-    this.visit.customerID = this.$route.params.id
+    this.visit.customerID = []
+    this.visit.activityID = []
   },
   methods: {
     handleBackdropClick() {

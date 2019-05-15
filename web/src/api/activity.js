@@ -4,10 +4,13 @@ export function getAllActivitiesByVisitID(visitId) {
   return axios.get('/activity/visit/' + visitId)
 }
 
-export function getAllActivites() {
+export function getAllActivities() {
   return axios.get('/activity')
 }
 
+export function getActivityByID(id) {
+  return axios.get('/activity/' + id)
+}
 export function createActivity(activity) {
   return axios.post('/activity', activity)
 }

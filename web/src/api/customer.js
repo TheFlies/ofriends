@@ -13,7 +13,7 @@ export function getAllCustomers() {
   return axios.get('/customers')
 }
 
-export function getCustomerById(id) {
+export function getCustomerByID(id) {
   return axios.get('/customers/' + id)
 }
 
@@ -25,7 +25,7 @@ export function updateCustomer(customer) {
   return axios.put('/customers', customer)
 }
 
-export function deleteCustomerById(id) {
+export function deleteCustomerByID(id) {
   return axios.delete('/customers/' + id)
 }
 

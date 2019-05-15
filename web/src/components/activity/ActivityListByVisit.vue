@@ -1,61 +1,59 @@
 <template>
-  <el-container style="background: #ecf5ff;">
-    <el-header style="width: 100%; margin:auto">
-      <el-button
-        type="primary"
-        icon="el-icon-plus"
-        plain
-        style="float:right"
-        @click="isVisibleAdd = !isVisibleAdd"
-      >
-        New activity
-      </el-button>
-    </el-header>
+  <el-container>
     <el-main>
-      <el-table
-        v-loading="loading"
-        :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
-        style="width: 100%; margin:auto"
-      >
-        <el-table-column type="index" :index="indexMethod" />
-        <el-table-column label="Start Time" width="130" sortable prop="startTime">
-          <template slot-scope="scope">
-            {{ getHumanDate(scope.row.startTime) }}
-          </template>
-        </el-table-column>
-        <el-table-column label="End Time" width="130" sortable prop="endTime">
-          <template slot-scope="scope">
-            {{ getHumanDate(scope.row.endTime) }}
-          </template>
-        </el-table-column>
-        <el-table-column label="Detail" width="300" prop="detail" />
-        <el-table-column label="Participant" prop="participant" width="150" />
-        <el-table-column label="Hotel" width="280" prop="hotel" />
-        <el-table-column align="right">
-          <ActivityUpdate
-            :is-visible-update.sync="isVisibleUpdate"
-            :activity.sync="activity"
-            @isUpdateAct="handleUpdate"
-          />
-          <ActivityDelete :is-visible-delete.sync="isVisibleDelete" @isDeleteAct="handleDelete" />
-          <ActivityAdd :is-visible-add.sync="isVisibleAdd" @isAddAct="handleAdd" />
-          <template slot-scope="scope">
-            <el-button
-              size="mini"
-              @click="activity = scope.row; isVisibleUpdate = !isVisibleUpdate"
-            >
-              Edit
-            </el-button>
-            <el-button
-              size="mini"
-              type="danger"
-              @click="isVisibleDelete = !isVisibleDelete; scopeActivity= scope"
-            >
-              Delete
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+      <el-card class="box-card">
+        <div slot="header" class="clearfix">
+          <span style="font-size: 18px;">Activity Associate</span>
+          <el-button type="primary" icon="el-icon-plus" plain style="float:right" @click="getActivityAssociate">
+            Assign activity
+          </el-button>
+        </div>
+        
+        <div class="text item">
+          <el-table v-loading="loading" :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" style="width: 100%; margin:auto">
+            <el-table-column type="index" :index="indexMethod" />
+            <el-table-column label="Name" prop="name" width="150" />
+            <el-table-column label="Start Time" width="130" sortable prop="startTime">
+              <template slot-scope="scope">
+                {{ getHumanDate(scope.row.startTime) }}
+              </template>
+            </el-table-column>
+            <el-table-column label="End Time" width="130" sortable prop="endTime">
+              <template slot-scope="scope">
+                {{ getHumanDate(scope.row.endTime) }}
+              </template>
+            </el-table-column>
+            <el-table-column label="Detail" width="300" prop="detail" />
+            <el-table-column label="Participant" prop="participant" width="150" />
+            <el-table-column label="Hotel" width="280" prop="hotel" />
+            <el-table-column align="right">
+              <ActivityAssociateAdd :assigned-activities.sync="assignedActivities" :is-visible-assign.sync="isVisibleAssign" @isActivityAssociateAdd="handleActivityAssociateAdd" />
+              <!-- <ActivityUpdate
+                :is-visible-update.sync="isVisibleUpdate"
+                :activity.sync="activity"
+                @isUpdateAct="handleUpdate"
+              />
+              <ActivityDelete :is-visible-delete.sync="isVisibleDelete" @isDeleteAct="handleDelete" />
+              <ActivityAdd :is-visible-add.sync="isVisibleAdd" @isAddAct="handleAdd" /> -->
+              <template slot-scope="scope">
+                <el-button
+                  size="mini"
+                  @click="activity = scope.row; isVisibleUpdate = !isVisibleUpdate"
+                >
+                  Edit
+                </el-button>
+                <el-button
+                  size="mini"
+                  type="danger"
+                  @click="isVisibleDelete = !isVisibleDelete; scopeActivity= scope"
+                >
+                  Delete
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+      </el-card>      
     </el-main>
   </el-container>
 </template>
@@ -64,10 +62,12 @@
 import ActivityUpdate from '@/components/activity/ActivityUpdate.vue'
 import ActivityDelete from '@/components/activity/ActivityDelete.vue'
 import ActivityAdd from '@/components/activity/ActivityAdd.vue'
+import ActivityAssociateAdd from '@/components/activityAssocicates/ActivityAssociateAdd.vue'
 import { getHumanDate } from '@/utils/convert'
+import { updateVisit } from '@/api/visit'
 
 import {
-  getAllActivitiesByVisitID,
+  getActivityByID,
   createActivity,
   updateActivity,
   deleteActivityById
@@ -78,10 +78,11 @@ export default {
   components: {
     ActivityUpdate,
     ActivityDelete,
-    ActivityAdd
+    ActivityAdd,
+    ActivityAssociateAdd
   },
   props: {
-    visitId: { type: String, default: '' }
+    visit: { type: Object}
   },
   data() {
     return {
@@ -92,25 +93,65 @@ export default {
       search: '',
       loading: false, // need to be true need fix
       activity: {},
-      scopeActivity: {}
+      scopeActivity: {},
+      assignedActivities: [],
+      isVisibleAssign: false,
     }
   },
-  created() {
-    this.activity.visitID = this.visitId
-  },
   mounted() {
-    getAllActivitiesByVisitID(this.activity.visitID)
-      .then(resp => {
+    this.visit.activityID.forEach((id, index) => {
+      getActivityByID(id).then(resp => {
         if (resp.data != null) {
-          this.tableData = resp.data
+          this.tableData.push(resp.data)
         }
-        this.loading = false
       })
-      .catch(err => {
-        console.log(err)
-      })
+    })
+    this.loading = false
   },
   methods: {
+    getActivityAssociate: function() {
+      this.assignedActivities = []
+      this.tableData.forEach((activity, index) => {
+        this.assignedActivities.push(activity.id)
+      })
+      this.isVisibleAssign = !this.isVisibleAssign
+    },
+    handleActivityAssociateAdd: function(isActivityAssociateAdd, updatedActivityAssociates) {
+      this.tableData = []
+      var activityIDList = []
+      if(isActivityAssociateAdd) {
+        updatedActivityAssociates.forEach((activity, index) => {
+          activityIDList.push(activity.initial)
+        })
+      }
+      this.visit.activityID = activityIDList
+      updateVisit(this.visit)
+        .then(resp => {
+          this.$notify({
+            title: 'Success',
+            message: 'Update successfully!',
+            type: 'success',
+            position: 'bottom-right'
+          })
+        })
+        .catch(err => {
+          console.log(err)
+          this.$notify.error({
+            title: 'Error',
+            message: err
+          })
+        })
+
+      //Load list again
+      this.visit.activityID.forEach((id, index) => {
+        getActivityByID(id).then(resp => {
+          if (resp.data != null) {
+            this.tableData.push(resp.data)
+          }
+        })
+      })
+      this.loading = false
+    },
     handleAdd: function(isAddAct, activity) {
       activity.visitID = this.activity.visitID
       if (isAddAct) {
@@ -120,7 +161,8 @@ export default {
             this.$notify({
               title: 'Success',
               message: 'Update successfully!',
-              type: 'success'
+              type: 'success',
+              position: 'bottom-right'
             })
             activity.id = resp.data.id
             this.tableData.splice(0, 0, activity)
@@ -129,7 +171,8 @@ export default {
             console.log(err)
             this.$notify.error({
               title: 'Error',
-              message: err
+              message: err,
+              position: 'bottom-right'
             })
           })
         this.loading = false
@@ -144,14 +187,16 @@ export default {
             this.$notify({
               title: 'Success',
               message: 'Update successfully!',
-              type: 'success'
+              type: 'success',
+              position: 'bottom-right'
             })
           })
           .catch(err => {
             console.log(err)
             this.$notify.error({
               title: 'Error',
-              message: err
+              message: err,
+              position: 'bottom-right'
             })
           })
         this.loading = false
@@ -166,14 +211,16 @@ export default {
             this.$notify({
               title: 'Success',
               message: 'Delete successfully!',
-              type: 'success'
+              type: 'success',
+              position: 'bottom-right'
             })
           })
           .catch(err => {
             console.log(err)
             this.$notify.error({
               title: 'Error',
-              message: err
+              message: err,
+              position: 'bottom-right'
             })
           })
       }

@@ -4,8 +4,8 @@ export function getAllGiftAssociates() {
   return axios.get('/gifts/associates')
 }
 
-export function getGiftAssociatesByVisitID(visitID) {
-  return axios.get('/gifts/associates/visits/' + visitID)
+export function getGiftAssociatesByVisitIDNCustomerID(visitID, customerID) {
+  return axios.get('/gifts/associates/visits/' + visitID + '/' + customerID)
 }
 
 export function createGiftAssociate(gift) {
@@ -18,5 +18,9 @@ export function modifyGiftAssociates(gift) {
 
 export function deleteGiftAssociateById(giftID) {
   return axios.delete('/gifts/associates/' + giftID)
+}
+
+export function deleteGiftAssociatesByVisitIDNCustomerID(visitID, customerID) {
+  return axios.delete('/gifts/associates/visits/' + visitID + '/' + customerID)
 }
 

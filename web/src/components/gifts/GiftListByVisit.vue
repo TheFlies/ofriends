@@ -1,54 +1,34 @@
 <template>
-  <el-container style="background: #f0f9eb;">
-    <el-header style="width: 100%; margin:auto">
-      <el-button
-        type="success"
-        icon="el-icon-plus"
-        plain
-        style="float:right"
-        @click="getGiftAssociate"
-      >
-        Assign gift
-      </el-button>
-    </el-header>
+  <el-container>
     <el-main>
-      <el-table
-        v-loading="loading"
-        :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
-        style="width: 100%"
-      >
-        <el-table-column label="Name" prop="giftName" sortable />
-        <el-table-column label="Quantity" prop="quantity" sortable />
-        <el-table-column label="Note" prop="note" sortable />
-        <el-table-column align="right">
-          <GiftAssociateUpdate
-            :is-visible-update.sync="isVisibleUpdate"
-            :gift.sync="gift"
-            @isUpdateGift="handleGiftAssociateUpdate"
-          />
-          <GiftAssociateDelete
-            :is-visible-delete.sync="isVisibleDelete"
-            :gift-name.sync="giftName"
-            @isDeleteGift="handleGiftAssociateDelete"
-          />
-          <GiftAssociateAdd :assigned-gifts.sync="assignedGifts" :is-visible-assign.sync="isVisibleAssign" @isGiftAssociateAdd="handleGiftAssociateAdd" />
-          <template slot-scope="scope">
-            <el-button
-              size="mini"
-              @click="gift = scope.row; isVisibleUpdate = !isVisibleUpdate; "
-            >
-              Edit
-            </el-button>
-            <el-button
-              size="mini"
-              type="danger"
-              @click="isVisibleDelete = !isVisibleDelete; scopeGift = scope; giftName = scope.row.giftName"
-            >
-              Delete
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+      <el-card class="box-card">
+        <div slot="header" class="clearfix">
+          <span style="font-size: 18px;">Gift Associate</span>
+          <el-button type="primary" icon="el-icon-plus" plain style="float:right" @click="getGiftAssociate">
+            Assign gift
+          </el-button>        
+        </div>
+        <div class="text item">
+          <el-table v-loading="loading" :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" style="width: 100%">
+            <el-table-column label="Name" prop="giftName" sortable />
+            <el-table-column label="Quantity" prop="quantity" sortable />
+            <el-table-column label="Note" prop="note" sortable />
+            <el-table-column align="right">
+              <GiftAssociateUpdate :is-visible-update.sync="isVisibleUpdate" :gift.sync="gift" @isUpdateGift="handleGiftAssociateUpdate" />
+              <GiftAssociateDelete :is-visible-delete.sync="isVisibleDelete" :gift-name.sync="giftName" @isDeleteGift="handleGiftAssociateDelete" />
+              <GiftAssociateAdd :assigned-gifts.sync="assignedGifts" :is-visible-assign.sync="isVisibleAssign" @isGiftAssociateAdd="handleGiftAssociateAdd" />
+              <template slot-scope="scope">
+                <el-button size="mini" @click="gift = scope.row; isVisibleUpdate = !isVisibleUpdate; ">
+                  Edit
+                </el-button>
+                <el-button size="mini" type="danger" @click="isVisibleDelete = !isVisibleDelete; scopeGift = scope; giftName = scope.row.giftName">
+                  Delete
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+      </el-card>      
     </el-main>
   </el-container>
 </template>
@@ -59,7 +39,7 @@ import GiftAssociateDelete from '@/components/giftAssocicates/GiftAssociateDelet
 import GiftAssociateAdd from '@/components/giftAssocicates/GiftAssociateAdd.vue'
 
 import {
-  getGiftAssociatesByVisitID,
+  getGiftAssociatesByVisitIDNCustomerID,
   createGiftAssociate,
   deleteGiftAssociateById,
   modifyGiftAssociates
@@ -74,8 +54,8 @@ export default {
   },
   props: {
     visitId: { type: String, default: '' },
-    friendId: { type: String, default: '' },
-    friendName: { type: String, default: '' }
+    customerId: { type: String, default: '' },
+    customerName: { type: String, default: '' }
   },
 
   data() {
@@ -94,7 +74,7 @@ export default {
     }
   },
   mounted() {
-    getGiftAssociatesByVisitID(this.visitId)
+    getGiftAssociatesByVisitIDNCustomerID(this.visitId,this.customerId)
       .then(resp => {
         if (resp.data != null) {
           this.tableData = resp.data
@@ -130,9 +110,9 @@ export default {
             var giftAssociate = {}
             giftAssociate.giftId = gift.initial
             giftAssociate.visitId = this.visitId
-            giftAssociate.friendId = this.friendId
+            giftAssociate.customerID = this.customerId
             giftAssociate.giftName = gift.label
-            giftAssociate.friendName = this.friendName
+            giftAssociate.customerName = this.customerName
             giftAssociate.quantity = 1
             giftAssociate.note = ''
             createGiftAssociate(giftAssociate)
@@ -140,7 +120,8 @@ export default {
                 this.$notify({
                   title: 'Success',
                   message: 'Update successfully!',
-                  type: 'success'
+                  type: 'success',
+                  position: 'bottom-right'
                 })
                 giftAssociate.id = resp.data.id
                 this.tableData.splice(0, 0, giftAssociate)
@@ -149,7 +130,8 @@ export default {
                 console.log(err)
                 this.$notify.error({
                   title: 'Error',
-                  message: err
+                  message: err,
+                  position: 'bottom-right'
                 })
               })
           } else {
@@ -169,14 +151,16 @@ export default {
                 this.$notify({
                   title: 'Success',
                   message: 'Delete successfully!',
-                  type: 'success'
+                  type: 'success',
+                  position: 'bottom-right'
                 })
               })
               .catch(err => {
                 console.log(err)
                 this.$notify.error({
                   title: 'Error',
-                  message: err
+                  message: err,
+                  position: 'bottom-right'
                 })
               })
           })
@@ -194,14 +178,16 @@ export default {
             this.$notify({
               title: 'Success',
               message: 'Update successfully!',
-              type: 'success'
+              type: 'success',
+              position: 'bottom-right'
             })
           })
           .catch(err => {
             console.log(err)
             this.$notify.error({
               title: 'Error',
-              message: err
+              message: err,
+              position: 'bottom-right'
             })
           })
         this.loading = false
@@ -216,14 +202,16 @@ export default {
             this.$notify({
               title: 'Success',
               message: 'Delete successfully!',
-              type: 'success'
+              type: 'success',
+              position: 'bottom-right'
             })
           })
           .catch(err => {
             console.log(err)
             this.$notify.error({
               title: 'Error',
-              message: err
+              message: err,
+              position: 'bottom-right'
             })
           })
       }
@@ -232,3 +220,13 @@ export default {
   }
 }
 </script>
+<style>
+  .clearfix:before,
+  .clearfix:after {
+    display: table;
+    content: "";
+  }
+  .clearfix:after {
+    clear: both
+  }
+</style>

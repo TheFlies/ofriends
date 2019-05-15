@@ -12,10 +12,11 @@ import (
 type Repository interface {
 	FindByID(ctx context.Context, id string) (*types.GiftAssociate, error)
 	FindAll(ctx context.Context) ([]types.GiftAssociate, error)
-	FindByVisitID(ctx context.Context, visitID string) ([]types.GiftAssociate, error)
+	FindByVisitIDNCustomerID(ctx context.Context, visitID string, customerID string) ([]types.GiftAssociate, error)
 	Create(ctx context.Context, giftAssociate types.GiftAssociate) (string, error)
 	Update(ctx context.Context, giftAssociate types.GiftAssociate) error
 	Delete(ctx context.Context, id string) error
+	DeleteByVisitIDNCustomerID(ctx context.Context, visitID string, customerID string) error
 }
 
 // Service is an gift associate service
@@ -43,15 +44,15 @@ func (s *Service) GetAll(ctx context.Context) ([]types.GiftAssociate, error) {
 }
 
 // GetByVisitID return given gift associate by visit id
-func (s *Service) GetByVisitID(ctx context.Context, visitID string) ([]types.GiftAssociate, error) {
-	return s.repo.FindByVisitID(ctx, visitID)
+func (s *Service) GetByVisitIDNCustomerID(ctx context.Context, visitID string, customerID string) ([]types.GiftAssociate, error) {
+	return s.repo.FindByVisitIDNCustomerID(ctx, visitID, customerID)
 }
 
 // Create a gift associates
 func (s *Service) Create(ctx context.Context, giftAssociate types.GiftAssociate) (string, error) {
 	if err := validation.ValidateStruct(&giftAssociate,
 		validation.Field(&giftAssociate.VisitID, validation.Required),
-		validation.Field(&giftAssociate.FriendID, validation.Required),
+		validation.Field(&giftAssociate.CustomerID, validation.Required),
 		validation.Field(&giftAssociate.Quantity, validation.Required),
 	); err != nil {
 		return "", err
@@ -64,7 +65,7 @@ func (s *Service) Update(ctx context.Context, giftAssociate types.GiftAssociate)
 	if err := validation.ValidateStruct(&giftAssociate,
 		validation.Field(&giftAssociate.ID, validation.Required),
 		validation.Field(&giftAssociate.VisitID, validation.Required),
-		validation.Field(&giftAssociate.FriendID, validation.Required),
+		validation.Field(&giftAssociate.CustomerID, validation.Required),
 		validation.Field(&giftAssociate.Quantity, validation.Required),
 	); err != nil {
 		return err
@@ -75,4 +76,9 @@ func (s *Service) Update(ctx context.Context, giftAssociate types.GiftAssociate)
 // Delete a gift associate
 func (s *Service) Delete(ctx context.Context, id string) error {
 	return s.repo.Delete(ctx, id)
+}
+
+// Delete a gift associate
+func (s *Service) DeleteByVisitIDNCustomerID(ctx context.Context, visitId string, customerId string) error {
+	return s.repo.DeleteByVisitIDNCustomerID(ctx, visitId, customerId)
 }

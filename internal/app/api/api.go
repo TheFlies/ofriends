@@ -311,9 +311,9 @@ func Init(conns *InfraConns) (http.Handler, error) {
 		},
 
 		{
-			path:    "/gifts/associates/visits/{visitID:[a-z0-9-\\-]+}",
+			path:    "/gifts/associates/visits/{visitID:[a-z0-9-\\-]+}/{customerID:[a-z0-9-\\-]+}",
 			method:  get,
-			handler: giftAssociateHandler.GetByVisitID,
+			handler: giftAssociateHandler.GetByVisitIDNCustomerID,
 		},
 
 		{
@@ -338,6 +338,12 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			path:    "/gifts/associates/{id:[a-z0-9-\\-]+}",
 			method:  delete,
 			handler: giftAssociateHandler.Delete,
+		},
+
+		{
+			path:    "/gifts/associates/visits/{visitID:[a-z0-9-\\-]+}/{customerID:[a-z0-9-\\-]+}",
+			method:  delete,
+			handler: giftAssociateHandler.DeleteByVisitIDNCustomerID,
 		},
 	}
 

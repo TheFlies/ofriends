@@ -15,10 +15,11 @@ type (
 	service interface {
 		Get(ctx context.Context, id string) (*types.GiftAssociate, error)
 		GetAll(ctx context.Context) ([]types.GiftAssociate, error)
-		GetByVisitID(ctx context.Context, visitID string) ([]types.GiftAssociate, error)
+		GetByVisitIDNCustomerID(ctx context.Context, visitID string, customerID string) ([]types.GiftAssociate, error)
 		Create(ctx context.Context, giftAssociate types.GiftAssociate) (string, error)
 		Update(ctx context.Context, giftAssociate types.GiftAssociate) error
 		Delete(ctx context.Context, id string) error
+		DeleteByVisitIDNCustomerID(ctx context.Context, visitID string, customerID string) error
 	}
 
 	// Handler is gift associate web handler
@@ -57,9 +58,9 @@ func (h *Handler) GetAll(w http.ResponseWriter, r *http.Request) {
 	respond.JSON(w, http.StatusOK, giftAssociates)
 }
 
-// GetByVisitID handle get gift associate by Visit ID HTTP request
-func (h *Handler) GetByVisitID(w http.ResponseWriter, r *http.Request) {
-	giftAssociates, err := h.srv.GetByVisitID(r.Context(), mux.Vars(r)["visitID"])
+// GetByVisitIDNCustomerID handle get gift associate by Visit ID HTTP request
+func (h *Handler) GetByVisitIDNCustomerID(w http.ResponseWriter, r *http.Request) {
+	giftAssociates, err := h.srv.GetByVisitIDNCustomerID(r.Context(), mux.Vars(r)["visitID"], mux.Vars(r)["customerID"])
 	if err != nil {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
@@ -103,6 +104,15 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 // Delete handle delete gift associate HTTP Request
 func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 	if err := h.srv.Delete(r.Context(), mux.Vars(r)["id"]); err != nil {
+		respond.Error(w, err, http.StatusInternalServerError)
+		return
+	}
+	respond.JSON(w, http.StatusOK, map[string]string{"status": "success"})
+}
+
+// DeleteByVisitIDNCustomerID handle delete gift associate HTTP Request
+func (h *Handler) DeleteByVisitIDNCustomerID(w http.ResponseWriter, r *http.Request) {
+	if err := h.srv.DeleteByVisitIDNCustomerID(r.Context(), mux.Vars(r)["visitID"], mux.Vars(r)["customerID"]); err != nil {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
 	}

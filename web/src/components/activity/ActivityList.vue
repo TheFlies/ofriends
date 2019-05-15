@@ -1,12 +1,15 @@
 <template>
-  <el-container style="background: #ecf5ff;">
-    <el-main>
-      <el-table
-        v-loading="loading"
-        :data="tableData.filter(data => !search || data.participant.toLowerCase().includes(search.toLowerCase()))"
-        style="width: 100%; margin:auto"
-      >
+  <el-card class="box-card">
+    <div slot="header">
+      <!-- <span>Activity</span> -->
+      <el-tooltip class="item" effect="dark" content="Add activity" placement="right-start" >
+        <el-button type="primary" icon="el-icon-plus" plain @click="isVisibleAdd = !isVisibleAdd">New Activity</el-button>
+      </el-tooltip>  
+    </div>
+    <div class="text item">
+      <el-table v-loading="loading" :data="tableData.filter(data => !search || data.participant.toLowerCase().includes(search.toLowerCase()))" style="width: 100%; margin:auto">
         <el-table-column type="index" :index="indexMethod" />
+        <el-table-column label="Name" width="150" prop="name" />
         <el-table-column label="Start Time" width="130" sortable prop="startTime">
           <template slot-scope="scope">
             {{ getHumanDate(scope.row.startTime) }}
@@ -52,8 +55,8 @@
           </template>
         </el-table-column>
       </el-table>
-    </el-main>
-  </el-container>
+    </div>
+  </el-card>
 </template>
 
 <script>
@@ -63,7 +66,7 @@ import ActivityAdd from '@/components/activity/ActivityAdd.vue'
 import { getHumanDate } from '@/utils/convert'
 
 import {
-  getAllActivites,
+  getAllActivities,
   createActivity,
   updateActivity,
   deleteActivityById
@@ -89,7 +92,7 @@ export default {
     }
   },
   mounted() {
-    getAllActivites()
+    getAllActivities()
       .then(resp => {
         if (resp.data != null) {
           this.tableData = resp.data
@@ -112,7 +115,8 @@ export default {
             this.$notify({
               title: 'Success',
               message: 'Update successfully!',
-              type: 'success'
+              type: 'success',
+              position: 'bottom-right'
             })
             activity.id = resp.data.id
             activity.startTime = activity.startTime.toString()
@@ -123,7 +127,8 @@ export default {
             console.log(err)
             this.$notify.error({
               title: 'Error',
-              message: err
+              message: err,
+              position: 'bottom-right'
             })
           })
         this.loading = false
@@ -138,14 +143,16 @@ export default {
             this.$notify({
               title: 'Success',
               message: 'Update successfully!',
-              type: 'success'
+              type: 'success',
+              position: 'bottom-right'
             })
           })
           .catch(err => {
             console.log(err)
             this.$notify.error({
               title: 'Error',
-              message: err
+              message: err,
+              position: 'bottom-right'
             })
           })
         this.loading = false
@@ -160,14 +167,16 @@ export default {
             this.$notify({
               title: 'Success',
               message: 'Delete successfully!',
-              type: 'success'
+              type: 'success',
+              position: 'bottom-right'
             })
           })
           .catch(err => {
             console.log(err)
             this.$notify.error({
               title: 'Error',
-              message: err
+              message: err,
+              position: 'bottom-right'
             })
           })
       }

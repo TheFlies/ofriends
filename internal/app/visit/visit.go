@@ -5,7 +5,7 @@ import (
 
 	"github.com/TheFlies/ofriends/internal/app/types"
 	"github.com/TheFlies/ofriends/internal/pkg/glog"
-	"github.com/go-ozzo/ozzo-validation"
+	validation "github.com/go-ozzo/ozzo-validation"
 )
 
 // Repository is an interface of a visit repository
@@ -53,9 +53,8 @@ func (s *Service) Create(ctx context.Context, visit types.Visit) (string, error)
 		validation.Field(&visit.Lab, validation.Required),
 		validation.Field(&visit.ArrivedTime, validation.Required),
 		validation.Field(&visit.DepartureTime, validation.Required),
-		validation.Field(&visit.CustomerID, validation.Required),
 	); err != nil {
-		return "",err
+		return "", err
 	} // not empty
 	return s.repo.Create(ctx, visit)
 }
@@ -67,7 +66,6 @@ func (s *Service) Update(ctx context.Context, visit types.Visit) error {
 		validation.Field(&visit.Lab, validation.Required),
 		validation.Field(&visit.ArrivedTime, validation.Required),
 		validation.Field(&visit.DepartureTime, validation.Required),
-		validation.Field(&visit.CustomerID, validation.Required),
 	); err != nil {
 		return err
 	} // not empty

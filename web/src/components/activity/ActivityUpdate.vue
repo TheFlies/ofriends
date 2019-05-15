@@ -13,6 +13,9 @@
       label-width="130px"
       class="activity-form"
     >
+    <el-form-item label="Name" prop="name">
+        <el-input v-model="activity.name" placeholder="What is the activity name?" />
+      </el-form-item>
       <el-form-item label="Start time" required>
         <el-col :span="22">
           <el-form-item prop="startTime">

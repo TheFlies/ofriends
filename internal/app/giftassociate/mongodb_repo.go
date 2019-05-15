@@ -49,12 +49,12 @@ func (r *MongoRepository) FindAll(ctx context.Context) ([]types.GiftAssociate, e
 	return giftAssociates, nil
 }
 
-// FindByVisitID return gift associate base on given id
-func (r *MongoRepository) FindByVisitID(ctx context.Context, visitID string) ([]types.GiftAssociate, error) {
+// FindByVisitIDNCustomerID return gift associate base on given ids
+func (r *MongoRepository) FindByVisitIDNCustomerID(ctx context.Context, visitID string, customerID string) ([]types.GiftAssociate, error) {
 	s := r.session.Clone()
 	defer s.Close()
 	var giftAssociates []types.GiftAssociate
-	if err := r.collection(s).Find(bson.M{"_visit_id": visitID}).All(&giftAssociates); err != nil {
+	if err := r.collection(s).Find(bson.M{"_visit_id": visitID, "_customer_id": customerID}).All(&giftAssociates); err != nil {
 		return nil, errors.Wrap(err, "failed to find the given gift from database")
 	}
 	return giftAssociates, nil
@@ -82,5 +82,13 @@ func (r *MongoRepository) Delete(ctx context.Context, id string) error {
 	s := r.session.Clone()
 	defer s.Close()
 	err := r.collection(s).Remove(bson.M{"_id": id})
+	return err
+}
+
+// DeleteByVisitIDNCustomerID a gift associate
+func (r *MongoRepository) DeleteByVisitIDNCustomerID(ctx context.Context, visitID string, customerID string) error {
+	s := r.session.Clone()
+	defer s.Close()
+	err := r.collection(s).Remove(bson.M{"_visit_id": visitID, "_customer_id": customerID})
 	return err
 }
