@@ -22,9 +22,8 @@
                 {{ getHumanDate(scope.row.endTime) }}
               </template>
             </el-table-column>
-            <el-table-column label="Detail" width="300" prop="detail" />
             <el-table-column label="Participant" prop="participant" width="150" />
-            <el-table-column label="Hotel" width="280" prop="hotel" />
+            <el-table-column label="Note" width="300" prop="note" />
             <el-table-column align="right">
               <ActivityAssociateAdd :assigned-activities.sync="assignedActivities" :is-visible-assign.sync="isVisibleAssign" @isActivityAssociateAdd="handleActivityAssociateAdd" />
               <!-- <ActivityUpdate
@@ -32,8 +31,10 @@
                 :activity.sync="activity"
                 @isUpdateAct="handleUpdate"
               />
-              <ActivityDelete :is-visible-delete.sync="isVisibleDelete" @isDeleteAct="handleDelete" />
-              <ActivityAdd :is-visible-add.sync="isVisibleAdd" @isAddAct="handleAdd" /> -->
+               -->
+              <ActivityAssociateUpdate :is-visible-update.sync="isVisibleUpdate" :activity.sync="activity" @isUpdateActivity="handleActivityAssociateUpdate" />
+              <ActivityAssociateDelete :is-visible-delete.sync="isVisibleDelete" :activity-name.sync="activityName" @isDeleteActivity="handleAcitivityAssociateDelete" />
+              <!-- <ActivityAdd :is-visible-add.sync="isVisibleAdd" @isAddAct="handleAdd" /> -->
               <template slot-scope="scope">
                 <el-button
                   size="mini"
@@ -44,7 +45,7 @@
                 <el-button
                   size="mini"
                   type="danger"
-                  @click="isVisibleDelete = !isVisibleDelete; scopeActivity= scope"
+                  @click="isVisibleDelete = !isVisibleDelete; scopeActivity= scope; activityName = scope.row.activityName"
                 >
                   Delete
                 </el-button>
@@ -62,8 +63,17 @@
 // import ActivityDelete from '@/components/activity/ActivityDelete.vue'
 // import ActivityAdd from '@/components/activity/ActivityAdd.vue'
 import ActivityAssociateAdd from '@/components/activityAssocicates/ActivityAssociateAdd.vue'
+import ActivityAssociateDelete from '@/components/activityAssocicates/ActivityAssociateDelete.vue'
+import ActivityAssociateUpdate from '@/components/activityAssocicates/ActivityAssociateUpdate.vue'
+
 import { getHumanDate } from '@/utils/convert'
 import { updateVisit } from '@/api/visit'
+import {
+  getAcitivityVisitAssociatesByVisitID,
+  createAcitivityVisitAssociate,
+  modifyAcitivityVisitAssociates,
+  deleteAcitivityVisitAssociateByID
+} from '@/api/activityVisitAssociate'
 
 import {
   getActivityByID,
@@ -78,7 +88,9 @@ export default {
     // ActivityUpdate,
     // ActivityDelete,
     // ActivityAdd,
-    ActivityAssociateAdd
+    ActivityAssociateAdd,
+    ActivityAssociateDelete,
+    ActivityAssociateUpdate
   },
   props: {
     visit: { type: Object }
@@ -94,62 +106,148 @@ export default {
       activity: {},
       scopeActivity: {},
       assignedActivities: [],
-      isVisibleAssign: false
+      isVisibleAssign: false,
+      activityName: ''
     }
   },
   mounted() {
-    this.visit.activityID.forEach((id, index) => {
-      getActivityByID(id).then(resp => {
-        if (resp.data != null) {
-          this.tableData.push(resp.data)
-        }
-      })
-    })
+    getAcitivityVisitAssociatesByVisitID(this.visit.id)
+        .then(resp => {
+          if (resp.data != null) {
+            this.tableData = resp.data
+            this.tableData.forEach((activity, index) => {
+              this.assignedActivities.push(activity.id)
+            })
+          }
+        })
+        .catch(err => {
+          console.log(err)          
+        })
     this.loading = false
   },
   methods: {
     getActivityAssociate: function() {
       this.assignedActivities = []
       this.tableData.forEach((activity, index) => {
-        this.assignedActivities.push(activity.id)
+        this.assignedActivities.push(activity.activityID)
       })
       this.isVisibleAssign = !this.isVisibleAssign
     },
     handleActivityAssociateAdd: function(isActivityAssociateAdd, updatedActivityAssociates) {
-      this.tableData = []
-      var activityIDList = []
+      var currentAssignedActivityVisitAssocs = this.assignedActivities
       if (isActivityAssociateAdd) {
         updatedActivityAssociates.forEach((activity, index) => {
-          activityIDList.push(activity.initial)
-        })
-      }
-      this.visit.activityID = activityIDList
-      updateVisit(this.visit)
-        .then(resp => {
-          this.$notify({
-            title: 'Success',
-            message: 'Update successfully!',
-            type: 'success',
-            position: 'bottom-right'
-          })
-        })
-        .catch(err => {
-          console.log(err)
-          this.$notify.error({
-            title: 'Error',
-            message: err
-          })
-        })
-
-      // Load list again
-      this.visit.activityID.forEach((id, index) => {
-        getActivityByID(id).then(resp => {
-          if (resp.data != null) {
-            this.tableData.push(resp.data)
+          // If currentAssignedGifts doesn not include this gift, assign this gift
+          var position = currentAssignedActivityVisitAssocs.indexOf(activity.initial)
+          if (position < 0) {
+            var activityVisitAssocs = {}
+            activityVisitAssocs.activityID = activity.initial
+            activityVisitAssocs.visitID = this.visit.id
+            activityVisitAssocs.customerID = this.customerId
+            activityVisitAssocs.name = activity.label
+            activityVisitAssocs.startTime = new Date().getTime()
+            activityVisitAssocs.endTime = new Date().getTime()
+            activityVisitAssocs.participant = ''
+            activityVisitAssocs.note = activity.note
+            createAcitivityVisitAssociate(activityVisitAssocs)
+              .then(resp => {
+                this.$notify({
+                  title: 'Success',
+                  message: 'Update successfully!',
+                  type: 'success',
+                  position: 'bottom-right'
+                })
+                activityVisitAssocs.id = resp.data.id
+                this.tableData.splice(0, 0, activityVisitAssocs)
+              })
+              .catch(err => {
+                console.log(err)
+                this.$notify.error({
+                  title: 'Error',
+                  message: err,
+                  position: 'bottom-right'
+                })
+              })
+          } else {
+            // Remove this gifts are not in currentAssignedGifts
+            currentAssignedActivityVisitAssocs.splice(position, 1)
           }
         })
-      })
-      this.loading = false
+        // Current elements in currentAssignedActivityVisitAssocs are gifts that is not in updated Gift
+        if (currentAssignedActivityVisitAssocs.length > 0) {
+          currentAssignedActivityVisitAssocs.forEach((id) => {
+            // Find to get gift associate ID, then delete this gift associate
+            var data = this.tableData.filter(data => !id || data.activityID.includes(id))
+            deleteAcitivityVisitAssociateByID(data[0].id)
+              .then(resp => {
+                var giftIndex = this.assignedActivities.indexOf(id)
+                this.tableData.splice(giftIndex, 1)
+                this.$notify({
+                  title: 'Success',
+                  message: 'Delete successfully!',
+                  type: 'success',
+                  position: 'bottom-right'
+                })
+              })
+              .catch(err => {
+                console.log(err)
+                this.$notify.error({
+                  title: 'Error',
+                  message: err,
+                  position: 'bottom-right'
+                })
+              })
+          })
+        }
+        this.loading = false
+      }
+    },
+     handleAcitivityAssociateDelete: function(isDeleteActivity) {
+      if (isDeleteActivity) {
+        this.loading = true
+        deleteAcitivityVisitAssociateByID(this.scopeActivity.row.id)
+          .then(resp => {
+            this.tableData.splice(this.scopeActivity.$index, 1)
+            this.$notify({
+              title: 'Success',
+              message: 'Delete successfully!',
+              type: 'success',
+              position: 'bottom-right'
+            })
+          })
+          .catch(err => {
+            console.log(err)
+            this.$notify.error({
+              title: 'Error',
+              message: err,
+              position: 'bottom-right'
+            })
+          })
+        }
+        this.loading = false
+      },
+    handleActivityAssociateUpdate: function(isUpdateActivity) {
+      if (isUpdateActivity) {
+        this.loading = true
+        modifyAcitivityVisitAssociates(this.activity)
+          .then(resp => {
+            this.$notify({
+              title: 'Success',
+              message: 'Update successfully!',
+              type: 'success',
+              position: 'bottom-right'
+            })
+          })
+          .catch(err => {
+            console.log(err)
+            this.$notify.error({
+              title: 'Error',
+              message: err,
+              position: 'bottom-right'
+            })
+          })
+        this.loading = false
+      }
     },
     handleAdd: function(isAddAct, activity) {
       activity.visitID = this.activity.visitID
@@ -182,7 +280,6 @@ export default {
         this.loading = true
         updateActivity(this.activity)
           .then(resp => {
-            console.log(resp.data)
             this.$notify({
               title: 'Success',
               message: 'Update successfully!',
@@ -230,5 +327,5 @@ export default {
     },
     getHumanDate
   }
-}
+} 
 </script>

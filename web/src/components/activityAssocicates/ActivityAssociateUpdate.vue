@@ -1,47 +1,48 @@
 <template>
-  <el-dialog
-    title="Update Gift"
-    :visible.sync="isVisibleUpdate"
-    width="30%"
-    append-to-body
-    :before-close="handleBackdropClick"
-  >
-    <el-form
-      ref="gift"
-      :model="gift"
-      :rules="rules"
-      label-width="120px"
-      class="demo-ruleForm"
-    >
-      <el-form-item
-        label="Name"
-        prop="giftName"
-      >
-        <el-input v-model="gift.giftName" :disabled="true" />
+  <el-dialog title="Update Activity" :visible.sync="isVisibleUpdate" width="30%" append-to-body :before-close="handleBackdropClick">
+    <el-form ref="activity" :model="activity" label-width="120px">
+      <el-form-item label="Name" prop="name">
+        <el-input v-model="activity.name" :disabled="true" />
       </el-form-item>
-      <el-form-item
-        label="Quantity"
-        prop="quantity"
-      >
-        <el-input-number v-model="gift.quantity" :min="1" />
+      <el-form-item label="Start time" required>
+        <el-col :span="22">
+          <el-form-item prop="startTime">
+            <el-date-picker
+              v-model="activity.startTime"
+              type="datetime"
+              placeholder="Pick start time"
+              format="yyyy/MM/dd HH:mm"
+              value-format="timestamp"
+              style="width: 100%;"
+            />
+          </el-form-item>
+        </el-col>
       </el-form-item>
-      <el-form-item
-        label="Note"
-        prop="note"
-      >
-        <el-input
-          v-model="gift.note"
-          type="textarea"
-        />
+      <el-form-item label="End time" required>
+        <el-col :span="22">
+          <el-form-item prop="endTime">
+            <el-date-picker
+              v-model="activity.endTime"
+              type="datetime"
+              placeholder="Pick End Time"
+              format="yyyy/MM/dd HH:mm"
+              value-format="timestamp"
+              style="width: 100%;"
+            />
+          </el-form-item>
+        </el-col>
+      </el-form-item>
+      <el-form-item label="Participant" prop="participant">
+        <el-input v-model="activity.participant" />
+      </el-form-item>
+      <el-form-item label="Note" prop="note">
+        <el-input v-model="activity.note" type="textarea" />
       </el-form-item>
       <el-form-item>
-        <el-button
-          type="primary"
-          @click="submitForm('gift')"
-        >
+        <el-button type="primary" @click="submitForm('activity')">
           Save
         </el-button>
-        <el-button @click="resetForm('gift')">
+        <el-button @click="resetForm('activity')">
           Cancel
         </el-button>
       </el-form-item>
@@ -54,27 +55,7 @@ export default {
   name: 'GiftUpdate',
   props: {
     isVisibleUpdate: { type: Boolean, default: false },
-    gift: {
-      type: Object,
-      default: () => ({
-        id: 0,
-        name: '',
-        idea: '',
-        size: '',
-        price: 0,
-        link: '',
-        description: ''
-      })
-    }
-  },
-  data() {
-    return {
-      rules: {
-        name: [
-          { required: true, message: 'Please input Gift name', trigger: 'blur' }
-        ]
-      }
-    }
+    activity: {}
   },
   methods: {
     handleBackdropClick() {
@@ -84,7 +65,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.$emit('update:isVisibleUpdate', false)
-          this.$emit('isUpdateGift', true)
+          this.$emit('isUpdateActivity', true)
         } else {
           console.log('error submit!!')
           return false

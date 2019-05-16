@@ -22,11 +22,11 @@
 
 <script>
 export default {
-  name: 'CustomerAssociateDelete',
+  name: 'ActivityAssociateDelete',
   props: {
     isVisibleDelete: { type: Boolean, default: false },
     customerName: { type: String, default: '' },
-    isDeleteCustomer: { type: Boolean, default: false }
+    isDeleteActivity: { type: Boolean, default: false }
   },
   methods: {
     handleBackdropClick() {
@@ -34,7 +34,7 @@ export default {
     },
     deleteCustomer() {
       this.$emit('update:isVisibleDelete', false)
-      this.$emit('isDeleteCustomer', true)
+      this.$emit('isDeleteActivity', true)
     }
   }
 }

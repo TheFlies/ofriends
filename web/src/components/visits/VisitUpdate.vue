@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    title="update Visit"
+    title="Update Visit"
     :visible.sync="isVisibleUpdate"
     width="30%"
     append-to-body

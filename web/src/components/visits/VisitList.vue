@@ -100,7 +100,6 @@ export default {
     getAllVisits()
       .then(resp => {
         if (resp.data != null) {
-          console.log(resp.data)
           this.tableData = resp.data
         }
         this.loading = false

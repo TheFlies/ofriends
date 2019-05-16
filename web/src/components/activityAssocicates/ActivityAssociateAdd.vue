@@ -58,7 +58,7 @@ export default {
               starttime: activity.starttime,
               key: index,
               endtime: activity.endtime,
-              detail: activity.detail,
+              note: activity.note,
               participant: activity.participant,
               hotel: activity.hotel,
               initial: activity.id,

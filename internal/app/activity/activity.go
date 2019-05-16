@@ -5,7 +5,6 @@ import (
 
 	"github.com/TheFlies/ofriends/internal/app/types"
 	"github.com/TheFlies/ofriends/internal/pkg/glog"
-	"github.com/go-ozzo/ozzo-validation"
 )
 
 // Repository is an interface of a activity repository
@@ -49,26 +48,11 @@ func (s *Service) GetAll(ctx context.Context) ([]types.Activity, error) {
 
 // Create a activity
 func (s *Service) Create(ctx context.Context, act types.Activity) (string, error) {
-	if err := validation.ValidateStruct(&act,
-		validation.Field(&act.StartTime, validation.Required),
-		validation.Field(&act.EndTime, validation.Required),
-		validation.Field(&act.VisitID, validation.Required),
-	); err != nil {
-		return "",err
-	} // not empty
 	return s.repo.Create(ctx, act)
 }
 
 // Update a activity
 func (s *Service) Update(ctx context.Context, act types.Activity) error {
-	if err := validation.ValidateStruct(&act,
-		validation.Field(&act.ID, validation.Required),
-		validation.Field(&act.StartTime, validation.Required),
-		validation.Field(&act.EndTime, validation.Required),
-		validation.Field(&act.VisitID, validation.Required),
-	); err != nil {
-		return err
-	} // not empty
 	return s.repo.Update(ctx, act)
 }
 
