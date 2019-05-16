@@ -49,11 +49,11 @@ export default {
   },
   watch: {
     isVisibleAssign: function(val) {
-        getAllActivities().then(resp => {
-          this.value = []
-          this.data = []
-          if (resp.data != null) {            
-            resp.data.forEach((activity, index) => {
+      getAllActivities().then(resp => {
+        this.value = []
+        this.data = []
+        if (resp.data != null) {
+          resp.data.forEach((activity, index) => {
             this.data.push({
               starttime: activity.starttime,
               key: index,
@@ -62,18 +62,18 @@ export default {
               participant: activity.participant,
               hotel: activity.hotel,
               initial: activity.id,
-              label:  activity.name,
+              label: activity.name
             })
             var position = this.assignedActivities.indexOf(activity.id)
             if (position >= 0) {
               this.value.push(index)
             }
           })
-          }
+        }
+      })
+        .catch(err => {
+          console.log(err)
         })
-          .catch(err => {
-            console.log(err)
-          })
     }
   },
   methods: {

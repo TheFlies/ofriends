@@ -6,7 +6,7 @@
           <span style="font-size: 18px;">Gift Associate</span>
           <el-button type="primary" icon="el-icon-plus" plain style="float:right" @click="getGiftAssociate">
             Assign gift
-          </el-button>        
+          </el-button>
         </div>
         <div class="text item">
           <el-table v-loading="loading" :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" style="width: 100%">
@@ -74,7 +74,7 @@ export default {
     }
   },
   mounted() {
-    getGiftAssociatesByVisitIDNCustomerID(this.visitId,this.customerId)
+    getGiftAssociatesByVisitIDNCustomerID(this.visitId, this.customerId)
       .then(resp => {
         if (resp.data != null) {
           this.tableData = resp.data

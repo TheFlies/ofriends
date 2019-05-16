@@ -64,7 +64,7 @@
 import SCardHead from './SCardHead.vue'
 import SCardBody from './SCardBody.vue'
 
-import { getCustomerById } from '@/api/customer'
+import { getCustomerByID } from '@/api/customer'
 
 import { todayIsAfter } from '@/utils/convert'
 
@@ -138,7 +138,7 @@ export default {
   },
   mounted() {
     this.loading = true
-    getCustomerById(this.item.customerId)
+    getCustomerByID(this.item.customerId)
       .then(res => {
         this.data = Object.assign({}, this.item, res.data)
       })

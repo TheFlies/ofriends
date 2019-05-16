@@ -2,11 +2,11 @@
   <el-card class="box-card">
     <div slot="header" class="clearfix">
       <!-- <span>Visit</span> -->
-      <el-tooltip class="item" effect="dark" content="Add visit" placement="right-start" >
+      <el-tooltip class="item" effect="dark" content="Add visit" placement="right-start">
         <el-button type="primary" icon="el-icon-plus" plain @click="isVisibleAdd = !isVisibleAdd">
           New Visit
-        </el-button> 
-      </el-tooltip>     
+        </el-button>
+      </el-tooltip>
     </div>
     <div class="text item">
       <el-table v-loading="loading" :data="tableData.filter(data => !search || data.lab.toLowerCase().includes(search.toLowerCase()))" style="width: 100%; margin:auto">
@@ -17,7 +17,7 @@
                 <ActivityListByVisit :visit="scope.row" />
               </el-tab-pane>
               <el-tab-pane label="Customer">
-                <CustomerListByVisit :customer-id="scope.row.customerID" :visit="scope.row"/>
+                <CustomerListByVisit :customer-id="scope.row.customerID" :visit="scope.row" />
               </el-tab-pane>
             </el-tabs>
             <!-- <GiftListByVisit :visit-id="scope.row.id" /> -->
@@ -39,9 +39,9 @@
         <el-table-column label="Pickup" width="120" prop="pickup" />
         <el-table-column align="right">
           <template slot="header" slot-scope="scope">
-            <el-input v-model="search" size="mini" placeholder="Type to search"/>
+            <el-input v-model="search" size="mini" placeholder="Type to search" />
           </template>
-          <VisitUpdate :is-visible-update.sync="isVisibleUpdate" :visit.sync="visit" @isUpdateVisit="handleUpdate"/>
+          <VisitUpdate :is-visible-update.sync="isVisibleUpdate" :visit.sync="visit" @isUpdateVisit="handleUpdate" />
           <VisitDelete :is-visible-delete.sync="isVisibleDelete" @isDeleteVisit="handleDelete" />
           <VisitAdd :is-visible-add.sync="isVisibleAdd" @isAddVisit="handleAdd" />
           <template slot-scope="scope">
@@ -55,7 +55,7 @@
         </el-table-column>
       </el-table>
     </div>
-  </el-card>     
+  </el-card>
 </template>
 
 <script>
@@ -138,22 +138,22 @@ export default {
     handleUpdate: function(isUpdateVisit) {
       if (isUpdateVisit) {
         this.loading = true
-      updateVisit(this.visit)
-        .then(resp => {
-          this.$notify({
-            title: 'Success',
-            message: 'Update successfully!',
-            type: 'success',
-            position: 'bottom-right'
+        updateVisit(this.visit)
+          .then(resp => {
+            this.$notify({
+              title: 'Success',
+              message: 'Update successfully!',
+              type: 'success',
+              position: 'bottom-right'
+            })
           })
-        })
-        .catch(err => {
-          console.log(err)
-          this.$notify.error({
-            title: 'Error',
-            message: err
+          .catch(err => {
+            console.log(err)
+            this.$notify.error({
+              title: 'Error',
+              message: err
+            })
           })
-        })
         this.loading = false
       }
     },

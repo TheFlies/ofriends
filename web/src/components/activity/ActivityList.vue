@@ -2,9 +2,11 @@
   <el-card class="box-card">
     <div slot="header">
       <!-- <span>Activity</span> -->
-      <el-tooltip class="item" effect="dark" content="Add activity" placement="right-start" >
-        <el-button type="primary" icon="el-icon-plus" plain @click="isVisibleAdd = !isVisibleAdd">New Activity</el-button>
-      </el-tooltip>  
+      <el-tooltip class="item" effect="dark" content="Add activity" placement="right-start">
+        <el-button type="primary" icon="el-icon-plus" plain @click="isVisibleAdd = !isVisibleAdd">
+          New Activity
+        </el-button>
+      </el-tooltip>
     </div>
     <div class="text item">
       <el-table v-loading="loading" :data="tableData.filter(data => !search || data.participant.toLowerCase().includes(search.toLowerCase()))" style="width: 100%; margin:auto">

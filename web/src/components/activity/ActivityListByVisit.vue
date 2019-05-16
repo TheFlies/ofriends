@@ -8,7 +8,6 @@
             Assign activity
           </el-button>
         </div>
-        
         <div class="text item">
           <el-table v-loading="loading" :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" style="width: 100%; margin:auto">
             <el-table-column type="index" :index="indexMethod" />
@@ -53,15 +52,15 @@
             </el-table-column>
           </el-table>
         </div>
-      </el-card>      
+      </el-card>
     </el-main>
   </el-container>
 </template>
 
 <script>
-import ActivityUpdate from '@/components/activity/ActivityUpdate.vue'
-import ActivityDelete from '@/components/activity/ActivityDelete.vue'
-import ActivityAdd from '@/components/activity/ActivityAdd.vue'
+// import ActivityUpdate from '@/components/activity/ActivityUpdate.vue'
+// import ActivityDelete from '@/components/activity/ActivityDelete.vue'
+// import ActivityAdd from '@/components/activity/ActivityAdd.vue'
 import ActivityAssociateAdd from '@/components/activityAssocicates/ActivityAssociateAdd.vue'
 import { getHumanDate } from '@/utils/convert'
 import { updateVisit } from '@/api/visit'
@@ -76,13 +75,13 @@ import {
 export default {
   name: 'ActivityListByVisit',
   components: {
-    ActivityUpdate,
-    ActivityDelete,
-    ActivityAdd,
+    // ActivityUpdate,
+    // ActivityDelete,
+    // ActivityAdd,
     ActivityAssociateAdd
   },
   props: {
-    visit: { type: Object}
+    visit: { type: Object }
   },
   data() {
     return {
@@ -95,7 +94,7 @@ export default {
       activity: {},
       scopeActivity: {},
       assignedActivities: [],
-      isVisibleAssign: false,
+      isVisibleAssign: false
     }
   },
   mounted() {
@@ -119,7 +118,7 @@ export default {
     handleActivityAssociateAdd: function(isActivityAssociateAdd, updatedActivityAssociates) {
       this.tableData = []
       var activityIDList = []
-      if(isActivityAssociateAdd) {
+      if (isActivityAssociateAdd) {
         updatedActivityAssociates.forEach((activity, index) => {
           activityIDList.push(activity.initial)
         })
@@ -142,7 +141,7 @@ export default {
           })
         })
 
-      //Load list again
+      // Load list again
       this.visit.activityID.forEach((id, index) => {
         getActivityByID(id).then(resp => {
           if (resp.data != null) {

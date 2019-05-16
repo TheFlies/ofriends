@@ -2,25 +2,27 @@
   <el-card class="box-card">
     <div slot="header" class="clearfix">
       <!-- <span>Gift</span> -->
-      <el-tooltip class="item" effect="dark" content="Add gift" placement="right-start" >
-        <el-button type="primary" icon="el-icon-plus" plain @click="isVisibleAdd = !isVisibleAdd">New Gift</el-button>
-      </el-tooltip>        
+      <el-tooltip class="item" effect="dark" content="Add gift" placement="right-start">
+        <el-button type="primary" icon="el-icon-plus" plain @click="isVisibleAdd = !isVisibleAdd">
+          New Gift
+        </el-button>
+      </el-tooltip>
     </div>
     <div class="text item">
-      <el-table  v-loading="loading" :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" style="width: 100%">
-        <el-table-column label="Name" prop="name" sortable/>
-        <el-table-column label="Idea" prop="idea" sortable/>
-        <el-table-column label="Size" prop="size" sortable/>
-        <el-table-column label="Price" prop="price" sortable/>
-        <el-table-column label="Link" prop="link"/>
-        <el-table-column label="Description" prop="description"/>
+      <el-table v-loading="loading" :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" style="width: 100%">
+        <el-table-column label="Name" prop="name" sortable />
+        <el-table-column label="Idea" prop="idea" sortable />
+        <el-table-column label="Size" prop="size" sortable />
+        <el-table-column label="Price" prop="price" sortable />
+        <el-table-column label="Link" prop="link" />
+        <el-table-column label="Description" prop="description" />
         <el-table-column align="right" width="320">
           <template slot="header" slot-scope="scope">
-            <el-input v-model="search" size="mini" placeholder="Type to search"/>
+            <el-input v-model="search" size="mini" placeholder="Type to search" />
           </template>
-          <GiftUpdate :is-visible-update.sync="isVisibleUpdate" :gift.sync="gift" @isUpdateGift="handleUpdate"/>
-          <GiftDelete :is-visible-delete.sync="isVisibleDelete" :gift-name.sync="giftName" @isDeleteGift="handleDelete"/>
-          <GiftAdd :is-visible-add.sync="isVisibleAdd" @isAddGift="handleAdd"/>
+          <GiftUpdate :is-visible-update.sync="isVisibleUpdate" :gift.sync="gift" @isUpdateGift="handleUpdate" />
+          <GiftDelete :is-visible-delete.sync="isVisibleDelete" :gift-name.sync="giftName" @isDeleteGift="handleDelete" />
+          <GiftAdd :is-visible-add.sync="isVisibleAdd" @isAddGift="handleAdd" />
           <template slot-scope="scope">
             <el-button size="mini" @click="gift = scope.row; isVisibleUpdate = !isVisibleUpdate">
               Edit

@@ -5,8 +5,8 @@
           <el-tooltip class="item" effect="dark" content="Add customer" placement="right-start" >
             <el-button type="primary" icon="el-icon-plus" plain @click="isVisibleAdd = !isVisibleAdd">
               | New customer
-            </el-button> 
-          </el-tooltip>          
+            </el-button>
+          </el-tooltip>
         </div>
         <div class="text item">
           <el-table v-loading="loading" :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" style="width: 100%; margin:auto">
@@ -30,19 +30,21 @@
               <template slot="header" slot-scope="scope">
                 <el-input v-model="search" size="mini" placeholder="Type to search base on participant" />
               </template>
+              <template slot-scope="scope">
                 <el-button size="mini" @click="customer = scope.row; isVisibleUpdate = !isVisibleUpdate">
                   | Edit
-                </el-button> 
+                </el-button>
                 <el-button size="mini" type="danger" @click="isVisibleDelete = !isVisibleDelete; scopeCustomer = scope; customerName = scope.row.name">
                   | Delete
                 </el-button>
+              </template>
             </el-table-column>
           </el-table>
           <edit-customer :is-visible-update.sync="isVisibleUpdate" :customer.sync="customer" @isUpdateCustomer="handleUpdate"/>
           <delete-customer :is-visible-delete.sync="isVisibleDelete" :customer-name.sync="customerName" @isDeleteCustomer="handleDelete"/>
           <add-customer :is-visible-add.sync="isVisibleAdd" @isAddCustomer="handleAdd"/>
         </div>
-      </el-card>      
+      </el-card>
 </template>
 
 <script>

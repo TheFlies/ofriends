@@ -6,13 +6,13 @@
           <span style="font-size: 18px;">Customer Associate</span>
           <el-button type="primary" icon="el-icon-plus" plain style="float:right" @click="getCustomerAssociate">
             Assign customer
-          </el-button>        
+          </el-button>
         </div>
         <div class="text item">
           <el-table v-loading="loading" :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" style="width: 100%">
             <el-table-column type="expand">
               <template slot-scope="scope">
-                <GiftListByVisit :visit-id="visit.id" :customer-id="scope.row.id"/>
+                <GiftListByVisit :visit-id="visit.id" :customer-id="scope.row.id" />
               </template>
             </el-table-column>
             <el-table-column label="Customer Name" prop="name" sortable />
@@ -31,25 +31,21 @@
                 @isDeleteCustomer="handleCustomerAssociateDelete"
               />
               <CustomerAssociateAdd :assigned-customers.sync="assignedCustomers" :is-visible-assign.sync="isVisibleAssign" @isCustomerAssociateAdd="handleCustomerAssociateAdd" />
-               <template slot-scope="scope">
+              <template slot-scope="scope">
                 <!--<el-button
                   size="mini"
                   @click="gift = scope.row; isVisibleUpdate = !isVisibleUpdate; "
                 >
                   Edit
                 </el-button> -->
-                 <el-button
-                  size="mini"
-                  type="danger"
-                  @click="isVisibleDelete = !isVisibleDelete; scopeCustomer = scope; customerName = scope.row.name"
-                >
+                <el-button size="mini" type="danger" @click="isVisibleDelete = !isVisibleDelete; scopeCustomer = scope; customerName = scope.row.name">
                   Delete
                 </el-button>
-              </template> 
+              </template>
             </el-table-column>
           </el-table>
         </div>
-      </el-card>      
+      </el-card>
     </el-main>
   </el-container>
 </template>
@@ -61,13 +57,12 @@ import CustomerAssociateAdd from '@/components/customerAssocicates/CustomerAssoc
 import GiftListByVisit from '@/components/gifts/GiftListByVisit.vue'
 
 import {
-  getGiftAssociatesByVisitID,
-  createGiftAssociate,
-  deleteGiftAssociateById,
-  modifyGiftAssociates,
+  // getGiftAssociatesByVisitID,
+  // createGiftAssociate,
+  // deleteGiftAssociateById,
+  // modifyGiftAssociates,
   deleteGiftAssociatesByVisitIDNCustomerID
 } from '@/api/giftAssociate'
-
 
 import {
   getCustomerByID
@@ -87,7 +82,7 @@ export default {
   },
   props: {
     customerID: { type: String, default: '' },
-    visit: { type: Object}
+    visit: { type: Object }
   },
 
   data() {
@@ -105,7 +100,7 @@ export default {
       assignedCustomers: []
     }
   },
-  mounted() {    
+  mounted() {
     this.visit.customerID.forEach((id, index) => {
       getCustomerByID(id).then(resp => {
         if (resp.data != null) {
@@ -118,7 +113,7 @@ export default {
 
   methods: {
     getCustomerAssociate: function() {
-       this.assignedCustomers = []
+      this.assignedCustomers = []
       this.tableData.forEach((customer, index) => {
         this.assignedCustomers.push(customer.id)
       })
@@ -130,7 +125,7 @@ export default {
     handleCustomerAssociateAdd: function(isCustomerAssociateAdd, updatedCustomerAssociates) {
       this.tableData = []
       var customerIDList = []
-      if(isCustomerAssociateAdd) {
+      if (isCustomerAssociateAdd) {
         updatedCustomerAssociates.forEach((customer, index) => {
           customerIDList.push(customer.initial)
         })
@@ -154,7 +149,7 @@ export default {
           })
         })
 
-      //Load list again
+      // Load list again
       this.visit.customerID.forEach((id, index) => {
         getCustomerByID(id).then(resp => {
           if (resp.data != null) {
@@ -168,14 +163,13 @@ export default {
     handleCustomerAssociateDelete: function(isDeleteCustomer) {
       if (isDeleteCustomer) {
         this.loading = true
-        
         var position = this.visit.customerID.indexOf(this.scopeCustomer.row.id)
-        if(position >= 0){
+        if (position >= 0) {
           this.visit.customerID.splice(position, 1)
           var positionCustomer = this.tableData.indexOf(this.scopeCustomer.row)
-          if(positionCustomer >= 0) {
-             deleteGiftAssociatesByVisitIDNCustomerID(this.visit.id, this.scopeCustomer.row.id)
-             .then(resp => {
+          if (positionCustomer >= 0) {
+            deleteGiftAssociatesByVisitIDNCustomerID(this.visit.id, this.scopeCustomer.row.id)
+              .then(resp => {
                 // console.log(resp)
               })
               .catch(err => {
@@ -189,22 +183,22 @@ export default {
             this.tableData.splice(positionCustomer, 1)
           }
           updateVisit(this.visit)
-          .then(resp => {
-            this.$notify({
-              title: 'Success',
-              message: 'Delete successfully!',
-              type: 'success',
-              position: 'bottom-right'
+            .then(resp => {
+              this.$notify({
+                title: 'Success',
+                message: 'Delete successfully!',
+                type: 'success',
+                position: 'bottom-right'
+              })
             })
-          })
-          .catch(err => {
-            console.log(err)
-            this.$notify.error({
-              title: 'Error',
-              message: err,
-              position: 'bottom-right'
+            .catch(err => {
+              console.log(err)
+              this.$notify.error({
+                title: 'Error',
+                message: err,
+                position: 'bottom-right'
+              })
             })
-          })
         }
       }
       this.loading = false
