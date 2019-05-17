@@ -11,6 +11,7 @@
     <el-form-item label="Title" prop="title">
       <el-select v-model="customer.title" style="width: 100%;" placeholder="please select customer title" >
         <el-option label="Mr" value="Mr"/>
+        <el-option label="Ms" value="Ms"/>
         <el-option label="Mrs" value="Mrs"/>
       </el-select>
     </el-form-item>

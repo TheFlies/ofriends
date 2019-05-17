@@ -18,7 +18,7 @@
           <el-option label="lab 8" value="lab8" />
         </el-select>
       </el-form-item>
-      <el-form-item label="Visit time" required>
+      <el-form-item label="Arrival time" required>
         <el-col :span="22">
           <el-form-item prop="arrivedTime">
             <el-date-picker

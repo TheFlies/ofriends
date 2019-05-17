@@ -24,18 +24,18 @@
           </template>
         </el-table-column>
         <el-table-column label="Lab" width="70" sortable prop="lab" />
-        <el-table-column label="Arrived Date" width="200" prop="arrivedTime">
+        <el-table-column label="Arrival time" width="200" prop="arrivedTime">
           <template slot-scope="scope">
             {{ getHumanDate(scope.row.arrivedTime) }}
           </template>
         </el-table-column>
-        <el-table-column label="Departure Date" width="200" prop="departureTime">
+        <el-table-column label="Departure time" width="200" prop="departureTime">
           <template slot-scope="scope">
             {{ getHumanDate(scope.row.departureTime) }}
           </template>
         </el-table-column>
-        <el-table-column label="Created By" width="120" sortable prop="createdBy" />
-        <el-table-column label="Hotel Stayed" width="180" prop="hotelStayed" />
+        <el-table-column label="Created by" width="120" sortable prop="createdBy" />
+        <el-table-column label="Accommodation" width="180" prop="hotelStayed" />
         <el-table-column label="Pickup" width="120" prop="pickup" />
         <el-table-column align="right">
           <template slot="header" slot-scope="scope">

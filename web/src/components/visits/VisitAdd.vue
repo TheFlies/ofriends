@@ -18,7 +18,7 @@
           <el-option label="lab 8" value="lab8" />
         </el-select>
       </el-form-item>
-      <el-form-item label="Visit time" required>
+      <el-form-item label="Arrival time" required>
         <el-col :span="22">
           <el-form-item prop="arrivedTime">
             <el-date-picker
@@ -46,11 +46,11 @@
           </el-form-item>
         </el-col>
       </el-form-item>
-      <el-form-item label="Created By" prop="createdBy">
+      <el-form-item label="Created by" prop="createdBy">
         <el-input v-model="visit.createdBy" placeholder="Who in HR created the pre-approved visa?" />
       </el-form-item>
 
-      <el-form-item label="Hotel Stayed" prop="hotelStayed">
+      <el-form-item label="Accommodation" prop="hotelStayed">
         <el-input v-model="visit.hotelStayed" placeholder="Where hotel customer stayed?" />
       </el-form-item>
 
