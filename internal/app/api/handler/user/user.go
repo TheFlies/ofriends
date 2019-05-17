@@ -25,6 +25,7 @@ type (
 	UserService interface {
 		GetByName(username string) (*types.User, error)
 		GetAll() ([]types.User, error)
+		Delete(id string) error
 		AddUser(u *types.User) (string, error)
 		CheckExistence(username string) bool
 		ChangePassword(username string, oldPassword string, newPassword string) error
@@ -50,6 +51,14 @@ func (u *UserHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 	
 	respond.JSON(w, http.StatusOK, users)
 
+}
+// Delete handle delete user HTTP Request
+func (u *UserHandler) Delete(w http.ResponseWriter, r *http.Request) {
+	if err := u.srv.Delete(mux.Vars(r)["id"]); err != nil {
+		respond.Error(w, err, http.StatusInternalServerError)
+		return
+	}
+	respond.JSON(w, http.StatusOK, map[string]string{"status": "success"})
 }
 func (u *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)

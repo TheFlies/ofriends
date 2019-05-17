@@ -45,6 +45,7 @@ func (r *UserMongoRepository) InsertUser(u *types.User) (string, error) {
 	s := r.session.Clone()
 	defer s.Close()
 	u.ID = uuid.New()
+	u.Priority = 1 //None
 	if err := r.collection(s).Insert(&u); err != nil {
 		return "", errors.Wrap(err, "insert u to database is fail")
 	}
@@ -70,4 +71,10 @@ func (r *UserMongoRepository) UpdateUser(u *types.User) error {
 		return errors.Wrap(err, "can't update u")
 	}
 	return nil
+}
+// Delete a user
+func (r *UserMongoRepository) Delete(id string) error {
+	s := r.session.Clone()
+	defer s.Close()
+	return r.collection(s).Remove(bson.M{"_id": id})
 }

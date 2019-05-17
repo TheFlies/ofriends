@@ -283,13 +283,19 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			path:        "/api/v1/user/getAll",
 			method:      get,
 			handler:     userHandler.GetAll,
-			// middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
+			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleAdmin)},
+		},
+		{
+			path:    "/api/v1/user/{id:[a-z0-9-\\-]+}",
+			method:  delete,
+			handler: userHandler.Delete,
+			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleAdmin)},
 		},
 		{
 			path:        "/api/v1/user/{username}",
 			method:      get,
 			handler:     userHandler.GetUser,
-			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
+			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleAdmin)},
 		},
 		{
 			path:        "/api/v1/user/{username}",
@@ -304,7 +310,7 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 		{
-			path:        "/api/v1/user/{username}",
+			path:        "/api/v1/user/",
 			method:      put,
 			handler:     userHandler.Update,
 			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
