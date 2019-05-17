@@ -123,7 +123,6 @@ export default {
         this.customer.age = parseInt(this.customer.age, 10)
         updateCustomer(this.customer)
           .then(resp => {
-            console.log(resp.data)
             this.$notify({
               title: 'Success',
               message: 'Update successfully!',

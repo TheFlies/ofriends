@@ -91,23 +91,38 @@ export default {
           {
             required: true,
             message: 'Please input lab',
-            trigger: 'change'
+            trigger: 'blur'
           }
         ],
         arrivedTime: [
           {
             required: true,
             message: 'Please input arrived time',
-            trigger: 'change'
+            trigger: 'blur'
           }
         ],
         departureTime: [
           {
             required: true,
             message: 'Please input departure time',
-            trigger: 'change'
+            trigger: 'blur'
           }
         ]
+      }
+    }
+  },
+  watch: {
+    isVisibleAdd: function(val) {
+      if (val) {
+        this.visit = {
+          lab: '',
+          arrivedTime: new Date().getTime(),
+          departureTime: new Date().getTime(),
+          createdBy: '',
+          hotelStayed: '',
+          pickup: '',
+          customerID: []
+        }
       }
     }
   },

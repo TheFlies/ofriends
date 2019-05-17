@@ -10,5 +10,4 @@ type Visit struct {
 	HotelStayed   string   `json:"hotelStayed"`
 	Pickup        string   `json:"pickup"`
 	CustomerID    []string `json:"customerID" bson:"_customer_id"`
-	ActivityID    []string `json:"activityID" bson:"_activity_id"`
 }

@@ -76,30 +76,52 @@ export default {
           {
             required: true,
             message: 'Please input customer name',
-            trigger: 'change'
+            trigger: 'blur'
           }
         ],
         title: [
           {
             required: true,
             message: 'Please input customer title',
-            trigger: 'change'
+            trigger: 'blur'
           }
         ],
         position: [
           {
             required: true,
             message: 'Please input customer position',
-            trigger: 'change'
+            trigger: 'blur'
           }
         ],
         project: [
           {
             required: true,
             message: 'Please input project',
-            trigger: 'change'
+            trigger: 'blur'
           }
         ]
+      }
+    }
+  },
+  watch: {
+    isVisibleAdd: function(val) {
+      if (val) {
+        this.customer = {
+          name: '',
+          title: 'Mr',
+          position: '',
+          project: '',
+          company: '',
+          country: '',
+          city: '',
+          age: 50,
+          preApproveVisa: false,
+          passportInfo: '',
+          foodNote: '',
+          familyNote: '',
+          nextVisitNote: '',
+          response: null
+        }
       }
     }
   },

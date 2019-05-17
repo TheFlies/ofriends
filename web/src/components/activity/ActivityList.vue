@@ -107,11 +107,11 @@ export default {
   },
   methods: {
     handleAdd: function(isAddAct, activity) {
-      activity.visitID = this.activity.visitID
+      // activity.visitID = this.activity.visitID
       if (isAddAct) {
         this.loading = true
-        activity.startTime = activity.startTime.toString()
-        activity.endTime = activity.endTime.toString()
+        // activity.startTime = activity.startTime.toString()
+        // activity.endTime = activity.endTime.toString()
         createActivity(activity)
           .then(resp => {
             this.$notify({
@@ -121,8 +121,8 @@ export default {
               position: 'bottom-right'
             })
             activity.id = resp.data.id
-            activity.startTime = activity.startTime.toString()
-            activity.endTime = activity.endTime.toString()
+            // activity.startTime = activity.startTime.toString()
+            // activity.endTime = activity.endTime.toString()
             this.tableData.splice(0, 0, activity)
           })
           .catch(err => {

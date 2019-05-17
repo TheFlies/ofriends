@@ -43,7 +43,7 @@
       </el-checkbox-group>
     </el-form-item>
     <el-form-item label="Passport info" prop="passportInfo">
-        el-input(v-model="customer.passportInfo" type="textarea" placeholder="Passport info of customer")
+        <el-input v-model="customer.passportInfo" type="textarea" placeholder="Passport info of customer" />
     </el-form-item>
     <el-form-item label="Food Note" prop="foodNote">
       <el-input v-model="customer.foodNote" type="textarea" placeholder="is a vegetarian..."/>
@@ -55,7 +55,7 @@
       <el-input v-model="customer.nextVisitNote" type="textarea" placeholder="..."/>
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" @click="submitForm('customer')")>
+      <el-button type="primary" @click="submitForm('customer')">
         | Save
       </el-button>
       <el-button @click="resetForm('customer')">
