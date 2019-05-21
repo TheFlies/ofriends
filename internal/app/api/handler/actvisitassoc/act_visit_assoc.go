@@ -1,4 +1,4 @@
-package activityvisitassociatehandler
+package actvisitassochandler
 
 import (
 	"context"
@@ -13,11 +13,11 @@ import (
 
 type (
 	service interface {
-		Get(ctx context.Context, id string) (*types.ActivityVisitAssociate, error)
-		GetAll(ctx context.Context) ([]types.ActivityVisitAssociate, error)
-		GetByVisitID(ctx context.Context, visitID string) ([]types.ActivityVisitAssociate, error)
-		Create(ctx context.Context, activityVisitAssociate types.ActivityVisitAssociate) (string, error)
-		Update(ctx context.Context, activityVisitAssociate types.ActivityVisitAssociate) error
+		Get(ctx context.Context, id string) (*types.ActVisitAssoc, error)
+		GetAll(ctx context.Context) ([]types.ActVisitAssoc, error)
+		GetByVisitID(ctx context.Context, visitID string) ([]types.ActVisitAssoc, error)
+		Create(ctx context.Context, actVisitAssoc types.ActVisitAssoc) (string, error)
+		Update(ctx context.Context, actVisitAssoc types.ActVisitAssoc) error
 		Delete(ctx context.Context, id string) error
 		DeleteByVisitID(ctx context.Context, visitID string) error
 	}
@@ -39,66 +39,66 @@ func New(s service, l glog.Logger) *Handler {
 
 // Get handle get gift associate HTTP request
 func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
-	activityVisitAssociate, err := h.srv.Get(r.Context(), mux.Vars(r)["id"])
+	actVisitAssoc, err := h.srv.Get(r.Context(), mux.Vars(r)["id"])
 	if err != nil {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
 	}
-	respond.JSON(w, http.StatusOK, activityVisitAssociate)
+	respond.JSON(w, http.StatusOK, actVisitAssoc)
 }
 
 // GetAll handle get all gift associates HTTP Request
 func (h *Handler) GetAll(w http.ResponseWriter, r *http.Request) {
-	activityVisitAssociates, err := h.srv.GetAll(r.Context())
+	actVisitAssocs, err := h.srv.GetAll(r.Context())
 	if err != nil {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
 	}
 
-	respond.JSON(w, http.StatusOK, activityVisitAssociates)
+	respond.JSON(w, http.StatusOK, actVisitAssocs)
 }
 
 // GetByVisitID handle get gift associate by Visit ID HTTP request
 func (h *Handler) GetByVisitID(w http.ResponseWriter, r *http.Request) {
-	activityVisitAssociates, err := h.srv.GetByVisitID(r.Context(), mux.Vars(r)["visitID"])
+	actVisitAssocs, err := h.srv.GetByVisitID(r.Context(), mux.Vars(r)["visitID"])
 	if err != nil {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
 	}
-	respond.JSON(w, http.StatusOK, activityVisitAssociates)
+	respond.JSON(w, http.StatusOK, actVisitAssocs)
 }
 
 // Create handle insert gift associate HTTP Request
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
-	var activityVisitAssociate types.ActivityVisitAssociate
+	var actVisitAssoc types.ActVisitAssoc
 
-	if err := json.NewDecoder(r.Body).Decode(&activityVisitAssociate); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&actVisitAssoc); err != nil {
 		respond.Error(w, err, http.StatusBadRequest)
 		return
 	}
 
-	if id, err := h.srv.Create(r.Context(), activityVisitAssociate); err != nil {
+	if id, err := h.srv.Create(r.Context(), actVisitAssoc); err != nil {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
 	} else {
-		activityVisitAssociate.ID = id
+		actVisitAssoc.ID = id
 	}
-	respond.JSON(w, http.StatusCreated, map[string]string{"id": activityVisitAssociate.ID})
+	respond.JSON(w, http.StatusCreated, map[string]string{"id": actVisitAssoc.ID})
 }
 
 // Update handle modify gift associate HTTP Request
 func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
-	var activityVisitAssociate types.ActivityVisitAssociate
-	if err := json.NewDecoder(r.Body).Decode(&activityVisitAssociate); err != nil {
+	var actVisitAssoc types.ActVisitAssoc
+	if err := json.NewDecoder(r.Body).Decode(&actVisitAssoc); err != nil {
 		respond.Error(w, err, http.StatusBadRequest)
 		return
 	}
 
-	if err := h.srv.Update(r.Context(), activityVisitAssociate); err != nil {
+	if err := h.srv.Update(r.Context(), actVisitAssoc); err != nil {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
 	}
-	respond.JSON(w, http.StatusOK, map[string]string{"id": activityVisitAssociate.ID, "status": "success"})
+	respond.JSON(w, http.StatusOK, map[string]string{"id": actVisitAssoc.ID, "status": "success"})
 }
 
 // Delete handle delete gift associate HTTP Request
