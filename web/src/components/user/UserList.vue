@@ -11,9 +11,9 @@
         </el-table-column>
         <el-table-column label="Full Name" width="130" sortable prop="fullname">
         </el-table-column>
-        <el-table-column label="Email" prop="email" width="150" />
-        <el-table-column label="Delivery Center" width="280" prop="delivery_center" />
-        <el-table-column label="Priority" width="280" prop="priority">
+        <el-table-column label="Email" prop="email" sortable width="150" />
+        <el-table-column label="Delivery Center" sortable width="280" prop="delivery_center" />
+        <el-table-column label="Current Priority" width="280" sortable prop="priority">
           <template slot-scope="scope">
             {{ getRoleName(scope.row.priority) }}
           </template>
@@ -30,18 +30,21 @@
           <template slot-scope="scope">
             <el-button
               size="mini"
+              type="primary"
               @click="user=scope.row; handleUpdate(2)"
             >
               User Role
             </el-button>
             <el-button
               size="mini"
+              type="warning"
               @click="user=scope.row; handleUpdate(3)"
             >
               Admin Role
             </el-button>
             <el-button
               size="mini"
+              type="info"
               @click="user=scope.row; handleUpdate(1)"
             >
               None

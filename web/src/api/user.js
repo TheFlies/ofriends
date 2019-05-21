@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 export function getAllUsers() {
-  return axios.get('/api/v1/user/getAll')
+  return axios.get('/api/v1/user')
 }
 
 export function updateUser(user) {

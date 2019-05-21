@@ -24,7 +24,7 @@ type (
 	}
 	UserService interface {
 		GetByName(username string) (*types.User, error)
-		GetAll() ([]types.User, error)
+		FindAll() ([]types.User, error)
 		Delete(id string) error
 		AddUser(u *types.User) (string, error)
 		CheckExistence(username string) bool
@@ -42,8 +42,8 @@ func NewUserHandler(s UserService, localLogin login.LoginService, ldapLogin logi
 		ldapLoginSrv:  ldapLogin,
 	}
 }
-func (u *UserHandler) GetAll(w http.ResponseWriter, r *http.Request) {
-	users, err := u.srv.GetAll()
+func (u *UserHandler) FindAll(w http.ResponseWriter, r *http.Request) {
+	users, err := u.srv.FindAll()
 	if err != nil {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return

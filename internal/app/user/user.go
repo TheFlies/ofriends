@@ -29,7 +29,7 @@ func NewUserService(r UserRepository, l glog.Logger) *UserService {
 	}
 }
 // Get All return all user from database
-func (s *UserService) GetAll() ([]types.User, error) {
+func (s *UserService) FindAll() ([]types.User, error) {
 	return s.repo.FindAll()
 }
 // Delete a user
