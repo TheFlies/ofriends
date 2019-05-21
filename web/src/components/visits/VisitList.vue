@@ -9,7 +9,7 @@
       </el-tooltip>
     </div>
     <div class="text item">
-      <el-table v-loading="loading" :data="tableData.filter(data => !search || data.lab.toLowerCase().includes(search.toLowerCase()))" style="width: 100%; margin:auto">
+      <el-table v-loading="loading" :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" style="width: 100%; margin:auto">        
         <el-table-column type="expand">
           <template slot-scope="scope">
             <el-tabs type="card">
@@ -23,7 +23,17 @@
             <!-- <GiftListByVisit :visit-id="scope.row.id" /> -->
           </template>
         </el-table-column>
-        <el-table-column label="Lab" width="70" sortable prop="lab" />
+        <el-table-column label="Name" width="120" sortable="" prop="name"/>
+        <el-table-column label="Lab" width="200" sortable prop="lab">
+          <template slot-scope="scope">
+            <el-tag
+              :key="tag"
+              v-for="tag in scope.row.lab"
+              :disable-transitions="false">
+              {{tag}}
+            </el-tag>
+          </template>
+        </el-table-column>
         <el-table-column label="Arrival time" width="200" prop="arrivedTime">
           <template slot-scope="scope">
             {{ getHumanDate(scope.row.arrivedTime) }}

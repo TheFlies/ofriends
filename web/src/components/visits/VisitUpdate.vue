@@ -7,16 +7,29 @@
     :before-close="handleBackdropClick"
   >
     <el-form ref="visit" :model="visit" :rules="rules" label-width="130px" class="visit-form">
-      <el-form-item label="lab" prop="lab">
-        <el-select v-model="visit.lab" style="width: 100%;" placeholder="please select lab visit">
-          <el-option label="lab 1" value="lab1" />
-          <el-option label="lab 2" value="lab2" />
-          <el-option label="lab 3" value="lab3" />
-          <el-option label="lab 4" value="lab4" />
-          <el-option label="lab 5" value="lab5" />
-          <el-option label="lab 6" value="lab6" />
-          <el-option label="lab 8" value="lab8" />
-        </el-select>
+      <el-form-item label="Name" prop="name" required>
+        <el-input v-model="visit.name" type="success" placeholder="Visit name" />
+      </el-form-item>
+      <el-form-item label="Lab" prop="lab" required>        
+        <el-tag
+          :key="tag"
+          v-for="tag in visit.lab"
+          closable
+          :disable-transitions="false"
+          @close="handleClose(tag)">
+          {{tag}}
+        </el-tag>
+        <el-input
+          class="input-new-tag"
+          v-if="inputVisible"
+          v-model="inputValue"
+          ref="saveTagInput"
+          size="mini"
+          @keyup.enter.native="handleInputConfirm"
+          @blur="handleInputConfirm"
+        >
+        </el-input>
+        <el-button v-else class="button-new-tag" size="small" @click="showInput">+ Add Lab</el-button>
       </el-form-item>
       <el-form-item label="Arrival time" required>
         <el-col :span="22">
@@ -74,7 +87,8 @@ export default {
       type: Object,
       default: () => ({
         id: '',
-        lab: '',
+        name: '',
+        lab: [],
         arrivedTime: new Date().getTime(),
         departureTime: new Date().getTime(),
         preApproveVisa: false,
@@ -87,7 +101,9 @@ export default {
   },
   data() {
     return {
-      rules: {}
+      rules: {},
+      inputVisible: false,
+      inputValue: '',
     }
   },
   methods: {
@@ -108,6 +124,28 @@ export default {
     resetForm(formName) {
       this.$refs[formName].resetFields()
       this.$emit('update:isVisibleUpdate', false)
+    },
+    handleClose(tag) {
+    this.visit.lab.splice(this.visit.lab.indexOf(tag), 1);
+    },
+
+    showInput() {
+      this.inputVisible = true;
+      this.$nextTick(_ => {
+        this.$refs.saveTagInput.$refs.input.focus();
+      });
+    },
+
+    handleInputConfirm() {
+      let inputValue = this.inputValue;      
+      if (inputValue) {
+        let exist =  this.visit.lab.indexOf(inputValue)
+        if ( exist < 0 ) {
+          this.visit.lab.push(inputValue);
+        }
+      }
+      this.inputVisible = false;
+      this.inputValue = '';
     }
   }
 }
