@@ -19,7 +19,7 @@
             <el-table-column label="City" width="120" sortable="" prop="city"/>
             <el-table-column label="Pre-approved visa" width="120">
                 <template slot-scope="scope">
-                  <el-checkbox v-model="scope.row.preApproveVisa" />
+                  <el-checkbox v-model="scope.row.preApproveVisa" disabled/>
                 </template>
             </el-table-column>
             <el-table-column label="Passport Info" width="120" prop="passportInfo"/>
@@ -28,8 +28,11 @@
             <el-table-column label="Next Visit Note" width="120" prop="nextVisitNote"/>
             <el-table-column align="right">
               <template slot="header" slot-scope="scope">
-                <el-input v-model="search" size="mini" placeholder="Type to search base on participant" />
+                <el-input v-model="search" size="mini" placeholder="Type to search by name" />
               </template>
+              <edit-customer :is-visible-update.sync="isVisibleUpdate" :customer.sync="customer" @isUpdateCustomer="handleUpdate"/>
+              <delete-customer :is-visible-delete.sync="isVisibleDelete" :customer-name.sync="customerName" @isDeleteCustomer="handleDelete"/>
+              <add-customer :is-visible-add.sync="isVisibleAdd" @isAddCustomer="handleAdd"/>
               <template slot-scope="scope">
                 <el-button size="mini" @click="customer = scope.row; isVisibleUpdate = !isVisibleUpdate">
                   | Edit
@@ -40,9 +43,7 @@
               </template>
             </el-table-column>
           </el-table>
-          <edit-customer :is-visible-update.sync="isVisibleUpdate" :customer.sync="customer" @isUpdateCustomer="handleUpdate"/>
-          <delete-customer :is-visible-delete.sync="isVisibleDelete" :customer-name.sync="customerName" @isDeleteCustomer="handleDelete"/>
-          <add-customer :is-visible-add.sync="isVisibleAdd" @isAddCustomer="handleAdd"/>
+
         </div>
       </el-card>
 </template>

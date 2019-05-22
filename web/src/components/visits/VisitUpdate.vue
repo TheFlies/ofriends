@@ -10,26 +10,14 @@
       <el-form-item label="Name" prop="name" required>
         <el-input v-model="visit.name" type="success" placeholder="Visit name" />
       </el-form-item>
-      <el-form-item label="Lab" prop="lab" required>        
-        <el-tag
-          :key="tag"
-          v-for="tag in visit.lab"
-          closable
-          :disable-transitions="false"
-          @close="handleClose(tag)">
-          {{tag}}
+      <el-form-item label="Lab" prop="lab" required>
+        <el-tag v-for="tag in visit.lab" :key="tag" closable :disable-transitions="false" @close="handleClose(tag)">
+          {{ tag }}
         </el-tag>
-        <el-input
-          class="input-new-tag"
-          v-if="inputVisible"
-          v-model="inputValue"
-          ref="saveTagInput"
-          size="mini"
-          @keyup.enter.native="handleInputConfirm"
-          @blur="handleInputConfirm"
-        >
-        </el-input>
-        <el-button v-else class="button-new-tag" size="small" @click="showInput">+ Add Lab</el-button>
+        <el-input v-if="inputVisible" ref="saveTagInput" v-model="inputValue" class="input-new-tag" size="mini" @keyup.enter.native="handleInputConfirm" @blur="handleInputConfirm" />
+        <el-button v-else class="button-new-tag" size="small" @click="showInput">
+          + Add Lab
+        </el-button>
       </el-form-item>
       <el-form-item label="Arrival time" required>
         <el-col :span="22">
@@ -103,11 +91,12 @@ export default {
     return {
       rules: {},
       inputVisible: false,
-      inputValue: '',
+      inputValue: ''
     }
   },
   methods: {
     handleBackdropClick() {
+      this.$refs['visit'].resetFields()
       this.$emit('update:isVisibleUpdate', false)
     },
     submitForm(formName) {
@@ -126,26 +115,24 @@ export default {
       this.$emit('update:isVisibleUpdate', false)
     },
     handleClose(tag) {
-    this.visit.lab.splice(this.visit.lab.indexOf(tag), 1);
+      this.visit.lab.splice(this.visit.lab.indexOf(tag), 1)
     },
 
     showInput() {
-      this.inputVisible = true;
+      this.inputVisible = true
       this.$nextTick(_ => {
-        this.$refs.saveTagInput.$refs.input.focus();
-      });
+        this.$refs.saveTagInput.$refs.input.focus()
+      })
     },
 
     handleInputConfirm() {
-      let inputValue = this.inputValue;      
-      if (inputValue) {
-        let exist =  this.visit.lab.indexOf(inputValue)
-        if ( exist < 0 ) {
-          this.visit.lab.push(inputValue);
+      if (this.inputValue) {
+        if (this.visit.lab.indexOf(this.inputValue) < 0) {
+          this.visit.lab.push(this.inputValue)
         }
       }
-      this.inputVisible = false;
-      this.inputValue = '';
+      this.inputVisible = false
+      this.inputValue = ''
     }
   }
 }

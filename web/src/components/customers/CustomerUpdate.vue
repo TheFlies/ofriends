@@ -132,6 +132,7 @@ export default {
   },
   methods: {
     handleBackdropClick() {
+      this.$refs['customer'].resetFields()
       this.$emit('update:isVisibleUpdate', false)
     },
     submitForm(formName) {

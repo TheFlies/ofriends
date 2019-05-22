@@ -9,7 +9,7 @@
       </el-tooltip>
     </div>
     <div class="text item">
-      <el-table v-loading="loading" :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" style="width: 100%; margin:auto">        
+      <el-table v-loading="loading" :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" style="width: 100%; margin:auto">
         <el-table-column type="expand">
           <template slot-scope="scope">
             <el-tabs type="card">
@@ -23,14 +23,11 @@
             <!-- <GiftListByVisit :visit-id="scope.row.id" /> -->
           </template>
         </el-table-column>
-        <el-table-column label="Name" width="120" sortable="" prop="name"/>
+        <el-table-column label="Name" width="120" sortable="" prop="name" />
         <el-table-column label="Lab" width="200" sortable prop="lab">
           <template slot-scope="scope">
-            <el-tag
-              :key="tag"
-              v-for="tag in scope.row.lab"
-              :disable-transitions="false">
-              {{tag}}
+            <el-tag v-for="tag in scope.row.lab" :key="tag" :disable-transitions="false">
+              {{ tag }}
             </el-tag>
           </template>
         </el-table-column>
@@ -49,7 +46,7 @@
         <el-table-column label="Pickup" width="120" prop="pickup" />
         <el-table-column align="right">
           <template slot="header" slot-scope="scope">
-            <el-input v-model="search" size="mini" placeholder="Type to search" />
+            <el-input v-model="search" size="mini" placeholder="Type to search by name" />
           </template>
           <VisitUpdate :is-visible-update.sync="isVisibleUpdate" :visit.sync="visit" @isUpdateVisit="handleUpdate" />
           <VisitDelete :is-visible-delete.sync="isVisibleDelete" @isDeleteVisit="handleDelete" />

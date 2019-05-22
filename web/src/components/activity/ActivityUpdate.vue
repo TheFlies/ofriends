@@ -77,6 +77,7 @@ export default {
   },
   methods: {
     handleBackdropClick() {
+      this.$refs['activity'].resetFields()
       this.$emit('update:isVisibleUpdate', false)
     },
     submitForm(formName) {

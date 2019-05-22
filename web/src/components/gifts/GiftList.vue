@@ -18,7 +18,7 @@
         <el-table-column label="Description" prop="description" />
         <el-table-column align="right" width="320">
           <template slot="header" slot-scope="scope">
-            <el-input v-model="search" size="mini" placeholder="Type to search" />
+            <el-input v-model="search" size="mini" placeholder="Type to search by name" />
           </template>
           <GiftUpdate :is-visible-update.sync="isVisibleUpdate" :gift.sync="gift" @isUpdateGift="handleUpdate" />
           <GiftDelete :is-visible-delete.sync="isVisibleDelete" :gift-name.sync="giftName" @isDeleteGift="handleDelete" />
