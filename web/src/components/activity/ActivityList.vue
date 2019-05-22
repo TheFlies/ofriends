@@ -12,7 +12,6 @@
       <el-table v-loading="loading" :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" style="width: 100%; margin:auto">
         <el-table-column label="Name" width="150" prop="name" />
         <el-table-column label="Detail" width="300" prop="detail" />
-        <el-table-column label="Hotel" width="280" prop="hotel" />
         <el-table-column align="right">
           <template slot="header" slot-scope="scope">
             <el-input
@@ -26,7 +25,7 @@
             :activity.sync="activity"
             @isUpdateAct="handleUpdate"
           />
-          <ActivityDelete :is-visible-delete.sync="isVisibleDelete" @isDeleteAct="handleDelete" />
+          <ActivityDelete :is-visible-delete.sync="isVisibleDelete" :act-name.sync="actName" @isDeleteAct="handleDelete" />
           <ActivityAdd :is-visible-add.sync="isVisibleAdd" @isAddAct="handleAdd" />
           <template slot-scope="scope">
             <el-button
@@ -38,7 +37,7 @@
             <el-button
               size="mini"
               type="danger"
-              @click="isVisibleDelete = !isVisibleDelete; scopeActivity= scope"
+              @click="isVisibleDelete = !isVisibleDelete; scopeActivity= scope; actName = scope.row.name"
             >
               Delete
             </el-button>
@@ -78,6 +77,7 @@ export default {
       search: '',
       loading: true,
       activity: {},
+      actName: '',
       scopeActivity: {}
     }
   },

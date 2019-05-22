@@ -13,6 +13,7 @@ type Repository interface {
 	FindByID(ctx context.Context, id string) (*types.ActVisitAssoc, error)
 	FindAll(ctx context.Context) ([]types.ActVisitAssoc, error)
 	FindByVisitID(ctx context.Context, visitID string) ([]types.ActVisitAssoc, error)
+	FindByActID(ctx context.Context, actID string) ([]types.ActVisitAssoc, error)
 	Create(ctx context.Context, actVisitAssoc types.ActVisitAssoc) (string, error)
 	Update(ctx context.Context, actVisitAssoc types.ActVisitAssoc) error
 	Delete(ctx context.Context, id string) error
@@ -33,7 +34,7 @@ func NewService(r Repository, l glog.Logger) *Service {
 	}
 }
 
-// Get return given gift associate by id
+// Get return given activity associate by id
 func (s *Service) Get(ctx context.Context, id string) (*types.ActVisitAssoc, error) {
 	return s.repo.FindByID(ctx, id)
 }
@@ -43,9 +44,14 @@ func (s *Service) GetAll(ctx context.Context) ([]types.ActVisitAssoc, error) {
 	return s.repo.FindAll(ctx)
 }
 
-// GetByVisitID return given gift associate by visit id
+// GetByVisitID return given activity associate by visit id
 func (s *Service) GetByVisitID(ctx context.Context, visitID string) ([]types.ActVisitAssoc, error) {
 	return s.repo.FindByVisitID(ctx, visitID)
+}
+
+// GetByActID return given activity associate by activity id
+func (s *Service) GetByActID(ctx context.Context, actID string) ([]types.ActVisitAssoc, error) {
+	return s.repo.FindByActID(ctx, actID)
 }
 
 // Create a activity visit associates

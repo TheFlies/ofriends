@@ -1,47 +1,50 @@
 <template>
   <el-dialog
-    title="Update Gift"
+    title="Update Assigned Customer"
     :visible.sync="isVisibleUpdate"
     width="30%"
     append-to-body
     :before-close="handleBackdropClick"
   >
     <el-form
-      ref="gift"
-      :model="gift"
+      ref="customer"
+      :model="customer"
       :rules="rules"
-      label-width="120px"
+      label-width="150px"
       class="demo-ruleForm"
     >
       <el-form-item
         label="Name"
-        prop="giftName"
+        prop="customerName"
       >
-        <el-input v-model="gift.giftName" :disabled="true" />
+        <el-input v-model="customer.customerName" :disabled="true" />
       </el-form-item>
       <el-form-item
-        label="Quantity"
-        prop="quantity"
+        label="Pre-Approve Visa"
+        prop="preApproveVisa"
       >
-        <el-input-number v-model="gift.quantity" :min="1" />
+        <el-checkbox v-model="customer.preApproveVisa" />
+      </el-form-item>
+      <el-form-item label="Created by" prop="createdBy">
+        <el-input v-model="customer.createdBy" placeholder="Who in HR created the pre-approved visa?" />
       </el-form-item>
       <el-form-item
         label="Note"
         prop="note"
       >
         <el-input
-          v-model="gift.note"
+          v-model="customer.note"
           type="textarea"
         />
       </el-form-item>
       <el-form-item>
         <el-button
           type="primary"
-          @click="submitForm('gift')"
+          @click="submitForm('customer')"
         >
           Save
         </el-button>
-        <el-button @click="resetForm('gift')">
+        <el-button @click="resetForm('customer')">
           Cancel
         </el-button>
       </el-form-item>
@@ -51,10 +54,10 @@
 
 <script>
 export default {
-  name: 'GiftUpdate',
+  name: 'CustomerAssociateUpdate',
   props: {
     isVisibleUpdate: { type: Boolean, default: false },
-    gift: {
+    customer: {
       type: Object,
       default: () => ({
         id: 0,
@@ -71,20 +74,21 @@ export default {
     return {
       rules: {
         name: [
-          { required: true, message: 'Please input Gift name', trigger: 'blur' }
+          { required: true, message: 'Please input customer name', trigger: 'blur' }
         ]
       }
     }
   },
   methods: {
     handleBackdropClick() {
+      this.$refs['customer'].resetFields()
       this.$emit('update:isVisibleUpdate', false)
     },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.$emit('update:isVisibleUpdate', false)
-          this.$emit('isUpdateGift', true)
+          this.$emit('isUpdateCustomer', true)
         } else {
           console.log('error submit!!')
           return false

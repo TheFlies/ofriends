@@ -1,8 +1,8 @@
 <template>
   <el-dialog title="Update Activity" :visible.sync="isVisibleUpdate" width="30%" append-to-body :before-close="handleBackdropClick">
     <el-form ref="activity" :model="activity" label-width="120px">
-      <el-form-item label="Name" prop="name">
-        <el-input v-model="activity.name" :disabled="true" />
+      <el-form-item label="Name" prop="activityName">
+        <el-input v-model="activity.activityName" :disabled="true" />
       </el-form-item>
       <el-form-item label="Start time" required>
         <el-col :span="22">
@@ -52,10 +52,22 @@
 
 <script>
 export default {
-  name: 'GiftUpdate',
+  name: 'ActivityAssociateUpdate',
   props: {
     isVisibleUpdate: { type: Boolean, default: false },
-    activity: {}
+    activity: {
+      type: Object,
+      default: () => ({
+        id: '',
+        activityID: '',
+        visitID: '',
+        activityName: '',
+        startTime: 0,
+        endTime: 0,
+        participant: '',
+        note: ''
+      })
+    }
   },
   methods: {
     handleBackdropClick() {

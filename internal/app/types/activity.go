@@ -5,5 +5,4 @@ type Activity struct {
 	ID     string `json:"id,omitempty" bson:"_id"`
 	Name   string `json:"name,omitempty"`
 	Detail string `json:"detail"`
-	Hotel  string `json:"hotel"`
 }

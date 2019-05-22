@@ -6,7 +6,7 @@
     append-to-body
     :before-close="handleBackdropClick"
   >
-    <span>Do you want to delete: {{ customerName }}?</span>
+    <span>Do you want to delete: {{ actName }}?</span>
     <span
       slot="footer"
       class="dialog-footer"
@@ -25,7 +25,7 @@ export default {
   name: 'ActivityAssociateDelete',
   props: {
     isVisibleDelete: { type: Boolean, default: false },
-    customerName: { type: String, default: '' },
+    actName: { type: String, default: '' },
     isDeleteActivity: { type: Boolean, default: false }
   },
   methods: {

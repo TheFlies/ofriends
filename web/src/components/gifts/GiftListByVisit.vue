@@ -14,9 +14,9 @@
             <el-table-column label="Quantity" prop="quantity" sortable />
             <el-table-column label="Note" prop="note" sortable />
             <el-table-column align="right">
-              <GiftAssociateUpdate :is-visible-update.sync="isVisibleUpdate" :gift.sync="gift" @isUpdateGift="handleGiftAssociateUpdate" />
-              <GiftAssociateDelete :is-visible-delete.sync="isVisibleDelete" :gift-name.sync="giftName" @isDeleteGift="handleGiftAssociateDelete" />
-              <GiftAssociateAdd :assigned-gifts.sync="assignedGifts" :is-visible-assign.sync="isVisibleAssign" @isGiftAssociateAdd="handleGiftAssociateAdd" />
+              <GiftAssociateUpdate :is-visible-update.sync="isVisibleUpdate" :gift.sync="gift" @isUpdateGift="handleGiftAssocUpdate" />
+              <GiftAssociateDelete :is-visible-delete.sync="isVisibleDelete" :gift-name.sync="giftName" @isDeleteGift="handleGiftAssocDelete" />
+              <GiftAssociateAdd :assigned-gifts.sync="assignedGifts" :is-visible-assign.sync="isVisibleAssign" @isGiftAssociateAdd="handleGiftAssocAdd" />
               <template slot-scope="scope">
                 <el-button size="mini" @click="gift = scope.row; isVisibleUpdate = !isVisibleUpdate; ">
                   Edit
@@ -28,7 +28,7 @@
             </el-table-column>
           </el-table>
         </div>
-      </el-card>      
+      </el-card>
     </el-main>
   </el-container>
 </template>
@@ -43,7 +43,7 @@ import {
   createGiftAssociate,
   deleteGiftAssociateById,
   modifyGiftAssociates
-} from '@/api/giftAssociate'
+} from '@/api/giftassoc'
 
 export default {
   name: 'GiftListByVisit',
@@ -79,7 +79,7 @@ export default {
         if (resp.data != null) {
           this.tableData = resp.data
           this.tableData.forEach((gift, index) => {
-            this.assignedGifts.push(gift.id)
+            this.assignedGifts.push(gift.giftID)
           })
         }
         this.loading = false
@@ -93,14 +93,14 @@ export default {
     getGiftAssociate: function() {
       this.assignedGifts = []
       this.tableData.forEach((gift, index) => {
-        this.assignedGifts.push(gift.giftId)
+        this.assignedGifts.push(gift.giftID)
       })
       this.isVisibleAssign = !this.isVisibleAssign
     },
 
-    // handleGiftAssociateAdd: Create if this gift is not exist in current assigned gifts.
+    // handleGiftAssocAdd: Create if this gift is not exist in current assigned gifts.
     // Delete if the current assigned gifts does not exist in updated assigned gifts.
-    handleGiftAssociateAdd: function(isGiftAssociateAdd, updatedGiftAssociates) {
+    handleGiftAssocAdd: function(isGiftAssociateAdd, updatedGiftAssociates) {
       if (isGiftAssociateAdd) {
         var currentAssignedGifts = this.assignedGifts
         updatedGiftAssociates.forEach((gift, index) => {
@@ -108,8 +108,8 @@ export default {
           var position = currentAssignedGifts.indexOf(gift.initial)
           if (position < 0) {
             var giftAssociate = {}
-            giftAssociate.giftId = gift.initial
-            giftAssociate.visitId = this.visitId
+            giftAssociate.giftID = gift.initial
+            giftAssociate.visitID = this.visitId
             giftAssociate.customerID = this.customerId
             giftAssociate.giftName = gift.label
             giftAssociate.customerName = this.customerName
@@ -143,7 +143,7 @@ export default {
         if (currentAssignedGifts.length > 0) {
           currentAssignedGifts.forEach((id) => {
             // Find to get gift associate ID, then delete this gift associate
-            var data = this.tableData.filter(data => !id || data.giftId.includes(id))
+            var data = this.tableData.filter(data => !id || data.giftID.includes(id))
             deleteGiftAssociateById(data[0].id)
               .then(resp => {
                 var giftIndex = this.assignedGifts.indexOf(id)
@@ -169,7 +169,7 @@ export default {
       }
     },
 
-    handleGiftAssociateUpdate: function(isUpdateGift) {
+    handleGiftAssocUpdate: function(isUpdateGift) {
       if (isUpdateGift) {
         this.loading = true
         modifyGiftAssociates(this.gift)
@@ -193,7 +193,7 @@ export default {
         this.loading = false
       }
     },
-    handleGiftAssociateDelete: function(isDeleteGift) {
+    handleGiftAssocDelete: function(isDeleteGift) {
       if (isDeleteGift) {
         this.loading = true
         deleteGiftAssociateById(this.scopeGift.row.id)

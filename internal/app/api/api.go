@@ -6,6 +6,7 @@ import (
 
 	"github.com/TheFlies/ofriends/internal/app/actvisitassoc"
 	"github.com/TheFlies/ofriends/internal/app/api/handler/login"
+	"github.com/TheFlies/ofriends/internal/app/cusvisitassoc"
 	"github.com/TheFlies/ofriends/internal/app/giftassociate"
 
 	"github.com/gorilla/handlers"
@@ -15,6 +16,7 @@ import (
 	activityhandler "github.com/TheFlies/ofriends/internal/app/api/handler/activity"
 	actvisitassochandler "github.com/TheFlies/ofriends/internal/app/api/handler/actvisitassoc"
 	customerhandler "github.com/TheFlies/ofriends/internal/app/api/handler/customer"
+	cusvisitassochandler "github.com/TheFlies/ofriends/internal/app/api/handler/cusvisitassoc"
 	gifthandler "github.com/TheFlies/ofriends/internal/app/api/handler/gift"
 	giftassociatehandler "github.com/TheFlies/ofriends/internal/app/api/handler/giftassociate"
 	indexhandler "github.com/TheFlies/ofriends/internal/app/api/handler/index"
@@ -67,6 +69,7 @@ func Init(conns *InfraConns) (http.Handler, error) {
 	var actRepo activity.Repository
 	var giftAssociateRepo giftassociate.Repository
 	var actVisitAssocRepo actvisitassoc.Repository
+	var cusVisitAssocRepo cusvisitassoc.Repository
 
 	switch conns.Databases.Type {
 	case db.TypeMongoDB:
@@ -79,6 +82,7 @@ func Init(conns *InfraConns) (http.Handler, error) {
 		userRepo = user.NewUserMongoRepository(conns.Databases.MongoDB)
 		giftAssociateRepo = giftassociate.NewMongoRepository(conns.Databases.MongoDB)
 		actVisitAssocRepo = actvisitassoc.NewMongoRepository(conns.Databases.MongoDB)
+		cusVisitAssocRepo = cusvisitassoc.NewMongoRepository(conns.Databases.MongoDB)
 	default:
 		return nil, fmt.Errorf("database type not supported: %s", conns.Databases.Type)
 	}
@@ -103,9 +107,13 @@ func Init(conns *InfraConns) (http.Handler, error) {
 	giftAssociateSrv := giftassociate.NewService(giftAssociateRepo, giftAssociateLogger)
 	giftAssociateHandler := giftassociatehandler.New(giftAssociateSrv, giftAssociateLogger)
 
-	actVisitAssocLogger := logger.WithField("package", "activityvisitassociate")
+	actVisitAssocLogger := logger.WithField("package", "actvisitassociate")
 	actVisitAssocSrv := actvisitassoc.NewService(actVisitAssocRepo, actVisitAssocLogger)
 	actVisitAssocHandler := actvisitassochandler.New(actVisitAssocSrv, actVisitAssocLogger)
+
+	cusVisitAssocLogger := logger.WithField("package", "cusvisitassociate")
+	cusVisitAssocSrv := cusvisitassoc.NewService(cusVisitAssocRepo, cusVisitAssocLogger)
+	cusVisitAssocHandler := cusvisitassochandler.New(cusVisitAssocSrv, cusVisitAssocLogger)
 
 	indexWebHandler := indexhandler.New()
 
@@ -394,6 +402,48 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			path:    "/activities/associates/visits/{visitID:[a-z0-9-\\-]+}",
 			method:  delete,
 			handler: actVisitAssocHandler.DeleteByVisitID,
+		},
+		// Customer visit Associate services
+		{
+			path:    "/customers/associates/{id:[a-z0-9-\\-]+}",
+			method:  get,
+			handler: cusVisitAssocHandler.Get,
+		},
+
+		{
+			path:    "/customers/associates/visits/{visitID:[a-z0-9-\\-]+}",
+			method:  get,
+			handler: cusVisitAssocHandler.GetByVisitID,
+		},
+
+		{
+			path:    "/customers/associates",
+			method:  get,
+			handler: cusVisitAssocHandler.GetAll,
+		},
+
+		{
+			path:    "/customers/associates",
+			method:  post,
+			handler: cusVisitAssocHandler.Create,
+		},
+
+		{
+			path:    "/customers/associates",
+			method:  put,
+			handler: cusVisitAssocHandler.Update,
+		},
+
+		{
+			path:    "/customers/associates/{id:[a-z0-9-\\-]+}",
+			method:  delete,
+			handler: cusVisitAssocHandler.Delete,
+		},
+
+		{
+			path:    "/customers/associates/visits/{visitID:[a-z0-9-\\-]+}",
+			method:  delete,
+			handler: cusVisitAssocHandler.DeleteByVisitID,
 		},
 	}
 

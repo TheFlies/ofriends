@@ -47,8 +47,8 @@
         <el-input v-model="visit.createdBy" placeholder="Who in HR created the pre-approved visa?" />
       </el-form-item>
 
-      <el-form-item label="Hotel Stayed" prop="hotelStayed">
-        <el-input v-model="visit.hotelStayed" placeholder="Where hotel customer stayed?" />
+      <el-form-item label="Accommodation" prop="hotelStayed">
+        <el-input v-model="visit.accommodation" placeholder="Where hotel customer stayed?" />
       </el-form-item>
 
       <el-form-item label="Pickup" prop="pickup">

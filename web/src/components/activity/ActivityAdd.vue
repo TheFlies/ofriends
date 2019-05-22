@@ -17,9 +17,6 @@
           placeholder="Planning..."
         />
       </el-form-item>
-      <el-form-item label="Hotel Stayed" prop="hotel">
-        <el-input v-model="activity.hotel" placeholder="Where hotel customer stayed?" />
-      </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submitForm('activity')">
           Save
@@ -35,8 +32,7 @@
 <script>
 const activityDefault = {
   name: '',
-  detail: '',
-  hotel: ''
+  detail: ''
 }
 export default {
   name: 'ActivityAdd',
@@ -62,8 +58,7 @@ export default {
       if (val) {
         this.activity = {
           name: '',
-          detail: '',
-          hotel: ''
+          detail: ''
         }
       }
     }

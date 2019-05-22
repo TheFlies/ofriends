@@ -41,21 +41,20 @@
             {{ getHumanDate(scope.row.departureTime) }}
           </template>
         </el-table-column>
-        <el-table-column label="Created by" width="120" sortable prop="createdBy" />
-        <el-table-column label="Accommodation" width="180" prop="hotelStayed" />
+        <el-table-column label="Accommodation" width="180" prop="accommodation" />
         <el-table-column label="Pickup" width="120" prop="pickup" />
         <el-table-column align="right">
           <template slot="header" slot-scope="scope">
             <el-input v-model="search" size="mini" placeholder="Type to search by name" />
           </template>
           <VisitUpdate :is-visible-update.sync="isVisibleUpdate" :visit.sync="visit" @isUpdateVisit="handleUpdate" />
-          <VisitDelete :is-visible-delete.sync="isVisibleDelete" @isDeleteVisit="handleDelete" />
+          <VisitDelete :is-visible-delete.sync="isVisibleDelete" :visit-name.sync="visitName" @isDeleteVisit="handleDelete" />
           <VisitAdd :is-visible-add.sync="isVisibleAdd" @isAddVisit="handleAdd" />
           <template slot-scope="scope">
             <el-button size="mini" @click="visit = scope.row; isVisibleUpdate = !isVisibleUpdate">
               Edit
             </el-button>
-            <el-button size="mini" type="danger" @click="isVisibleDelete = !isVisibleDelete; scopeVisit= scope">
+            <el-button size="mini" type="danger" @click="isVisibleDelete = !isVisibleDelete; scopeVisit= scope; visitName = scope.row.name">
               Delete
             </el-button>
           </template>
@@ -100,7 +99,8 @@ export default {
       loading: true,
       visit: {},
       activities: {},
-      scopeVisit: {}
+      scopeVisit: {},
+      visitName: ''
     }
   },
   mounted() {

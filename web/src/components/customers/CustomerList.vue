@@ -17,11 +17,6 @@
             <el-table-column label="Company" width="120" sortable="" prop="company"/>
             <el-table-column label="Country" width="120" sortable="" prop="country"/>
             <el-table-column label="City" width="120" sortable="" prop="city"/>
-            <el-table-column label="Pre-approved visa" width="120">
-                <template slot-scope="scope">
-                  <el-checkbox v-model="scope.row.preApproveVisa" disabled/>
-                </template>
-            </el-table-column>
             <el-table-column label="Passport Info" width="120" prop="passportInfo"/>
             <el-table-column label="Food Note" width="120" prop="foodNote"/>
             <el-table-column label="Family Note" width="120" prop="familyNote"/>

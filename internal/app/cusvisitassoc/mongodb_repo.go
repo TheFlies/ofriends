@@ -1,4 +1,4 @@
-package actvisitassoc
+package cusvisitassoc
 
 import (
 	"context"
@@ -23,68 +23,57 @@ func NewMongoRepository(s *mgo.Session) *MongoRepository {
 }
 
 // FindByID return activity visit associate base on given id
-func (r *MongoRepository) FindByID(ctx context.Context, id string) (*types.ActVisitAssoc, error) {
+func (r *MongoRepository) FindByID(ctx context.Context, id string) (*types.CusVisitAssoc, error) {
 	s := r.session.Clone()
 	defer s.Close()
-	var actVisitAssoc *types.ActVisitAssoc
-	if err := r.collection(s).Find(bson.M{"_id": id}).One(&actVisitAssoc); err != nil {
+	var cusVisitAssoc *types.CusVisitAssoc
+	if err := r.collection(s).Find(bson.M{"_id": id}).One(&cusVisitAssoc); err != nil {
 		return nil, errors.Wrap(err, "failed to find the given gift from database")
 	}
-	return actVisitAssoc, nil
+	return cusVisitAssoc, nil
 }
 
 func (r *MongoRepository) collection(s *mgo.Session) *mgo.Collection {
-	return s.DB("ofriends").C("actvisitassoc")
+	return s.DB("ofriends").C("cusvisitassoc")
 }
 
 // FindAll return all activity visit associates
-func (r *MongoRepository) FindAll(ctx context.Context) ([]types.ActVisitAssoc, error) {
+func (r *MongoRepository) FindAll(ctx context.Context) ([]types.CusVisitAssoc, error) {
 	s := r.session.Clone()
 	defer s.Close()
-	var actVisitAssocs []types.ActVisitAssoc
-	if err := r.collection(s).Find(bson.M{}).All(&actVisitAssocs); err != nil {
+	var cusVisitAssocs []types.CusVisitAssoc
+	if err := r.collection(s).Find(bson.M{}).All(&cusVisitAssocs); err != nil {
 		return nil, errors.Wrap(err, "failed to fetch all gifts from database")
 	}
 
-	return actVisitAssocs, nil
+	return cusVisitAssocs, nil
 }
 
 // FindByVisitID return activity visit associate base on given ids
-func (r *MongoRepository) FindByVisitID(ctx context.Context, visitID string) ([]types.ActVisitAssoc, error) {
+func (r *MongoRepository) FindByVisitID(ctx context.Context, visitID string) ([]types.CusVisitAssoc, error) {
 	s := r.session.Clone()
 	defer s.Close()
-	var actVisitAssocs []types.ActVisitAssoc
-	if err := r.collection(s).Find(bson.M{"_visit_id": visitID}).All(&actVisitAssocs); err != nil {
+	var cusVisitAssocs []types.CusVisitAssoc
+	if err := r.collection(s).Find(bson.M{"_visit_id": visitID}).All(&cusVisitAssocs); err != nil {
 		return nil, errors.Wrap(err, "failed to find the given gift from database")
 	}
-	return actVisitAssocs, nil
-}
-
-// FindByActID return activity visit associate base on given ids
-func (r *MongoRepository) FindByActID(ctx context.Context, actID string) ([]types.ActVisitAssoc, error) {
-	s := r.session.Clone()
-	defer s.Close()
-	var actVisitAssocs []types.ActVisitAssoc
-	if err := r.collection(s).Find(bson.M{"_activity_id": actID}).All(&actVisitAssocs); err != nil {
-		return nil, errors.Wrap(err, "failed to find the given gift from database")
-	}
-	return actVisitAssocs, nil
+	return cusVisitAssocs, nil
 }
 
 // Create a activity visit associate
-func (r *MongoRepository) Create(ctx context.Context, actVisitAssoc types.ActVisitAssoc) (string, error) {
+func (r *MongoRepository) Create(ctx context.Context, cusVisitAssoc types.CusVisitAssoc) (string, error) {
 	s := r.session.Clone()
 	defer s.Close()
-	actVisitAssoc.ID = uuid.New()
-	err := r.collection(s).Insert(&actVisitAssoc)
-	return actVisitAssoc.ID, err
+	cusVisitAssoc.ID = uuid.New()
+	err := r.collection(s).Insert(&cusVisitAssoc)
+	return cusVisitAssoc.ID, err
 }
 
 // Update a activity visit associate
-func (r *MongoRepository) Update(ctx context.Context, actVisitAssoc types.ActVisitAssoc) error {
+func (r *MongoRepository) Update(ctx context.Context, cusVisitAssoc types.CusVisitAssoc) error {
 	s := r.session.Clone()
 	defer s.Close()
-	err := r.collection(s).Update(bson.M{"_id": actVisitAssoc.ID}, &actVisitAssoc)
+	err := r.collection(s).Update(bson.M{"_id": cusVisitAssoc.ID}, &cusVisitAssoc)
 	return err
 }
 

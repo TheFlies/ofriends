@@ -47,14 +47,9 @@
           </el-form-item>
         </el-col>
       </el-form-item>
-      <el-form-item label="Created by" prop="createdBy">
-        <el-input v-model="visit.createdBy" placeholder="Who in HR created the pre-approved visa?" />
-      </el-form-item>
-
-      <el-form-item label="Accommodation" prop="hotelStayed">
+      <el-form-item label="Accommodation" prop="accommodation">
         <el-input v-model="visit.hotelStayed" placeholder="Where hotel customer stayed?" />
       </el-form-item>
-
       <el-form-item label="Pickup" prop="pickup">
         <el-input v-model="visit.pickup" placeholder="Who pickup customer?" />
       </el-form-item>

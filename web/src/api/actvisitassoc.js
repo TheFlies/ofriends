@@ -1,26 +1,26 @@
 import axios from 'axios'
 
-export function getAllAcitivityVisitAssociates() {
+export function getAllAcVisitAssocs() {
   return axios.get('/activities/associates')
 }
 
-export function getAcitivityVisitAssociatesByVisitID(visitID) {
+export function getActVisitAssocsByVisitID(visitID) {
   return axios.get('/activities/associates/visits/' + visitID)
 }
 
-export function createAcitivityVisitAssociate(associate) {
+export function createActVisitAssoc(associate) {
   return axios.post('/activities/associates', associate)
 }
 
-export function modifyAcitivityVisitAssociates(associate) {
+export function modifyActVisitAssocs(associate) {
   return axios.put('/activities/associates', associate)
 }
 
-export function deleteAcitivityVisitAssociateByID(associateID) {
+export function deleteActVisitAssocByID(associateID) {
   return axios.delete('/activities/associates/' + associateID)
 }
 
-export function deleteAcitivityVisitAssociatesByVisitID(visitID) {
+export function deleteActVisitAssocsByVisitID(visitID) {
   return axios.delete('/activities/associates/visits/' + visitID)
 }
 

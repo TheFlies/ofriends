@@ -57,10 +57,7 @@ export default {
             this.data.push({
               label: customer.name,
               key: index,
-              initial: customer.id,
-              position: customer.position,
-              age: customer.age,
-              project: customer.project
+              initial: customer.id
             })
             var position = this.assignedCustomers.indexOf(customer.id)
             if (position >= 0) {

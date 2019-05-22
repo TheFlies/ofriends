@@ -4,42 +4,8 @@
       <el-form-item label="Name" prop="name">
         <el-input v-model="activity.name" placeholder="What is the activity name?" />
       </el-form-item>
-      <el-form-item label="Start time" required>
-        <el-col :span="22">
-          <el-form-item prop="startTime">
-            <el-date-picker
-              v-model="activity.startTime"
-              type="datetime"
-              placeholder="Pick start time"
-              format="yyyy/MM/dd HH:mm"
-              value-format="timestamp"
-              style="width: 100%;"
-            />
-          </el-form-item>
-        </el-col>
-      </el-form-item>
-      <el-form-item label="End time" required>
-        <el-col :span="22">
-          <el-form-item prop="endTime">
-            <el-date-picker
-              v-model="activity.endTime"
-              type="datetime"
-              placeholder="Pick End Time"
-              format="yyyy/MM/dd HH:mm"
-              value-format="timestamp"
-              style="width: 100%;"
-            />
-          </el-form-item>
-        </el-col>
-      </el-form-item>
       <el-form-item label="Detail Plan" prop="detail">
         <el-input v-model="activity.detail" type="textarea" placeholder="Planning..." />
-      </el-form-item>
-      <el-form-item label="Participant" prop="participant">
-        <el-input v-model="activity.participant" placeholder="Who joint this activity?" />
-      </el-form-item>
-      <el-form-item label="Hotel Stayed" prop="hotel">
-        <el-input v-model="activity.hotel" placeholder="Where hotel customer stayed?" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submitForm('activity')">
@@ -62,11 +28,7 @@ export default {
       type: Object,
       default: () => ({
         id: '',
-        startTime: new Date().getTime(),
-        endTime: new Date().getTime(),
-        detail: '',
-        participant: '',
-        hotel: ''
+        detail: ''
       })
     }
   },
