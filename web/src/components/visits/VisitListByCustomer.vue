@@ -25,18 +25,18 @@
         </el-table-column>
         <el-table-column type="index" :index="indexMethod" />
         <el-table-column label="Lab" width="70" sortable prop="lab" />
-        <el-table-column label="Arrived Date" width="130" prop="arrivedTime">
+        <el-table-column label="Arrival time" width="130" prop="arrivedTime">
           <template slot-scope="scope">
             {{ getHumanDate(scope.row.arrivedTime) }}
           </template>
         </el-table-column>
-        <el-table-column label="Departure Date" width="150" prop="departureTime">
+        <el-table-column label="Departure time" width="150" prop="departureTime">
           <template slot-scope="scope">
             {{ getHumanDate(scope.row.departureTime) }}
           </template>
         </el-table-column>
-        <el-table-column label="Created By" width="120" sortable prop="createdBy" />
-        <el-table-column label="Hotel Stayed" width="180" prop="hotelStayed" />
+        <el-table-column label="Created by" width="120" sortable prop="createdBy" />
+        <el-table-column label="Accommodation" width="180" prop="hotelStayed" />
         <el-table-column label="Pickup" width="120" prop="pickup" />
         <el-table-column align="right">
           <VisitUpdate
@@ -128,7 +128,8 @@ export default {
             this.$notify({
               title: 'Success',
               message: 'Update successfully!',
-              type: 'success'
+              type: 'success',
+              position: 'bottom-right'
             })
             visit.id = resp.data.id
             this.tableData.splice(0, 0, visit)
@@ -137,7 +138,8 @@ export default {
             console.log(err)
             this.$notify.error({
               title: 'Error',
-              message: err
+              message: err,
+              position: 'bottom-right'
             })
           })
         this.loading = false
@@ -151,14 +153,16 @@ export default {
             this.$notify({
               title: 'Success',
               message: 'Update successfully!',
-              type: 'success'
+              type: 'success',
+              position: 'bottom-right'
             })
           })
           .catch(err => {
             console.log(err)
             this.$notify.error({
               title: 'Error',
-              message: err
+              message: err,
+              position: 'bottom-right'
             })
           })
         this.loading = false
@@ -173,14 +177,16 @@ export default {
             this.$notify({
               title: 'Success',
               message: 'Delete successfully!',
-              type: 'success'
+              type: 'success',
+              position: 'bottom-right'
             })
           })
           .catch(err => {
             console.log(err)
             this.$notify.error({
               title: 'Error',
-              message: err
+              message: err,
+              position: 'bottom-right'
             })
           })
       }

@@ -11,7 +11,7 @@ import (
 	"github.com/TheFlies/ofriends/internal/app/api"
 	"github.com/TheFlies/ofriends/internal/app/db"
 	"github.com/TheFlies/ofriends/internal/app/db/mongodb"
-	"github.com/TheFlies/ofriends/internal/pkg/config/env"
+	envconfig "github.com/TheFlies/ofriends/internal/pkg/config/env"
 	"github.com/TheFlies/ofriends/internal/pkg/glog"
 	"github.com/TheFlies/ofriends/internal/pkg/health"
 )

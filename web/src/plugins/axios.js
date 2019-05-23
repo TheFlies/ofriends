@@ -8,7 +8,7 @@ import { getToken } from '../utils/auth'
 import { Message } from 'element-ui'
 
 // Set base URL to backend API service
-const backendAddr = process.env.OFRIENDS_BACKEND_ADDRS || 'http://localhost:8080'
+const backendAddr = process.env.OFRIENDS_BACKEND_ADDRS || 'http://localhost:8080/v1'
 console.log(`OFRIENDS_BACKEND_ADDRS: ${backendAddr}`)
 axios.defaults.baseURL = backendAddr
 // axios.defaults.withCredentials = true

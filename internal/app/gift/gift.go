@@ -2,7 +2,9 @@ package gift
 
 import (
 	"context"
+	"errors"
 
+	"github.com/TheFlies/ofriends/internal/app/giftassociate"
 	"github.com/TheFlies/ofriends/internal/app/types"
 	"github.com/TheFlies/ofriends/internal/pkg/glog"
 	validation "github.com/go-ozzo/ozzo-validation"
@@ -19,15 +21,17 @@ type Repository interface {
 
 // Service is an gift service
 type Service struct {
-	repo   Repository
-	logger glog.Logger
+	repo      Repository
+	assocRepo giftassociate.Repository
+	logger    glog.Logger
 }
 
 // NewService return a new gift service
-func NewService(r Repository, l glog.Logger) *Service {
+func NewService(r Repository, assocRepo giftassociate.Repository, l glog.Logger) *Service {
 	return &Service{
-		repo:   r,
-		logger: l,
+		repo:      r,
+		assocRepo: assocRepo,
+		logger:    l,
 	}
 }
 
@@ -59,10 +63,19 @@ func (s *Service) Update(ctx context.Context, gift types.Gift) error {
 	); err != nil {
 		return err
 	} // not empty
-	return s.repo.Update(ctx, gift)
+	if oldGift, err := s.repo.FindByID(ctx, gift.ID); err == nil {
+		error := s.repo.Update(ctx, gift)
+		if error == nil && oldGift.Name != gift.Name {
+			return s.assocRepo.UpdateNameByGiftID(ctx, gift.Name, gift.ID)
+		}
+	}
+	return nil
 }
 
 // Delete a gift
 func (s *Service) Delete(ctx context.Context, id string) error {
-	return s.repo.Delete(ctx, id)
+	if !s.assocRepo.IsAssignedGift(ctx, id, "") {
+		return s.repo.Delete(ctx, id)
+	}
+	return errors.New("This gift has assigned")
 }

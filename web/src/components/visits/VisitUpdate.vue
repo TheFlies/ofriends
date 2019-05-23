@@ -1,24 +1,25 @@
 <template>
   <el-dialog
-    title="update Visit"
+    title="Update Visit"
     :visible.sync="isVisibleUpdate"
     width="30%"
     append-to-body
     :before-close="handleBackdropClick"
   >
     <el-form ref="visit" :model="visit" :rules="rules" label-width="130px" class="visit-form">
-      <el-form-item label="lab" prop="lab">
-        <el-select v-model="visit.lab" style="width: 100%;" placeholder="please select lab visit">
-          <el-option label="lab 1" value="lab1" />
-          <el-option label="lab 2" value="lab2" />
-          <el-option label="lab 3" value="lab3" />
-          <el-option label="lab 4" value="lab4" />
-          <el-option label="lab 5" value="lab5" />
-          <el-option label="lab 6" value="lab6" />
-          <el-option label="lab 8" value="lab8" />
-        </el-select>
+      <el-form-item label="Name" prop="name" required>
+        <el-input v-model="visit.name" type="success" placeholder="Visit name" />
       </el-form-item>
-      <el-form-item label="Visit time" required>
+      <el-form-item label="Lab" prop="lab" required>
+        <el-tag v-for="tag in visit.lab" :key="tag" closable :disable-transitions="false" @close="handleClose(tag)">
+          {{ tag }}
+        </el-tag>
+        <el-input v-if="inputVisible" ref="saveTagInput" v-model="inputValue" class="input-new-tag" size="mini" @keyup.enter.native="handleInputConfirm" @blur="handleInputConfirm" />
+        <el-button v-else class="button-new-tag" size="small" @click="showInput">
+          + Add Lab
+        </el-button>
+      </el-form-item>
+      <el-form-item label="Arrival time" required>
         <el-col :span="22">
           <el-form-item prop="arrivedTime">
             <el-date-picker
@@ -46,8 +47,8 @@
         <el-input v-model="visit.createdBy" placeholder="Who in HR created the pre-approved visa?" />
       </el-form-item>
 
-      <el-form-item label="Hotel Stayed" prop="hotelStayed">
-        <el-input v-model="visit.hotelStayed" placeholder="Where hotel customer stayed?" />
+      <el-form-item label="Accommodation" prop="hotelStayed">
+        <el-input v-model="visit.accommodation" placeholder="Where hotel customer stayed?" />
       </el-form-item>
 
       <el-form-item label="Pickup" prop="pickup">
@@ -74,7 +75,8 @@ export default {
       type: Object,
       default: () => ({
         id: '',
-        lab: '',
+        name: '',
+        lab: [],
         arrivedTime: new Date().getTime(),
         departureTime: new Date().getTime(),
         preApproveVisa: false,
@@ -87,11 +89,14 @@ export default {
   },
   data() {
     return {
-      rules: {}
+      rules: {},
+      inputVisible: false,
+      inputValue: ''
     }
   },
   methods: {
     handleBackdropClick() {
+      this.$refs['visit'].resetFields()
       this.$emit('update:isVisibleUpdate', false)
     },
     submitForm(formName) {
@@ -108,6 +113,26 @@ export default {
     resetForm(formName) {
       this.$refs[formName].resetFields()
       this.$emit('update:isVisibleUpdate', false)
+    },
+    handleClose(tag) {
+      this.visit.lab.splice(this.visit.lab.indexOf(tag), 1)
+    },
+
+    showInput() {
+      this.inputVisible = true
+      this.$nextTick(_ => {
+        this.$refs.saveTagInput.$refs.input.focus()
+      })
+    },
+
+    handleInputConfirm() {
+      if (this.inputValue) {
+        if (this.visit.lab.indexOf(this.inputValue) < 0) {
+          this.visit.lab.push(this.inputValue)
+        }
+      }
+      this.inputVisible = false
+      this.inputValue = ''
     }
   }
 }

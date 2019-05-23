@@ -89,7 +89,8 @@ export default {
             this.$notify({
               title: 'Success',
               message: 'Update successfully!',
-              type: 'success'
+              type: 'success',
+              position: 'bottom-right'
             })
             friend.id = resp.data.id
             this.tableData.splice(0, 0, friend)
@@ -98,7 +99,8 @@ export default {
             console.log(err)
             this.$notify.error({
               title: 'Error',
-              message: err
+              message: err,
+              position: 'bottom-right'
             })
           })
         this.loading = false
@@ -114,14 +116,16 @@ export default {
             this.$notify({
               title: 'Success',
               message: 'Update successfully!',
-              type: 'success'
+              type: 'success',
+              position: 'bottom-right'
             })
           })
           .catch(err => {
             console.log(err)
             this.$notify.error({
               title: 'Error',
-              message: err
+              message: err,
+              position: 'bottom-right'
             })
           })
         this.loading = false
@@ -136,14 +140,16 @@ export default {
             this.$notify({
               title: 'Success',
               message: 'Delete successfully!',
-              type: 'success'
+              type: 'success',
+              position: 'bottom-right'
             })
           })
           .catch(err => {
             console.log(err)
             this.$notify.error({
               title: 'Error',
-              message: err
+              message: err,
+              position: 'bottom-right'
             })
           })
       }

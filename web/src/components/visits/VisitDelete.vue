@@ -6,7 +6,7 @@
     append-to-body
     :before-close="handleBackdropClick"
   >
-    <span>Do you want to delete?</span>
+    <span>Do you want to delete: {{ visitName }}?</span>
     <span slot="footer" class="dialog-footer">
       <el-button @click="handleBackdropClick">Cancel</el-button>
       <el-button type="primary" @click="deleteVisit">Confirm</el-button>
@@ -20,7 +20,8 @@ export default {
   props: {
     isVisibleDelete: { type: Boolean, default: false },
     visitInfo: { type: String, default: '' },
-    isDeleteVisit: { type: Boolean, default: false }
+    isDeleteVisit: { type: Boolean, default: false },
+    visitName: { type: String, default: '' }
   },
   methods: {
     handleBackdropClick() {
