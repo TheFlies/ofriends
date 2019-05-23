@@ -5,7 +5,7 @@ export function getAllGiftAssocs() {
 }
 
 export function getGiftAssocsByCusVistAssocID(assignID) {
-  return axios.get('/giftassociates/' + assignID)
+  return axios.get('/giftassociates?cusvisitassocid=' + assignID)
 }
 
 export function createGiftAssociate(gift) {
