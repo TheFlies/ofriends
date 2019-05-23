@@ -41,7 +41,7 @@ func (r *MongoRepository) FindByCustomerID(ctx context.Context, customerId strin
 	if err := r.collection(s).Find(bson.M{"_customer_id": customerId}).All(&visit); err != nil {
 		return nil, errors.Wrap(err, "failed to fetch all visit from database")
 	}
-	
+
 	return visit, nil
 }
 
@@ -53,7 +53,7 @@ func (r *MongoRepository) FindAll(ctx context.Context) ([]types.Visit, error) {
 	if err := r.collection(s).Find(bson.M{}).All(&visit); err != nil {
 		return nil, errors.Wrap(err, "failed to fetch all visit from database")
 	}
-	
+
 	return visit, nil
 }
 

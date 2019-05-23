@@ -10,7 +10,7 @@ import (
 
 	"github.com/TheFlies/ofriends/internal/app/api/handler/user"
 	"github.com/TheFlies/ofriends/internal/app/types"
-	"github.com/TheFlies/ofriends/internal/pkg/config/env"
+	envconfig "github.com/TheFlies/ofriends/internal/pkg/config/env"
 	"github.com/TheFlies/ofriends/internal/pkg/glog"
 	"github.com/TheFlies/ofriends/internal/pkg/jwt"
 )

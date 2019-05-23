@@ -1,12 +1,8 @@
 package types
 
-// Visit hold information of a activity's visit
+// Activity hold information of a activity
 type Activity struct {
-	ID          	string 		`json:"id,omitempty" bson:"_id"`
-	StartTime     	int64 		`json:"startTime,omitempty"`
-	EndTime   		int64 		`json:"endTime"`
-	Detail  		string    	`json:"detail"`
-	Participant    	string     	`json:"participant"`
-	Hotel    		string     	`json:"hotel"`
-	VisitID			string		`json:"visitId,omitempty" bson:"_visit_id"`
+	ID     string `json:"id,omitempty" bson:"_id"`
+	Name   string `json:"name,omitempty"`
+	Detail string `json:"detail"`
 }

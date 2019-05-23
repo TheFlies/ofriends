@@ -100,6 +100,7 @@ export default {
   },
   methods: {
     handleBackdropClick() {
+      this.$refs['gift'].resetFields()
       this.$emit('update:isVisibleUpdate', false)
     },
     submitForm(formName) {

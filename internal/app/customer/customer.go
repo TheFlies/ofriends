@@ -2,10 +2,12 @@ package customer
 
 import (
 	"context"
+	"errors"
 
+	"github.com/TheFlies/ofriends/internal/app/cusvisitassoc"
 	"github.com/TheFlies/ofriends/internal/app/types"
 	"github.com/TheFlies/ofriends/internal/pkg/glog"
-	"github.com/go-ozzo/ozzo-validation"
+	validation "github.com/go-ozzo/ozzo-validation"
 )
 
 // Repository is an interface of a customer repository
@@ -19,15 +21,17 @@ type Repository interface {
 
 // Service is an customer service
 type Service struct {
-	repo   Repository
-	logger glog.Logger
+	repo      Repository
+	assocRepo cusvisitassoc.Repository
+	logger    glog.Logger
 }
 
 // NewService return a new customer service
-func NewService(r Repository, l glog.Logger) *Service {
+func NewService(r Repository, assocRepo cusvisitassoc.Repository, l glog.Logger) *Service {
 	return &Service{
-		repo:   r,
-		logger: l,
+		repo:      r,
+		assocRepo: assocRepo,
+		logger:    l,
 	}
 }
 
@@ -49,7 +53,7 @@ func (s *Service) Create(ctx context.Context, customer types.Customer) (string, 
 		validation.Field(&customer.Position, validation.Required),
 		validation.Field(&customer.Project, validation.Required),
 	); err != nil {
-		return "",err
+		return "", err
 	} // not empty
 	return s.repo.Create(ctx, customer)
 }
@@ -65,10 +69,20 @@ func (s *Service) Update(ctx context.Context, customer types.Customer) error {
 	); err != nil {
 		return err
 	} // not empty
-	return s.repo.Update(ctx, customer)
+
+	if cus, err := s.repo.FindByID(ctx, customer.ID); err == nil {
+		error := s.repo.Update(ctx, customer)
+		if error == nil && cus.Name != customer.Name {
+			return s.assocRepo.UpdateNameByCusID(ctx, customer.Name, customer.ID)
+		}
+	}
+	return nil
 }
 
 // Delete a customer
 func (s *Service) Delete(ctx context.Context, id string) error {
-	return s.repo.Delete(ctx, id)
+	if !s.assocRepo.IsAssignedCustomer(ctx, id, "") {
+		return s.repo.Delete(ctx, id)
+	}
+	return errors.New("This customer has assigned with visit")
 }

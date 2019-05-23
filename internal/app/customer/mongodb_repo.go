@@ -41,7 +41,7 @@ func (r *MongoRepository) FindAll(ctx context.Context) ([]types.Customer, error)
 	if err := r.collection(s).Find(bson.M{}).All(&customer); err != nil {
 		return nil, errors.Wrap(err, "failed to fetch all customer from database")
 	}
-	
+
 	return customer, nil
 }
 

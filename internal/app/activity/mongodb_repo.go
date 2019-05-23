@@ -33,18 +33,6 @@ func (r *MongoRepository) FindByID(ctx context.Context, id string) (*types.Activ
 	return act, nil
 }
 
-// Find all activities by visit ID
-func (r *MongoRepository) FindByVisitID(ctx context.Context, visitId string) ([]types.Activity, error) {
-	s := r.session.Clone()
-	defer s.Close()
-	var act []types.Activity
-	if err := r.collection(s).Find(bson.M{"_visit_id": visitId}).All(&act); err != nil {
-		return nil, errors.Wrap(err, "failed to fetch all activities from database")
-	}
-	
-	return act, nil
-}
-
 // FindAll return all activites
 func (r *MongoRepository) FindAll(ctx context.Context) ([]types.Activity, error) {
 	s := r.session.Clone()
@@ -53,7 +41,7 @@ func (r *MongoRepository) FindAll(ctx context.Context) ([]types.Activity, error)
 	if err := r.collection(s).Find(bson.M{}).All(&act); err != nil {
 		return nil, errors.Wrap(err, "failed to fetch all activity from database")
 	}
-	
+
 	return act, nil
 }
 

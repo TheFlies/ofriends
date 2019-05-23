@@ -1,9 +1,5 @@
 import axios from 'axios'
 
-export function getAllGiftsByVisitID(visitId) {
-  return axios.get('/gifts/visit/' + visitId)
-}
-
 export function getAllGifts() {
   return axios.get('/gifts')
 }
