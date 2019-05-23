@@ -290,6 +290,18 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 		{
+			path:        "/users",
+			method:      get,
+			handler:     userHandler.FindAll,
+			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
+		},
+		{
+			path:        "/users",
+			method:      put,
+			handler:     userHandler.Update,
+			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
+		},
+		{
 			path:        "/users/{username}",
 			method:      get,
 			handler:     userHandler.GetUser,

@@ -1,13 +1,13 @@
 import axios from 'axios'
 
 export function getAllUsers() {
-  return axios.get('/api/v1/user')
+  return axios.get('/users')
 }
 
 export function updateUser(user) {
-  return axios.put('/api/v1/user/', user)
+  return axios.put('/users', user)
 }
 
 export function deleteUser(id) {
-  return axios.delete('/api/v1/user/' + id)
+  return axios.delete('/users/' + id)
 }

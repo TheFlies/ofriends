@@ -22,7 +22,7 @@ type (
 func (u User) Validate() error {
 	return validation.ValidateStruct(&u,
 		validation.Field(&u.Email, is.Email),
-		validation.Field(&u.Password, validation.NilOrNotEmpty),
+		// validation.Field(&u.Password, validation.NilOrNotEmpty),
 		validation.Field(&u.FullName),
 	)
 }
