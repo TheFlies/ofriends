@@ -10,7 +10,7 @@
         </div>
         <div class="text item">
           <el-table v-loading="loading" :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" style="width: 100%; margin:auto">
-            <el-table-column label="Name" width="120" sortable="" prop="name"/>
+            <el-table-column label="Name" width="250" sortable="" prop="name"/>
             <el-table-column label="Position" width="120" sortable="" prop="position"/>
             <el-table-column label="Project" width="120" sortable="" prop="project"/>
             <el-table-column label="Age" width="120" sortable="" prop="age"/>
@@ -154,7 +154,7 @@ export default {
             console.log(err)
             this.$notify.error({
               title: 'Error',
-              message: err,
+              message: err.response.data,
               position: 'bottom-right'
             })
           })

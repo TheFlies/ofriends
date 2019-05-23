@@ -1,6 +1,6 @@
 package types
 
-// Visit hold information of a customer's visit
+// Visit hold information of a visit
 type Visit struct {
 	ID            string   `json:"id,omitempty" bson:"_id"`
 	Name          string   `json:"name,omitempty"`

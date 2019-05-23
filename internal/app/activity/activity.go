@@ -2,7 +2,9 @@ package activity
 
 import (
 	"context"
+	"errors"
 
+	"github.com/TheFlies/ofriends/internal/app/actvisitassoc"
 	"github.com/TheFlies/ofriends/internal/app/types"
 	"github.com/TheFlies/ofriends/internal/pkg/glog"
 )
@@ -11,7 +13,6 @@ import (
 type Repository interface {
 	FindByID(ctx context.Context, id string) (*types.Activity, error)
 	FindAll(ctx context.Context) ([]types.Activity, error)
-	FindByVisitID(ctx context.Context, visitId string) ([]types.Activity, error)
 	Create(ctx context.Context, act types.Activity) (string, error)
 	Update(ctx context.Context, act types.Activity) error
 	Delete(ctx context.Context, id string) error
@@ -19,26 +20,23 @@ type Repository interface {
 
 // Service is an activity service
 type Service struct {
-	repo   Repository
-	logger glog.Logger
+	repo      Repository
+	assocRepo actvisitassoc.Repository
+	logger    glog.Logger
 }
 
 // NewService return a new activity service
-func NewService(r Repository, l glog.Logger) *Service {
+func NewService(r Repository, assocRepo actvisitassoc.Repository, l glog.Logger) *Service {
 	return &Service{
-		repo:   r,
-		logger: l,
+		repo:      r,
+		assocRepo: assocRepo,
+		logger:    l,
 	}
 }
 
 // Get return given activity by activity id
 func (s *Service) Get(ctx context.Context, id string) (*types.Activity, error) {
 	return s.repo.FindByID(ctx, id)
-}
-
-// Get all activities from database by visit ID
-func (s *Service) GetByVisitID(ctx context.Context, visitId string) ([]types.Activity, error) {
-	return s.repo.FindByVisitID(ctx, visitId)
 }
 
 // Get All return all activities from database
@@ -53,10 +51,20 @@ func (s *Service) Create(ctx context.Context, act types.Activity) (string, error
 
 // Update a activity
 func (s *Service) Update(ctx context.Context, act types.Activity) error {
-	return s.repo.Update(ctx, act)
+	if activity, err := s.repo.FindByID(ctx, act.ID); err == nil {
+		error := s.repo.Update(ctx, act)
+		if error == nil && activity.Name != act.Name {
+			return s.assocRepo.UpdateNameByActID(ctx, act.Name, act.ID)
+		}
+	}
+	return nil
 }
 
 // Delete a activity
 func (s *Service) Delete(ctx context.Context, id string) error {
-	return s.repo.Delete(ctx, id)
+	if !s.assocRepo.IsAssignedActivity(ctx, id, "") {
+		return s.repo.Delete(ctx, id)
+	}
+	return errors.New("This activity has assigned with visit")
+
 }

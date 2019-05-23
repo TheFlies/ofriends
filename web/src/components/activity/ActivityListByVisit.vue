@@ -10,7 +10,7 @@
         </div>
         <div class="text item">
           <el-table v-loading="loading" :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" style="width: 100%; margin:auto">
-            <el-table-column label="Name" prop="activityName" sortable />
+            <el-table-column label="Name" width="250" prop="activityName" sortable />
             <el-table-column label="Start Time" width="200" sortable prop="startTime">
               <template slot-scope="scope">
                 {{ getHumanDate(scope.row.startTime) }}
@@ -211,7 +211,7 @@ export default {
             console.log(err)
             this.$notify.error({
               title: 'Error',
-              message: err,
+              message: err.response.data,
               position: 'bottom-right'
             })
           })

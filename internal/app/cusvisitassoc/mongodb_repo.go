@@ -2,6 +2,7 @@ package cusvisitassoc
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/TheFlies/ofriends/internal/app/types"
 	"github.com/TheFlies/ofriends/internal/pkg/uuid"
@@ -34,7 +35,7 @@ func (r *MongoRepository) FindByID(ctx context.Context, id string) (*types.CusVi
 }
 
 func (r *MongoRepository) collection(s *mgo.Session) *mgo.Collection {
-	return s.DB("ofriends").C("cusvisitassoc")
+	return s.DB("ofriends").C("cusvisitassocs")
 }
 
 // FindAll return all activity visit associates
@@ -91,4 +92,32 @@ func (r *MongoRepository) DeleteByVisitID(ctx context.Context, visitID string) e
 	defer s.Close()
 	err := r.collection(s).Remove(bson.M{"_visit_id": visitID})
 	return err
+}
+
+// UpdateNameByCusID update customer name by customer id
+func (r *MongoRepository) UpdateNameByCusID(ctx context.Context, customerName string, customerID string) error {
+	s := r.session.Clone()
+	defer s.Close()
+	filter := bson.M{"_customer_id": customerID}
+	update := bson.M{"$set": bson.M{"customername": customerName}}
+
+	err := r.collection(s).Update(filter, update)
+	return err
+}
+
+// IsAssignedCustomer check assigned customer
+func (r *MongoRepository) IsAssignedCustomer(ctx context.Context, customerID string, visitID string) bool {
+	s := r.session.Clone()
+	defer s.Close()
+	count, err := r.collection(s).Find(bson.M{
+		"$or": []bson.M{
+			bson.M{"_customer_id": customerID},
+			bson.M{"_visit_id": visitID},
+		},
+	}).Limit(1).Count()
+	fmt.Println(count)
+	if err == nil && count > 0 {
+		return true
+	}
+	return false
 }

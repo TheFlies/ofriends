@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="update Activity" :visible.sync="isVisibleUpdate" width="30%" append-to-body :before-close="handleBackdropClick">
+  <el-dialog title="Update Activity" :visible.sync="isVisibleUpdate" width="30%" append-to-body :before-close="handleBackdropClick">
     <el-form ref="activity" :model="activity" :rules="rules" label-width="130px" class="activity-form">
       <el-form-item label="Name" prop="name">
         <el-input v-model="activity.name" placeholder="What is the activity name?" />

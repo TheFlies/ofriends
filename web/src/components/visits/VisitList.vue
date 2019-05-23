@@ -23,7 +23,7 @@
             <!-- <GiftListByVisit :visit-id="scope.row.id" /> -->
           </template>
         </el-table-column>
-        <el-table-column label="Name" width="120" sortable="" prop="name" />
+        <el-table-column label="Name" width="250" sortable="" prop="name" />
         <el-table-column label="Lab" width="200" sortable prop="lab">
           <template slot-scope="scope">
             <el-tag v-for="tag in scope.row.lab" :key="tag" :disable-transitions="false">
@@ -180,7 +180,7 @@ export default {
             console.log(err)
             this.$notify.error({
               title: 'Error',
-              message: err,
+              message: err.response.data,
               position: 'bottom-right'
             })
           })

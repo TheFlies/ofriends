@@ -2,6 +2,7 @@ package actvisitassoc
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/TheFlies/ofriends/internal/app/types"
 	"github.com/TheFlies/ofriends/internal/pkg/uuid"
@@ -34,7 +35,7 @@ func (r *MongoRepository) FindByID(ctx context.Context, id string) (*types.ActVi
 }
 
 func (r *MongoRepository) collection(s *mgo.Session) *mgo.Collection {
-	return s.DB("ofriends").C("actvisitassoc")
+	return s.DB("ofriends").C("actvisitassocs")
 }
 
 // FindAll return all activity visit associates
@@ -102,4 +103,32 @@ func (r *MongoRepository) DeleteByVisitID(ctx context.Context, visitID string) e
 	defer s.Close()
 	err := r.collection(s).Remove(bson.M{"_visit_id": visitID})
 	return err
+}
+
+// UpdateNameByActID update activity name by activity id
+func (r *MongoRepository) UpdateNameByActID(ctx context.Context, activityName string, activityID string) error {
+	s := r.session.Clone()
+	defer s.Close()
+	filter := bson.M{"_activity_id": activityID}
+	update := bson.M{"$set": bson.M{"activityname": activityName}}
+
+	err := r.collection(s).Update(filter, update)
+	return err
+}
+
+// IsAssignedActivity check assigned activity
+func (r *MongoRepository) IsAssignedActivity(ctx context.Context, activityID string, visitID string) bool {
+	s := r.session.Clone()
+	defer s.Close()
+	count, err := r.collection(s).Find(bson.M{
+		"$or": []bson.M{
+			bson.M{"_activity_id": activityID},
+			bson.M{"_visit_id": visitID},
+		},
+	}).Limit(1).Count()
+	fmt.Println(count)
+	if err == nil && count > 0 {
+		return true
+	}
+	return false
 }

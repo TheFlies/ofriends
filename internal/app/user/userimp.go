@@ -48,7 +48,7 @@ func (r *UserMongoRepository) CheckUserByUsername(username string) bool {
 	return true
 }
 func (r *UserMongoRepository) collection(s *mgo.Session) *mgo.Collection {
-	return s.DB("").C("user")
+	return s.DB("").C("users")
 }
 func (r *UserMongoRepository) UpdateUser(u *types.User) error {
 	s := r.session.Clone()

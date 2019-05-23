@@ -10,7 +10,7 @@
         </div>
         <div class="text item">
           <el-table v-loading="loading" :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" style="width: 100%">
-            <el-table-column label="Name" prop="giftName" sortable />
+            <el-table-column label="Name" width="250" prop="giftName" sortable />
             <el-table-column label="Quantity" prop="quantity" sortable />
             <el-table-column label="Note" prop="note" sortable />
             <el-table-column align="right">
@@ -39,7 +39,7 @@ import GiftAssociateDelete from '@/components/giftAssocicates/GiftAssociateDelet
 import GiftAssociateAdd from '@/components/giftAssocicates/GiftAssociateAdd.vue'
 
 import {
-  getGiftAssociatesByVisitIDNCustomerID,
+  getGiftAssocsByCusVistAssocID,
   createGiftAssociate,
   deleteGiftAssociateById,
   modifyGiftAssociates
@@ -53,8 +53,7 @@ export default {
     GiftAssociateAdd
   },
   props: {
-    visitId: { type: String, default: '' },
-    customerId: { type: String, default: '' },
+    assignId: { type: String, default: '' },
     customerName: { type: String, default: '' }
   },
 
@@ -74,7 +73,8 @@ export default {
     }
   },
   mounted() {
-    getGiftAssociatesByVisitIDNCustomerID(this.visitId, this.customerId)
+    console.log(this.assignId)
+    getGiftAssocsByCusVistAssocID(this.assignId)
       .then(resp => {
         if (resp.data != null) {
           this.tableData = resp.data
@@ -109,8 +109,7 @@ export default {
           if (position < 0) {
             var giftAssociate = {}
             giftAssociate.giftID = gift.initial
-            giftAssociate.visitID = this.visitId
-            giftAssociate.customerID = this.customerId
+            giftAssociate.cusvisitassocID = this.assignId
             giftAssociate.giftName = gift.label
             giftAssociate.customerName = this.customerName
             giftAssociate.quantity = 1
@@ -210,7 +209,7 @@ export default {
             console.log(err)
             this.$notify.error({
               title: 'Error',
-              message: err,
+              message: err.response.data,
               position: 'bottom-right'
             })
           })

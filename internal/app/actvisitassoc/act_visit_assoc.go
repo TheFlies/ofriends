@@ -18,6 +18,8 @@ type Repository interface {
 	Update(ctx context.Context, actVisitAssoc types.ActVisitAssoc) error
 	Delete(ctx context.Context, id string) error
 	DeleteByVisitID(ctx context.Context, visitID string) error
+	UpdateNameByActID(ctx context.Context, activityName string, activityID string) error
+	IsAssignedActivity(ctx context.Context, activityID string, visitID string) bool
 }
 
 // Service is an activity visit associate service
@@ -80,7 +82,17 @@ func (s *Service) Delete(ctx context.Context, id string) error {
 	return s.repo.Delete(ctx, id)
 }
 
-// Delete a activity visit associate
+// DeleteByVisitID a activity visit associate
 func (s *Service) DeleteByVisitID(ctx context.Context, visitId string) error {
 	return s.repo.DeleteByVisitID(ctx, visitId)
+}
+
+// UpdateNameByActID update activity name by activity id
+func (s *Service) UpdateNameByActID(ctx context.Context, activityName string, activityID string) error {
+	return s.repo.UpdateNameByActID(ctx, activityName, activityID)
+}
+
+// IsAssignedActivity check activity visit associcate exist
+func (s *Service) IsAssignedActivity(ctx context.Context, activityID string, visitID string) bool {
+	return s.repo.IsAssignedActivity(ctx, activityID, visitID)
 }

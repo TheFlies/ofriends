@@ -1,26 +1,26 @@
 import axios from 'axios'
 
-export function getAllGiftAssociates() {
-  return axios.get('/gifts/associates')
+export function getAllGiftAssocs() {
+  return axios.get('/giftassociates')
 }
 
-export function getGiftAssociatesByVisitIDNCustomerID(visitID, customerID) {
-  return axios.get('/gifts/associates/visits/' + visitID + '/' + customerID)
+export function getGiftAssocsByCusVistAssocID(assignID) {
+  return axios.get('/giftassociates/' + assignID)
 }
 
 export function createGiftAssociate(gift) {
-  return axios.post('/gifts/associates', gift)
+  return axios.post('/giftassociates', gift)
 }
 
 export function modifyGiftAssociates(gift) {
-  return axios.put('/gifts/associates', gift)
+  return axios.put('/giftassociates', gift)
 }
 
 export function deleteGiftAssociateById(giftID) {
-  return axios.delete('/gifts/associates/' + giftID)
+  return axios.delete('/giftassociates/' + giftID)
 }
 
-export function deleteGiftAssociatesByVisitIDNCustomerID(visitID, customerID) {
-  return axios.delete('/gifts/associates/visits/' + visitID + '/' + customerID)
+export function deleteGiftAssocsByCusVistAssocID(assignID) {
+  return axios.delete('/giftassociates?cusvisitassocid=' + assignID)
 }
 

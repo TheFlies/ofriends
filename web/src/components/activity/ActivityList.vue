@@ -10,8 +10,8 @@
     </div>
     <div class="text item">
       <el-table v-loading="loading" :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" style="width: 100%; margin:auto">
-        <el-table-column label="Name" width="150" prop="name" />
-        <el-table-column label="Detail" width="300" prop="detail" />
+        <el-table-column label="Name" width="250" prop="name" />
+        <el-table-column label="Detail" prop="detail" />
         <el-table-column align="right">
           <template slot="header" slot-scope="scope">
             <el-input
@@ -58,7 +58,7 @@ import {
   getAllActivities,
   createActivity,
   updateActivity,
-  deleteActivityById
+  deleteActivityByID
 } from '@/api/activity'
 
 export default {
@@ -151,7 +151,7 @@ export default {
     handleDelete: function(isDeleteAct) {
       if (isDeleteAct) {
         this.loading = true
-        deleteActivityById(this.scopeActivity.row.id)
+        deleteActivityByID(this.scopeActivity.row.id)
           .then(resp => {
             this.tableData.splice(this.scopeActivity.$index, 1)
             this.$notify({
@@ -165,7 +165,7 @@ export default {
             console.log(err)
             this.$notify.error({
               title: 'Error',
-              message: err,
+              message: err.response.data,
               position: 'bottom-right'
             })
           })

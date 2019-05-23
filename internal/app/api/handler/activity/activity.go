@@ -2,8 +2,8 @@ package activityhandler
 
 import (
 	"context"
-	"net/http"
 	"encoding/json"
+	"net/http"
 
 	"errors"
 	"io"
@@ -17,7 +17,6 @@ import (
 type (
 	service interface {
 		Get(ctx context.Context, id string) (*types.Activity, error)
-		GetByVisitID(ctx context.Context, visitId string) ([]types.Activity, error)
 		GetAll(ctx context.Context) ([]types.Activity, error)
 		Create(ctx context.Context, visit types.Activity) (string, error)
 		Update(ctx context.Context, visit types.Activity) error
@@ -49,18 +48,6 @@ func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
 	respond.JSON(w, http.StatusOK, act)
 }
 
-// GetByVisitID handle get activities HTTP Request by visitID
-func (h *Handler) GetByVisitID(w http.ResponseWriter, r *http.Request) {
-	acts, err := h.srv.GetByVisitID(r.Context(),mux.Vars(r)["id"])
-	if err != nil {
-		respond.Error(w, err, http.StatusInternalServerError)
-		return
-	}
-	
-	respond.JSON(w, http.StatusOK, acts)
-
-}
-
 // GetAll handle get activities HTTP Request
 func (h *Handler) GetAll(w http.ResponseWriter, r *http.Request) {
 	acts, err := h.srv.GetAll(r.Context())
@@ -68,15 +55,13 @@ func (h *Handler) GetAll(w http.ResponseWriter, r *http.Request) {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
 	}
-	
 	respond.JSON(w, http.StatusOK, acts)
-
 }
 
 // Create handle insert activity HTTP Request
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	var act types.Activity
-	
+
 	if err := json.NewDecoder(r.Body).Decode(&act); err != nil {
 		if err == io.EOF {
 			respond.Error(w, errors.New("Invalid request method"), http.StatusMethodNotAllowed)
@@ -86,7 +71,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	defer r.Body.Close() 
+	defer r.Body.Close()
 
 	if id, err := h.srv.Create(r.Context(), act); err != nil {
 		respond.Error(w, err, http.StatusInternalServerError)
@@ -110,8 +95,8 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
 	}
-	
-	defer r.Body.Close() 
+
+	defer r.Body.Close()
 
 	if err := h.srv.Update(r.Context(), act); err != nil {
 		respond.Error(w, err, http.StatusInternalServerError)

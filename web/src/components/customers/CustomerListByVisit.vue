@@ -12,10 +12,10 @@
           <el-table v-loading="loading" :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" style="width: 100%">
             <el-table-column type="expand">
               <template slot-scope="scope">
-                <GiftListByVisit :visit-id="visit.id" :customer-id="scope.row.id" />
+                <GiftListByVisit :assign-id="scope.row.id" />
               </template>
             </el-table-column>
-            <el-table-column label="Customer Name" prop="customerName" sortable />
+            <el-table-column label="Customer Name" width="250" prop="customerName" sortable />
             <el-table-column label="Pre-approved visa" width="120">
               <template slot-scope="scope">
                 <el-checkbox v-model="scope.row.preApproveVisa" disabled />
@@ -152,7 +152,7 @@ export default {
                 console.log(err)
                 this.$notify.error({
                   title: 'Error',
-                  message: err,
+                  message: err.response.data,
                   position: 'bottom-right'
                 })
               })
@@ -208,7 +208,7 @@ export default {
             console.log(err)
             this.$notify.error({
               title: 'Error',
-              message: err,
+              message: err.response.data,
               position: 'bottom-right'
             })
           })
@@ -232,7 +232,7 @@ export default {
             console.log(err)
             this.$notify.error({
               title: 'Error',
-              message: err,
+              message: err.response.data,
               position: 'bottom-right'
             })
           })

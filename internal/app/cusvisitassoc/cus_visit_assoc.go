@@ -2,7 +2,9 @@ package cusvisitassoc
 
 import (
 	"context"
+	"errors"
 
+	"github.com/TheFlies/ofriends/internal/app/giftassociate"
 	"github.com/TheFlies/ofriends/internal/app/types"
 	"github.com/TheFlies/ofriends/internal/pkg/glog"
 	validation "github.com/go-ozzo/ozzo-validation"
@@ -17,19 +19,23 @@ type Repository interface {
 	Update(ctx context.Context, cusVisitAssoc types.CusVisitAssoc) error
 	Delete(ctx context.Context, id string) error
 	DeleteByVisitID(ctx context.Context, visitID string) error
+	UpdateNameByCusID(ctx context.Context, customerName string, customerID string) error
+	IsAssignedCustomer(ctx context.Context, customerID string, visitID string) bool
 }
 
 // Service is an customer visit associate service
 type Service struct {
-	repo   Repository
-	logger glog.Logger
+	repo      Repository
+	assocRepo giftassociate.Repository
+	logger    glog.Logger
 }
 
 // NewService return a new customer visit associate service
-func NewService(r Repository, l glog.Logger) *Service {
+func NewService(r Repository, assocRepo giftassociate.Repository, l glog.Logger) *Service {
 	return &Service{
-		repo:   r,
-		logger: l,
+		repo:      r,
+		assocRepo: assocRepo,
+		logger:    l,
 	}
 }
 
@@ -71,10 +77,23 @@ func (s *Service) Update(ctx context.Context, cusVisitAssoc types.CusVisitAssoc)
 
 // Delete a customer visit associate
 func (s *Service) Delete(ctx context.Context, id string) error {
-	return s.repo.Delete(ctx, id)
+	if !s.assocRepo.IsAssignedGift(ctx, "", id) {
+		return s.repo.Delete(ctx, id)
+	}
+	return errors.New("Can not delete this customer because it has some assigned gifts.")
 }
 
-// Delete a customer visit associate
-func (s *Service) DeleteByVisitID(ctx context.Context, visitId string) error {
-	return s.repo.DeleteByVisitID(ctx, visitId)
+// DeleteByVisitID a customer visit associate
+func (s *Service) DeleteByVisitID(ctx context.Context, visitID string) error {
+	return s.repo.DeleteByVisitID(ctx, visitID)
+}
+
+// UpdateNameByCusID update customer name by customer id
+func (s *Service) UpdateNameByCusID(ctx context.Context, customerName string, customerID string) error {
+	return s.repo.UpdateNameByCusID(ctx, customerName, customerID)
+}
+
+// IsAssignedCustomer check customer visit associcate exist
+func (s *Service) IsAssignedCustomer(ctx context.Context, customerID string, visitID string) bool {
+	return s.repo.IsAssignedCustomer(ctx, customerID, visitID)
 }
