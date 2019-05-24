@@ -1,12 +1,20 @@
 <template>
-  <el-container style="background: #ecf5ff;">
-    <el-main>
+  <el-card class="box-card">
+    <!-- <div slot="header" class="clearfix">
+      <span>Management</span>
+      <el-tooltip class="item" effect="dark" content="Add customer" placement="right-start" >
+        <el-button type="primary" icon="el-icon-plus" plain @click="isVisibleAdd = !isVisibleAdd">
+          | New customer
+        </el-button>
+      </el-tooltip>
+    </div> -->
+    <div class="text item">
       <el-table
         v-loading="loading"
         :data="tableData.filter(data => !search || data.username.toLowerCase().includes(search.toLowerCase()))"
         style="width: 100%; margin:auto"
       >
-        <el-table-column type="index" :index="indexMethod" />
+        <!-- <el-table-column type="index" :index="indexMethod" /> -->
         <el-table-column label="User Name" width="130" sortable prop="username" />
         <el-table-column label="Full Name" width="130" sortable prop="fullname" />
         <el-table-column label="Email" prop="email" sortable width="150" />
@@ -57,8 +65,8 @@
           </template>
         </el-table-column>
       </el-table>
-    </el-main>
-  </el-container>
+    </div>
+  </el-card>
 </template>
 <script>
 import DeleteUser from '@/components/user/UserDelete.vue'
