@@ -41,7 +41,7 @@ func (r *MongoRepository) FindByCustomerID(ctx context.Context, customerId strin
 	if err := r.collection(s).Find(bson.M{"_customer_id": customerId}).All(&visit); err != nil {
 		return nil, errors.Wrap(err, "failed to fetch all visit from database")
 	}
-	
+
 	return visit, nil
 }
 
@@ -53,7 +53,7 @@ func (r *MongoRepository) FindAll(ctx context.Context) ([]types.Visit, error) {
 	if err := r.collection(s).Find(bson.M{}).All(&visit); err != nil {
 		return nil, errors.Wrap(err, "failed to fetch all visit from database")
 	}
-	
+
 	return visit, nil
 }
 
@@ -82,4 +82,17 @@ func (r *MongoRepository) Delete(ctx context.Context, id string) error {
 
 func (r *MongoRepository) collection(s *mgo.Session) *mgo.Collection {
 	return s.DB("ofriends").C("visits")
+}
+func (r *MongoRepository) FindVisitsByDay(ctx context.Context, startTime, endTime int64) ([]types.Visit, error) {
+	s := r.session.Clone()
+	defer s.Close()
+	var listVisit []types.Visit
+	err := r.collection(s).Find(bson.M{"$and": []bson.M{
+		{"arrivedtime": bson.M{"$gt": startTime}},
+		{"arrivedtime": bson.M{"$lt": endTime}},
+	}}).All(&listVisit)
+	if err != nil {
+		return []types.Visit{}, errors.Wrap(err, "visit not found")
+	}
+	return listVisit, nil
 }
