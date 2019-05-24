@@ -10,6 +10,8 @@ import (
 type (
 	UserRepository interface {
 		FindUserByUserName(username string) (*types.User, error)
+		FindAll() ([]types.User, error)
+		Delete(id string) error
 		InsertUser(user *types.User) (string, error)
 		CheckUserByUsername(username string) bool
 		UpdateUser(user *types.User) error
@@ -25,6 +27,14 @@ func NewUserService(r UserRepository, l glog.Logger) *UserService {
 		repo:   r,
 		logger: l,
 	}
+}
+// Get All return all user from database
+func (s *UserService) FindAll() ([]types.User, error) {
+	return s.repo.FindAll()
+}
+// Delete a user
+func (s *UserService) Delete(id string) error {
+	return s.repo.Delete(id)
 }
 func (s *UserService) GetByName(username string) (*types.User, error) {
 	return s.repo.FindUserByUserName(username)

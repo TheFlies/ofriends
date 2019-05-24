@@ -2,10 +2,13 @@ package visit
 
 import (
 	"context"
+	"errors"
 
+	"github.com/TheFlies/ofriends/internal/app/actvisitassoc"
+	"github.com/TheFlies/ofriends/internal/app/cusvisitassoc"
 	"github.com/TheFlies/ofriends/internal/app/types"
 	"github.com/TheFlies/ofriends/internal/pkg/glog"
-	"github.com/go-ozzo/ozzo-validation"
+	validation "github.com/go-ozzo/ozzo-validation"
 )
 
 // Repository is an interface of a visit repository
@@ -21,15 +24,19 @@ type Repository interface {
 
 // Service is an visit service
 type Service struct {
-	repo   Repository
-	logger glog.Logger
+	repo         Repository
+	assocCusRepo cusvisitassoc.Repository
+	assocActRepo actvisitassoc.Repository
+	logger       glog.Logger
 }
 
 // NewService return a new visit service
-func NewService(r Repository, l glog.Logger) *Service {
+func NewService(r Repository, assocCusRepo cusvisitassoc.Repository, assocActRepo actvisitassoc.Repository, l glog.Logger) *Service {
 	return &Service{
-		repo:   r,
-		logger: l,
+		repo:         r,
+		assocCusRepo: assocCusRepo,
+		assocActRepo: assocActRepo,
+		logger:       l,
 	}
 }
 
@@ -54,7 +61,6 @@ func (s *Service) Create(ctx context.Context, visit types.Visit) (string, error)
 		validation.Field(&visit.Lab, validation.Required),
 		validation.Field(&visit.ArrivedTime, validation.Required),
 		validation.Field(&visit.DepartureTime, validation.Required),
-		validation.Field(&visit.CustomerID, validation.Required),
 	); err != nil {
 		return "", err
 	} // not empty
@@ -68,7 +74,6 @@ func (s *Service) Update(ctx context.Context, visit types.Visit) error {
 		validation.Field(&visit.Lab, validation.Required),
 		validation.Field(&visit.ArrivedTime, validation.Required),
 		validation.Field(&visit.DepartureTime, validation.Required),
-		validation.Field(&visit.CustomerID, validation.Required),
 	); err != nil {
 		return err
 	} // not empty
@@ -77,5 +82,8 @@ func (s *Service) Update(ctx context.Context, visit types.Visit) error {
 
 // Delete a visit
 func (s *Service) Delete(ctx context.Context, id string) error {
-	return s.repo.Delete(ctx, id)
+	if !s.assocCusRepo.IsAssignedCustomer(ctx, "", id) && !s.assocActRepo.IsAssignedActivity(ctx, "", id) {
+		return s.repo.Delete(ctx, id)
+	}
+	return errors.New("This customer has assigned with visit")
 }

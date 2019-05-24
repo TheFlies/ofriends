@@ -63,7 +63,7 @@ export const constantRouterMap = [
         name: 'Customers',
         component: () => import('./views/customers/Show.vue'),
         meta: {
-          title: 'Customers',
+          title: 'Customer',
           icon: 'user-setting'
         }
       },
@@ -102,7 +102,7 @@ export const constantRouterMap = [
         name: 'gifts',
         component: () => import('./views/Gifts.vue'),
         meta: {
-          title: 'Gifts',
+          title: 'Gift',
           icon: 'gift'
         }
       }
@@ -119,6 +119,21 @@ export const constantRouterMap = [
         meta: {
           title: 'Activity',
           icon: 'hiking'
+        }
+      }
+    ]
+  },
+  {
+    path: '/managements',
+    component: Layout,
+    children: [
+      {
+        path: '',
+        name: 'managements',
+        component: () => import('./views/user/Show.vue'),
+        meta: {
+          title: 'Management',
+          icon: 'mng'
         }
       }
     ]

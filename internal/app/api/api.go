@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/TheFlies/ofriends/internal/app/actvisitassoc"
 	"github.com/TheFlies/ofriends/internal/app/api/handler/login"
+	"github.com/TheFlies/ofriends/internal/app/cusvisitassoc"
 	"github.com/TheFlies/ofriends/internal/app/giftassociate"
 
 	"github.com/gorilla/handlers"
@@ -12,7 +14,9 @@ import (
 
 	"github.com/TheFlies/ofriends/internal/app/activity"
 	activityhandler "github.com/TheFlies/ofriends/internal/app/api/handler/activity"
+	actvisitassochandler "github.com/TheFlies/ofriends/internal/app/api/handler/actvisitassoc"
 	customerhandler "github.com/TheFlies/ofriends/internal/app/api/handler/customer"
+	cusvisitassochandler "github.com/TheFlies/ofriends/internal/app/api/handler/cusvisitassoc"
 	gifthandler "github.com/TheFlies/ofriends/internal/app/api/handler/gift"
 	giftassociatehandler "github.com/TheFlies/ofriends/internal/app/api/handler/giftassociate"
 	indexhandler "github.com/TheFlies/ofriends/internal/app/api/handler/index"
@@ -64,6 +68,8 @@ func Init(conns *InfraConns) (http.Handler, error) {
 	var visitRepo visit.Repository
 	var actRepo activity.Repository
 	var giftAssociateRepo giftassociate.Repository
+	var actVisitAssocRepo actvisitassoc.Repository
+	var cusVisitAssocRepo cusvisitassoc.Repository
 
 	switch conns.Databases.Type {
 	case db.TypeMongoDB:
@@ -75,29 +81,39 @@ func Init(conns *InfraConns) (http.Handler, error) {
 		customerRepo = customer.NewMongoRepository(conns.Databases.MongoDB)
 		userRepo = user.NewUserMongoRepository(conns.Databases.MongoDB)
 		giftAssociateRepo = giftassociate.NewMongoRepository(conns.Databases.MongoDB)
+		actVisitAssocRepo = actvisitassoc.NewMongoRepository(conns.Databases.MongoDB)
+		cusVisitAssocRepo = cusvisitassoc.NewMongoRepository(conns.Databases.MongoDB)
 	default:
 		return nil, fmt.Errorf("database type not supported: %s", conns.Databases.Type)
 	}
 
-	customerLogger := logger.WithField("package", "customer")
-	customerSrv := customer.NewService(customerRepo, customerLogger)
-	customerHandler := customerhandler.New(customerSrv, customerLogger)
-
-	giftLogger := logger.WithField("package", "gift")
-	giftSrv := gift.NewService(giftRepo, giftLogger)
-	giftHandler := gifthandler.New(giftSrv, giftLogger)
-
-	visitLogger := logger.WithField("package", "visit")
-	visitSrv := visit.NewService(visitRepo, visitLogger)
-	visitHandler := visithandler.New(visitSrv, visitLogger)
-
-	actLogger := logger.WithField("package", "activity")
-	actSrv := activity.NewService(actRepo, actLogger)
-	actHandler := activityhandler.New(actSrv, actLogger)
+	actVisitAssocLogger := logger.WithField("package", "actvisitassociate")
+	actVisitAssocSrv := actvisitassoc.NewService(actVisitAssocRepo, actVisitAssocLogger)
+	actVisitAssocHandler := actvisitassochandler.New(actVisitAssocSrv, actVisitAssocLogger)
 
 	giftAssociateLogger := logger.WithField("package", "giftassociate")
 	giftAssociateSrv := giftassociate.NewService(giftAssociateRepo, giftAssociateLogger)
 	giftAssociateHandler := giftassociatehandler.New(giftAssociateSrv, giftAssociateLogger)
+
+	cusVisitAssocLogger := logger.WithField("package", "cusvisitassociate")
+	cusVisitAssocSrv := cusvisitassoc.NewService(cusVisitAssocRepo, giftAssociateRepo, cusVisitAssocLogger)
+	cusVisitAssocHandler := cusvisitassochandler.New(cusVisitAssocSrv, cusVisitAssocLogger)
+
+	actLogger := logger.WithField("package", "activity")
+	actSrv := activity.NewService(actRepo, actVisitAssocRepo, actLogger)
+	actHandler := activityhandler.New(actSrv, actLogger)
+
+	customerLogger := logger.WithField("package", "customer")
+	customerSrv := customer.NewService(customerRepo, cusVisitAssocRepo, customerLogger)
+	customerHandler := customerhandler.New(customerSrv, customerLogger)
+
+	giftLogger := logger.WithField("package", "gift")
+	giftSrv := gift.NewService(giftRepo, giftAssociateRepo, giftLogger)
+	giftHandler := gifthandler.New(giftSrv, giftLogger)
+
+	visitLogger := logger.WithField("package", "visit")
+	visitSrv := visit.NewService(visitRepo, cusVisitAssocRepo, actVisitAssocRepo, visitLogger)
+	visitHandler := visithandler.New(visitSrv, visitLogger)
 
 	indexWebHandler := indexhandler.New()
 
@@ -193,39 +209,33 @@ func Init(conns *InfraConns) (http.Handler, error) {
 		},
 		// Activity services
 		{
-			path:        "/activity/{id:[a-z0-9-\\-]+}",
+			path:        "/activities/{id:[a-z0-9-\\-]+}",
 			method:      get,
 			handler:     actHandler.Get,
 			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 		{
-			path:        "/activity",
+			path:        "/activities",
 			method:      post,
 			handler:     actHandler.Create,
 			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 		{
-			path:        "/activity",
+			path:        "/activities",
 			method:      put,
 			handler:     actHandler.Update,
 			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 		{
-			path:        "/activity",
+			path:        "/activities",
 			method:      get,
 			handler:     actHandler.GetAll,
 			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 		{
-			path:        "/activity/{id:[a-z0-9-\\-]+}",
+			path:        "/activities/{id:[a-z0-9-\\-]+}",
 			method:      delete,
 			handler:     actHandler.Delete,
-			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
-		},
-		{
-			path:        "/activity/visit/{id:[a-z0-9-\\-]+}",
-			method:      get,
-			handler:     actHandler.GetByVisitID,
 			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 		// Gift services
@@ -264,80 +274,182 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 		{
-			path:    "/api/v1/login",
+			path:    "/login",
 			method:  post,
 			handler: loginHandler.Authenticate,
 		},
 		{
-			path:        "/api/v1/register",
+			path:        "/register",
 			method:      post,
 			handler:     userHandler.Register,
 			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleAdmin)},
 		}, {
-			path:        "/api/v1/getme",
+			path:        "/getme",
 			method:      get,
 			handler:     userHandler.GetMe,
 			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 		{
-			path:        "/api/v1/user/{username}",
+			path:        "/users",
+			method:      get,
+			handler:     userHandler.FindAll,
+			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
+		},
+		{
+			path:        "/users",
+			method:      put,
+			handler:     userHandler.Update,
+			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
+		},
+		{
+			path:        "/users/{username}",
 			method:      get,
 			handler:     userHandler.GetUser,
 			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 		{
-			path:        "/api/v1/user/{username}",
+			path:        "/users/{username}",
 			method:      post,
 			handler:     userHandler.SetPassword,
 			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 		{
-			path:        "/api/v1/user/{username}",
+			path:        "/users/{username}",
 			method:      put,
 			handler:     userHandler.ChangePassword,
 			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 		{
-			path:        "/api/v1/user/{username}",
+			path:        "/users/{username}",
 			method:      put,
 			handler:     userHandler.Update,
 			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
 		// Gift Associate services
 		{
-			path:    "/gifts/associates/{id:[a-z0-9-\\-]+}",
+			path:    "/giftassociates/{id:[a-z0-9-\\-]+}",
 			method:  get,
 			handler: giftAssociateHandler.Get,
 		},
 
 		{
-			path:    "/gifts/associates/visits/{visitID:[a-z0-9-\\-]+}",
+			path:    "/giftassociates?cusvisitassocid={assignID:[a-z0-9-\\-]+}",
 			method:  get,
-			handler: giftAssociateHandler.GetByVisitID,
+			handler: giftAssociateHandler.GetByCusVisitAssocID,
 		},
 
 		{
-			path:    "/gifts/associates",
+			path:    "/giftassociates",
 			method:  get,
 			handler: giftAssociateHandler.GetAll,
 		},
 
 		{
-			path:    "/gifts/associates",
+			path:    "/giftassociates",
 			method:  post,
 			handler: giftAssociateHandler.Create,
 		},
 
 		{
-			path:    "/gifts/associates",
+			path:    "/giftassociates",
 			method:  put,
 			handler: giftAssociateHandler.Update,
 		},
 
 		{
-			path:    "/gifts/associates/{id:[a-z0-9-\\-]+}",
+			path:    "/giftassociates/{id:[a-z0-9-\\-]+}",
 			method:  delete,
 			handler: giftAssociateHandler.Delete,
+		},
+
+		{
+			path:    "/giftassociates?cusvisitassocid={assignID:[a-z0-9-\\-]+}",
+			method:  delete,
+			handler: giftAssociateHandler.DeleteByCusVisitAssocID,
+		},
+		// Activity Associate services
+		{
+			path:    "/actvisitassocs/{id:[a-z0-9-\\-]+}",
+			method:  get,
+			handler: actVisitAssocHandler.Get,
+		},
+
+		{
+			path:    "/actvisitassocs?visitid={visitID:[a-z0-9-\\-]+}",
+			method:  get,
+			handler: actVisitAssocHandler.GetByVisitID,
+		},
+
+		{
+			path:    "/actvisitassocs",
+			method:  get,
+			handler: actVisitAssocHandler.GetAll,
+		},
+
+		{
+			path:    "/actvisitassocs",
+			method:  post,
+			handler: actVisitAssocHandler.Create,
+		},
+
+		{
+			path:    "/actvisitassocs",
+			method:  put,
+			handler: actVisitAssocHandler.Update,
+		},
+
+		{
+			path:    "/actvisitassocs/{id:[a-z0-9-\\-]+}",
+			method:  delete,
+			handler: actVisitAssocHandler.Delete,
+		},
+
+		{
+			path:    "/actvisitassocs?visitid={visitID:[a-z0-9-\\-]+}",
+			method:  delete,
+			handler: actVisitAssocHandler.DeleteByVisitID,
+		},
+		// Customer visit Associate services
+		{
+			path:    "/cusvisitassocs/{id:[a-z0-9-\\-]+}",
+			method:  get,
+			handler: cusVisitAssocHandler.Get,
+		},
+
+		{
+			path:    "/cusvisitassocs?visitid={visitID:[a-z0-9-\\-]+}",
+			method:  get,
+			handler: cusVisitAssocHandler.GetByVisitID,
+		},
+
+		{
+			path:    "/cusvisitassocs",
+			method:  get,
+			handler: cusVisitAssocHandler.GetAll,
+		},
+
+		{
+			path:    "/cusvisitassocs",
+			method:  post,
+			handler: cusVisitAssocHandler.Create,
+		},
+
+		{
+			path:    "/cusvisitassocs",
+			method:  put,
+			handler: cusVisitAssocHandler.Update,
+		},
+
+		{
+			path:    "/cusvisitassocs/{id:[a-z0-9-\\-]+}",
+			method:  delete,
+			handler: cusVisitAssocHandler.Delete,
+		},
+
+		{
+			path:    "/cusvisitassocs?visitid={visitID:[a-z0-9-\\-]+}",
+			method:  delete,
+			handler: cusVisitAssocHandler.DeleteByVisitID,
 		},
 	}
 
@@ -348,13 +460,15 @@ func Init(conns *InfraConns) (http.Handler, error) {
 	r.Use(middleware.StatusResponseWriter)
 	r.Use(loggingMW)
 	r.Use(handlers.CompressHandler)
+	// Add version
+	subrouter := r.PathPrefix("/v1").Subrouter()
 
 	for _, rt := range routes {
 		h := rt.handler
 		for i := len(rt.middlewares) - 1; i >= 0; i-- {
 			h = rt.middlewares[i](h)
 		}
-		r.Path(rt.path).Methods(rt.method).HandlerFunc(h)
+		subrouter.Path(rt.path).Methods(rt.method).HandlerFunc(h)
 	}
 
 	// even not found, return index so that VueJS does its job

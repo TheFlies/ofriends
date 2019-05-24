@@ -12,10 +12,13 @@ import (
 type Repository interface {
 	FindByID(ctx context.Context, id string) (*types.GiftAssociate, error)
 	FindAll(ctx context.Context) ([]types.GiftAssociate, error)
-	FindByVisitID(ctx context.Context, visitID string) ([]types.GiftAssociate, error)
+	FindByCusVisitAssocID(ctx context.Context, assignID string) ([]types.GiftAssociate, error)
 	Create(ctx context.Context, giftAssociate types.GiftAssociate) (string, error)
 	Update(ctx context.Context, giftAssociate types.GiftAssociate) error
 	Delete(ctx context.Context, id string) error
+	DeleteByCusVisitAssocID(ctx context.Context, assignID string) error
+	UpdateNameByGiftID(ctx context.Context, giftName string, giftID string) error
+	IsAssignedGift(ctx context.Context, giftID string, cusvisitassocID string) bool
 }
 
 // Service is an gift associate service
@@ -42,16 +45,15 @@ func (s *Service) GetAll(ctx context.Context) ([]types.GiftAssociate, error) {
 	return s.repo.FindAll(ctx)
 }
 
-// GetByVisitID return given gift associate by visit id
-func (s *Service) GetByVisitID(ctx context.Context, visitID string) ([]types.GiftAssociate, error) {
-	return s.repo.FindByVisitID(ctx, visitID)
+// GetByCusVisitAssocID return given gift associate by visit id
+func (s *Service) GetByCusVisitAssocID(ctx context.Context, assginID string) ([]types.GiftAssociate, error) {
+	return s.repo.FindByCusVisitAssocID(ctx, assginID)
 }
 
 // Create a gift associates
 func (s *Service) Create(ctx context.Context, giftAssociate types.GiftAssociate) (string, error) {
 	if err := validation.ValidateStruct(&giftAssociate,
-		validation.Field(&giftAssociate.VisitID, validation.Required),
-		validation.Field(&giftAssociate.FriendID, validation.Required),
+		validation.Field(&giftAssociate.CusVisitAssocID, validation.Required),
 		validation.Field(&giftAssociate.Quantity, validation.Required),
 	); err != nil {
 		return "", err
@@ -63,8 +65,7 @@ func (s *Service) Create(ctx context.Context, giftAssociate types.GiftAssociate)
 func (s *Service) Update(ctx context.Context, giftAssociate types.GiftAssociate) error {
 	if err := validation.ValidateStruct(&giftAssociate,
 		validation.Field(&giftAssociate.ID, validation.Required),
-		validation.Field(&giftAssociate.VisitID, validation.Required),
-		validation.Field(&giftAssociate.FriendID, validation.Required),
+		validation.Field(&giftAssociate.CusVisitAssocID, validation.Required),
 		validation.Field(&giftAssociate.Quantity, validation.Required),
 	); err != nil {
 		return err
@@ -75,4 +76,19 @@ func (s *Service) Update(ctx context.Context, giftAssociate types.GiftAssociate)
 // Delete a gift associate
 func (s *Service) Delete(ctx context.Context, id string) error {
 	return s.repo.Delete(ctx, id)
+}
+
+// DeleteByCusVisitAssocID gift associates by asign ID
+func (s *Service) DeleteByCusVisitAssocID(ctx context.Context, assignID string) error {
+	return s.repo.DeleteByCusVisitAssocID(ctx, assignID)
+}
+
+// UpdateNameByGiftID update gift name by gift id
+func (s *Service) UpdateNameByGiftID(ctx context.Context, giftName string, giftID string) error {
+	return s.repo.UpdateNameByGiftID(ctx, giftName, giftID)
+}
+
+// IsAssignedGift check gift associcate exist
+func (s *Service) IsAssignedGift(ctx context.Context, giftID string, cusvisitassocID string) bool {
+	return s.repo.IsAssignedGift(ctx, giftID, cusvisitassocID)
 }

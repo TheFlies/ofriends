@@ -1,104 +1,40 @@
 <template>
-  <el-container>
-    <el-header class="gift-list-header">
-      <el-row>
-        <el-col >
-          <div style="text-align: left; font-size: 25px">
-            <el-tooltip
-              class="item"
-              effect="dark"
-              content="Add gift"
-              placement="right-start"
-            >
-            <el-button
-              type="primary"
-              icon="el-icon-plus"
-              plain
-              @click="isVisibleAdd = !isVisibleAdd"
-            >New Gift</el-button>
-            </el-tooltip>
-          </div>
-        </el-col>
-      </el-row>
-    </el-header>
-    <el-main>
-      <el-table
-        v-loading="loading"
-        :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
-        style="width: 100%"
-      >
-        <el-table-column
-          label="Name"
-          prop="name"
-          sortable
-        />
-        <el-table-column
-          label="Idea"
-          prop="idea"
-          sortable
-        />
-        <el-table-column
-          label="Size"
-          prop="size"
-          sortable
-        />
-        <el-table-column
-          label="Price"
-          prop="price"
-          sortable
-        />
-        <el-table-column
-          label="Link"
-          prop="link"
-        />
-        <el-table-column
-          label="Description"
-          prop="description"
-        />
-        <el-table-column
-          align="right"
-          width="320"
-        >
+  <el-card class="box-card">
+    <div slot="header" class="clearfix">
+      <!-- <span>Gift</span> -->
+      <el-tooltip class="item" effect="dark" content="Add gift" placement="right-start">
+        <el-button type="primary" icon="el-icon-plus" plain @click="isVisibleAdd = !isVisibleAdd">
+          New Gift
+        </el-button>
+      </el-tooltip>
+    </div>
+    <div class="text item">
+      <el-table v-loading="loading" :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" style="width: 100%">
+        <el-table-column label="Name" width="250" prop="name" sortable />
+        <el-table-column label="Idea" prop="idea" sortable />
+        <el-table-column label="Size" prop="size" sortable />
+        <el-table-column label="Price" prop="price" sortable />
+        <el-table-column label="Link" prop="link" />
+        <el-table-column label="Description" prop="description" />
+        <el-table-column align="right" width="320">
           <template slot="header" slot-scope="scope">
-            <el-input
-              v-model="search"
-              size="mini"
-              placeholder="Type to search"
-            />
+            <el-input v-model="search" size="mini" placeholder="Type to search by name" />
           </template>
-          <GiftUpdate
-            :is-visible-update.sync="isVisibleUpdate"
-            :gift.sync="gift"
-            @isUpdateGift="handleUpdate"
-          />
-          <GiftDelete
-            :is-visible-delete.sync="isVisibleDelete"
-            :gift-name.sync="giftName"
-            @isDeleteGift="handleDelete"
-          />
-          <GiftAdd
-            :is-visible-add.sync="isVisibleAdd"
-            @isAddGift="handleAdd"
-          />
+          <GiftUpdate :is-visible-update.sync="isVisibleUpdate" :gift.sync="gift" @isUpdateGift="handleUpdate" />
+          <GiftDelete :is-visible-delete.sync="isVisibleDelete" :gift-name.sync="giftName" @isDeleteGift="handleDelete" />
+          <GiftAdd :is-visible-add.sync="isVisibleAdd" @isAddGift="handleAdd" />
           <template slot-scope="scope">
-            <el-button
-              size="mini"
-              @click="gift = scope.row; isVisibleUpdate = !isVisibleUpdate"
-            >
+            <el-button size="mini" @click="gift = scope.row; isVisibleUpdate = !isVisibleUpdate">
               Edit
             </el-button>
-            <el-button
-              size="mini"
-              type="danger"
-              @click="isVisibleDelete = !isVisibleDelete; scopeGift = scope; giftName = scope.row.name"
-            >
+            <el-button size="mini" type="danger" @click="isVisibleDelete = !isVisibleDelete; scopeGift = scope; giftName = scope.row.name">
               Delete
             </el-button>
           </template>
         </el-table-column>
       </el-table>
-    </el-main>
-  </el-container>
+    </div>
+  </el-card>
 </template>
 
 <script>
@@ -148,7 +84,8 @@ export default {
           this.$notify({
             title: 'Success',
             message: 'Update successfully!',
-            type: 'success'
+            type: 'success',
+            position: 'bottom-right'
           })
           gift.id = resp.data.id
           this.tableData.splice(0, 0, gift)
@@ -157,7 +94,8 @@ export default {
             console.log(err)
             this.$notify.error({
               title: 'Error',
-              message: err
+              message: err,
+              position: 'bottom-right'
             })
           })
         this.loading = false
@@ -171,14 +109,16 @@ export default {
           this.$notify({
             title: 'Success',
             message: 'Update successfully!',
-            type: 'success'
+            type: 'success',
+            position: 'bottom-right'
           })
         })
           .catch(err => {
             console.log(err)
             this.$notify.error({
               title: 'Error',
-              message: err
+              message: err,
+              position: 'bottom-right'
             })
           })
         this.loading = false
@@ -192,14 +132,16 @@ export default {
           this.$notify({
             title: 'Success',
             message: 'Delete successfully!',
-            type: 'success'
+            type: 'success',
+            position: 'bottom-right'
           })
         })
           .catch(err => {
             console.log(err)
             this.$notify.error({
               title: 'Error',
-              message: err
+              message: err.response.data,
+              position: 'bottom-right'
             })
           })
       }
