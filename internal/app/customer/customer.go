@@ -84,5 +84,5 @@ func (s *Service) Delete(ctx context.Context, id string) error {
 	if !s.assocRepo.IsAssignedCustomer(ctx, id, "") {
 		return s.repo.Delete(ctx, id)
 	}
-	return errors.New("This customer has assigned with visit")
+	return errors.New("This Customer is assigned in another Visit. You cannot delete it.")
 }

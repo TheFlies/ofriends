@@ -2,7 +2,6 @@ package visit
 
 import (
 	"context"
-	"errors"
 
 	"github.com/TheFlies/ofriends/internal/app/actvisitassoc"
 	"github.com/TheFlies/ofriends/internal/app/cusvisitassoc"
@@ -81,8 +80,13 @@ func (s *Service) Update(ctx context.Context, visit types.Visit) error {
 
 // Delete a visit
 func (s *Service) Delete(ctx context.Context, id string) error {
-	if !s.assocCusRepo.IsAssignedCustomer(ctx, "", id) && !s.assocActRepo.IsAssignedActivity(ctx, "", id) {
-		return s.repo.Delete(ctx, id)
+	if err := s.assocActRepo.DeleteByVisitID(ctx, id); err == nil {
+		if err = s.assocCusRepo.DeleteByVisitID(ctx, id); err == nil {
+			return s.repo.Delete(ctx, id)
+		} else {
+			return err
+		}
+	} else {
+		return err
 	}
-	return errors.New("This customer has assigned with visit")
 }

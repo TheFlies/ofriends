@@ -333,12 +333,6 @@ func Init(conns *InfraConns) (http.Handler, error) {
 		},
 
 		{
-			path:    "/giftassociates?cusvisitassocid={assignID:[a-z0-9-\\-]+}",
-			method:  get,
-			handler: giftAssociateHandler.GetByCusVisitAssocID,
-		},
-
-		{
 			path:    "/giftassociates",
 			method:  get,
 			handler: giftAssociateHandler.GetAll,
@@ -363,7 +357,7 @@ func Init(conns *InfraConns) (http.Handler, error) {
 		},
 
 		{
-			path:    "/giftassociates?cusvisitassocid={assignID:[a-z0-9-\\-]+}",
+			path:    "/giftassociates",
 			method:  delete,
 			handler: giftAssociateHandler.DeleteByCusVisitAssocID,
 		},
@@ -372,12 +366,6 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			path:    "/actvisitassocs/{id:[a-z0-9-\\-]+}",
 			method:  get,
 			handler: actVisitAssocHandler.Get,
-		},
-
-		{
-			path:    "/actvisitassocs?visitid={visitID:[a-z0-9-\\-]+}",
-			method:  get,
-			handler: actVisitAssocHandler.GetByVisitID,
 		},
 
 		{
@@ -405,7 +393,7 @@ func Init(conns *InfraConns) (http.Handler, error) {
 		},
 
 		{
-			path:    "/actvisitassocs?visitid={visitID:[a-z0-9-\\-]+}",
+			path:    "/actvisitassocs",
 			method:  delete,
 			handler: actVisitAssocHandler.DeleteByVisitID,
 		},
@@ -414,12 +402,6 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			path:    "/cusvisitassocs/{id:[a-z0-9-\\-]+}",
 			method:  get,
 			handler: cusVisitAssocHandler.Get,
-		},
-
-		{
-			path:    "/cusvisitassocs?visitid={visitID:[a-z0-9-\\-]+}",
-			method:  get,
-			handler: cusVisitAssocHandler.GetByVisitID,
 		},
 
 		{
@@ -447,7 +429,7 @@ func Init(conns *InfraConns) (http.Handler, error) {
 		},
 
 		{
-			path:    "/cusvisitassocs?visitid={visitID:[a-z0-9-\\-]+}",
+			path:    "/cusvisitassocs",
 			method:  delete,
 			handler: cusVisitAssocHandler.DeleteByVisitID,
 		},

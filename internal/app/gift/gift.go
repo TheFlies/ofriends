@@ -77,5 +77,5 @@ func (s *Service) Delete(ctx context.Context, id string) error {
 	if !s.assocRepo.IsAssignedGift(ctx, id, "") {
 		return s.repo.Delete(ctx, id)
 	}
-	return errors.New("This gift has assigned")
+	return errors.New("This Gift is assigned in another Customer. You cannot delete it.")
 }

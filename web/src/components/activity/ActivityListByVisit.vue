@@ -105,6 +105,7 @@ export default {
   mounted() {
     getActVisitAssocsByVisitID(this.visit.id)
       .then(resp => {
+        console.log(resp.data)
         if (resp.data != null) {
           this.tableData = resp.data
           this.tableData.forEach((activity, index) => {

@@ -65,6 +65,6 @@ func (s *Service) Delete(ctx context.Context, id string) error {
 	if !s.assocRepo.IsAssignedActivity(ctx, id, "") {
 		return s.repo.Delete(ctx, id)
 	}
-	return errors.New("This activity has assigned with visit")
+	return errors.New("This Activity is assigned in another Visit. You cannot delete it.")
 
 }

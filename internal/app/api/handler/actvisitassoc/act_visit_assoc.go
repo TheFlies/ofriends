@@ -50,22 +50,19 @@ func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
 
 // GetAll handle get all activity associates HTTP Request
 func (h *Handler) GetAll(w http.ResponseWriter, r *http.Request) {
-	actVisitAssocs, err := h.srv.GetAll(r.Context())
+	queryValues := r.URL.Query()
+	var actVisitAssocs []types.ActVisitAssoc
+	var err error
+	if visitID := queryValues.Get("visitid"); visitID != "" {
+		actVisitAssocs, err = h.srv.GetByVisitID(r.Context(), visitID)
+	} else {
+		actVisitAssocs, err = h.srv.GetAll(r.Context())
+	}
 	if err != nil {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
 	}
 
-	respond.JSON(w, http.StatusOK, actVisitAssocs)
-}
-
-// GetByVisitID handle get activity associate by Visit ID HTTP request
-func (h *Handler) GetByVisitID(w http.ResponseWriter, r *http.Request) {
-	actVisitAssocs, err := h.srv.GetByVisitID(r.Context(), mux.Vars(r)["visitID"])
-	if err != nil {
-		respond.Error(w, err, http.StatusInternalServerError)
-		return
-	}
 	respond.JSON(w, http.StatusOK, actVisitAssocs)
 }
 
@@ -123,7 +120,8 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 
 // DeleteByVisitID handle delete activity associate HTTP Request
 func (h *Handler) DeleteByVisitID(w http.ResponseWriter, r *http.Request) {
-	if err := h.srv.DeleteByVisitID(r.Context(), mux.Vars(r)["visitID"]); err != nil {
+	queryValues := r.URL.Query()
+	if err := h.srv.DeleteByVisitID(r.Context(), queryValues.Get("visitid")); err != nil {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
 	}
