@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"github.com/TheFlies/ofriends/internal/app/email"
 	"net/http"
 
 	"github.com/TheFlies/ofriends/internal/app/actvisitassoc"
@@ -123,7 +124,10 @@ func Init(conns *InfraConns) (http.Handler, error) {
 	ldapLoginService := ldapauth.New(userService)
 	localLoginService := dbauth.NewDBAuthentication(dbLoginLogger, userService)
 
-	loginHandler := login.NewLoginHandler(localLoginService, ldapLoginService, userLogger)
+	emailLogger := logger.WithField("package", "email")
+	emailServie := email.NewSendMailService(visitRepo, customerRepo, cusVisitAssocRepo, emailLogger)
+
+	loginHandler := login.NewLoginHandler(localLoginService, ldapLoginService, emailServie, userLogger)
 	userHandler := userhandler.NewUserHandler(userService, localLoginService, ldapLoginService)
 	routes := []route{
 		// infra
@@ -183,6 +187,7 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			handler:     visitHandler.Create,
 			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
+
 		{
 			path:        "/visits",
 			method:      put,
@@ -283,7 +288,13 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			method:      post,
 			handler:     userHandler.Register,
 			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleAdmin)},
-		}, {
+		},
+		{
+			path:    "/email",
+			method:  get,
+			handler: loginHandler.SendMail,
+		},
+		{
 			path:        "/getme",
 			method:      get,
 			handler:     userHandler.GetMe,
@@ -319,12 +330,7 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			handler:     userHandler.ChangePassword,
 			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
-		{
-			path:        "/users/{username}",
-			method:      put,
-			handler:     userHandler.Update,
-			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
-		},
+
 		// Gift Associate services
 		{
 			path:    "/giftassociates/{id:[a-z0-9-\\-]+}",

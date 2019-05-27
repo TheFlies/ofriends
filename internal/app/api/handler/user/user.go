@@ -48,10 +48,11 @@ func (u *UserHandler) FindAll(w http.ResponseWriter, r *http.Request) {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
 	}
-	
+
 	respond.JSON(w, http.StatusOK, users)
 
 }
+
 // Delete handle delete user HTTP Request
 func (u *UserHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	if err := u.srv.Delete(mux.Vars(r)["id"]); err != nil {
@@ -157,7 +158,6 @@ func (u *UserHandler) Update(w http.ResponseWriter, r *http.Request) {
 		respond.JSON(w, http.StatusBadRequest, map[string]string{"status": "400", "message": "can't get content form your request"})
 		return
 	}
-	err = requestData.Validate()
 	if err != nil {
 		u.logger.Errorf("some field of new user is malformed, &v", err)
 		respond.JSON(w, http.StatusBadRequest, map[string]string{"status": "400", "message": fmt.Sprintf("input must type correctly input %v", err)})

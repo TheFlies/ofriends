@@ -11,3 +11,6 @@ type NotificationData struct {
 	Note        string
 	CreatorName string
 }
+type VisitsData struct {
+	Data []NotificationData
+}

@@ -17,16 +17,20 @@ type EmailConfig struct {
 	MailTo             string `envconfig:"MAIL_TO" default:"pdkhang@tma.com.vn"` // for test, to avoiding  send real to internal communication department
 }
 
-func SendEmail(data types.NotificationData) error {
+func SendEmail(data []types.NotificationData) error {
 	var conf EmailConfig
 	envconfig.Load(&conf)
 
-	htmlTemplate, err := template.ParseFiles("emailtemplate.html")
+	dataForMail := types.VisitsData{
+		Data: data,
+	}
+
+	htmlTemplate, err := template.ParseFiles("internal/pkg/mail/emailtemplate.html")
 	if err != nil {
 		return errors.Wrap(err, "can't parse html form")
 	}
 	htmlData := new(bytes.Buffer)
-	err = htmlTemplate.Execute(htmlData, data)
+	err = htmlTemplate.Execute(htmlData, dataForMail)
 	if err != nil {
 		return errors.Wrap(err, "can't generate html data")
 	}

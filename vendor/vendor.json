@@ -77,11 +77,6 @@
 			"versionExact": "v2"
 		},
 		{
-			"path": "github.com/go-gomail/gomailn",
-			"revision": "=v2",
-			"version": "=v2"
-		},
-		{
 			"checksumSHA1": "3D1Hhs5oql4PvDWvksSU/XFW1Ho=",
 			"path": "github.com/go-ozzo/ozzo-validation",
 			"revision": "2f76ea62300c36e72bd56c804484cb6db53b69a5",
