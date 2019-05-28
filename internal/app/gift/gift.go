@@ -3,8 +3,6 @@ package gift
 import (
 	"context"
 	"errors"
-
-	"github.com/TheFlies/ofriends/internal/app/giftassociate"
 	"github.com/TheFlies/ofriends/internal/app/types"
 	"github.com/TheFlies/ofriends/internal/pkg/glog"
 	validation "github.com/go-ozzo/ozzo-validation"
@@ -22,15 +20,19 @@ type Repository interface {
 // Service is an gift service
 type Service struct {
 	repo      Repository
-	assocRepo giftassociate.Repository
+	assocService GiftAssocService
 	logger    glog.Logger
 }
 
+type GiftAssocService interface {
+	UpdateNameByGiftID(ctx context.Context, giftName string, giftID string) error
+	IsAssignedGift(ctx context.Context, giftID string, cusvisitassocID string) bool
+}
 // NewService return a new gift service
-func NewService(r Repository, assocRepo giftassociate.Repository, l glog.Logger) *Service {
+func NewService(r Repository, assocService GiftAssocService, l glog.Logger) *Service {
 	return &Service{
 		repo:      r,
-		assocRepo: assocRepo,
+		assocService: assocService,
 		logger:    l,
 	}
 }
@@ -66,7 +68,7 @@ func (s *Service) Update(ctx context.Context, gift types.Gift) error {
 	if oldGift, err := s.repo.FindByID(ctx, gift.ID); err == nil {
 		error := s.repo.Update(ctx, gift)
 		if error == nil && oldGift.Name != gift.Name {
-			return s.assocRepo.UpdateNameByGiftID(ctx, gift.Name, gift.ID)
+			return s.assocService.UpdateNameByGiftID(ctx, gift.Name, gift.ID)
 		}
 	}
 	return nil
@@ -74,7 +76,7 @@ func (s *Service) Update(ctx context.Context, gift types.Gift) error {
 
 // Delete a gift
 func (s *Service) Delete(ctx context.Context, id string) error {
-	if !s.assocRepo.IsAssignedGift(ctx, id, "") {
+	if !s.assocService.IsAssignedGift(ctx, id, "") {
 		return s.repo.Delete(ctx, id)
 	}
 	return errors.New("This Gift is assigned in another Customer. You cannot delete it.")

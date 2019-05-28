@@ -3,8 +3,6 @@ package customer
 import (
 	"context"
 	"errors"
-
-	"github.com/TheFlies/ofriends/internal/app/cusvisitassoc"
 	"github.com/TheFlies/ofriends/internal/app/types"
 	"github.com/TheFlies/ofriends/internal/pkg/glog"
 	validation "github.com/go-ozzo/ozzo-validation"
@@ -19,18 +17,23 @@ type Repository interface {
 	Delete(ctx context.Context, id string) error
 }
 
+type CusVisitAssocService interface {
+	UpdateNameByCusID(ctx context.Context, customerName string, customerID string) error
+	IsAssignedCustomer(ctx context.Context, customerID string, visitID string) bool
+}
+
 // Service is an customer service
 type Service struct {
 	repo      Repository
-	assocRepo cusvisitassoc.Repository
+	assocService CusVisitAssocService
 	logger    glog.Logger
 }
 
 // NewService return a new customer service
-func NewService(r Repository, assocRepo cusvisitassoc.Repository, l glog.Logger) *Service {
+func NewService(r Repository, assocService CusVisitAssocService, l glog.Logger) *Service {
 	return &Service{
 		repo:      r,
-		assocRepo: assocRepo,
+		assocService: assocService,
 		logger:    l,
 	}
 }
@@ -73,7 +76,7 @@ func (s *Service) Update(ctx context.Context, customer types.Customer) error {
 	if cus, err := s.repo.FindByID(ctx, customer.ID); err == nil {
 		error := s.repo.Update(ctx, customer)
 		if error == nil && cus.Name != customer.Name {
-			return s.assocRepo.UpdateNameByCusID(ctx, customer.Name, customer.ID)
+			return s.assocService.UpdateNameByCusID(ctx, customer.Name, customer.ID)
 		}
 	}
 	return nil
@@ -81,7 +84,7 @@ func (s *Service) Update(ctx context.Context, customer types.Customer) error {
 
 // Delete a customer
 func (s *Service) Delete(ctx context.Context, id string) error {
-	if !s.assocRepo.IsAssignedCustomer(ctx, id, "") {
+	if !s.assocService.IsAssignedCustomer(ctx, id, "") {
 		return s.repo.Delete(ctx, id)
 	}
 	return errors.New("This Customer is assigned in another Visit. You cannot delete it.")

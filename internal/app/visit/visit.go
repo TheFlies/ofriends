@@ -3,8 +3,6 @@ package visit
 import (
 	"context"
 
-	"github.com/TheFlies/ofriends/internal/app/actvisitassoc"
-	"github.com/TheFlies/ofriends/internal/app/cusvisitassoc"
 	"github.com/TheFlies/ofriends/internal/app/types"
 	"github.com/TheFlies/ofriends/internal/pkg/glog"
 	validation "github.com/go-ozzo/ozzo-validation"
@@ -20,20 +18,28 @@ type Repository interface {
 	Delete(ctx context.Context, id string) error
 }
 
+type ActVisitAssocService interface {
+	DeleteByVisitID(ctx context.Context, visitID string) error
+}
+
+type CusVisitAssocService interface {
+	DeleteByVisitID(ctx context.Context, visitID string) error
+}
+
 // Service is an visit service
 type Service struct {
 	repo         Repository
-	assocCusRepo cusvisitassoc.Repository
-	assocActRepo actvisitassoc.Repository
+	assocCusService CusVisitAssocService
+	assocActService ActVisitAssocService
 	logger       glog.Logger
 }
 
 // NewService return a new visit service
-func NewService(r Repository, assocCusRepo cusvisitassoc.Repository, assocActRepo actvisitassoc.Repository, l glog.Logger) *Service {
+func NewService(r Repository, assocCusService CusVisitAssocService, assocActService ActVisitAssocService, l glog.Logger) *Service {
 	return &Service{
 		repo:         r,
-		assocCusRepo: assocCusRepo,
-		assocActRepo: assocActRepo,
+		assocCusService: assocCusService,
+		assocActService: assocActService,
 		logger:       l,
 	}
 }
@@ -80,8 +86,8 @@ func (s *Service) Update(ctx context.Context, visit types.Visit) error {
 
 // Delete a visit
 func (s *Service) Delete(ctx context.Context, id string) error {
-	if err := s.assocActRepo.DeleteByVisitID(ctx, id); err == nil {
-		if err = s.assocCusRepo.DeleteByVisitID(ctx, id); err == nil {
+	if err := s.assocActService.DeleteByVisitID(ctx, id); err == nil {
+		if err = s.assocCusService.DeleteByVisitID(ctx, id); err == nil {
 			return s.repo.Delete(ctx, id)
 		} else {
 			return err

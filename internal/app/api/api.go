@@ -100,19 +100,19 @@ func Init(conns *InfraConns) (http.Handler, error) {
 	cusVisitAssocHandler := cusvisitassochandler.New(cusVisitAssocSrv, cusVisitAssocLogger)
 
 	actLogger := logger.WithField("package", "activity")
-	actSrv := activity.NewService(actRepo, actVisitAssocRepo, actLogger)
+	actSrv := activity.NewService(actRepo, actVisitAssocSrv, actLogger)
 	actHandler := activityhandler.New(actSrv, actLogger)
 
 	customerLogger := logger.WithField("package", "customer")
-	customerSrv := customer.NewService(customerRepo, cusVisitAssocRepo, customerLogger)
+	customerSrv := customer.NewService(customerRepo, cusVisitAssocSrv, customerLogger)
 	customerHandler := customerhandler.New(customerSrv, customerLogger)
 
 	giftLogger := logger.WithField("package", "gift")
-	giftSrv := gift.NewService(giftRepo, giftAssociateRepo, giftLogger)
+	giftSrv := gift.NewService(giftRepo, giftAssociateSrv, giftLogger)
 	giftHandler := gifthandler.New(giftSrv, giftLogger)
 
 	visitLogger := logger.WithField("package", "visit")
-	visitSrv := visit.NewService(visitRepo, cusVisitAssocRepo, actVisitAssocRepo, visitLogger)
+	visitSrv := visit.NewService(visitRepo, cusVisitAssocSrv, actVisitAssocSrv, visitLogger)
 	visitHandler := visithandler.New(visitSrv, visitLogger)
 
 	indexWebHandler := indexhandler.New()
@@ -282,7 +282,6 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			path:        "/register",
 			method:      post,
 			handler:     userHandler.Register,
-			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleAdmin)},
 		}, {
 			path:        "/getme",
 			method:      get,
