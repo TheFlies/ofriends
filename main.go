@@ -65,7 +65,6 @@ func main() {
 	// tell the world that we're ready
 	health.Ready()
 	logger.Infof("HTTP Server is listening at: %v", addr)
-
 	// gracefully shutdown
 	signals := make(chan os.Signal, 1)
 	signal.Notify(signals, os.Interrupt, os.Kill)
@@ -77,6 +76,7 @@ func main() {
 		logger.Errorf("http server shutdown with error: %v", err)
 	}
 	// shutdown background services goes here
+
 }
 
 // initInfraConns init underlying infrastructure connections

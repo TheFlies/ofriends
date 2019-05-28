@@ -4,6 +4,7 @@
         table{
             width: 500px;
             margin-bottom: 50px;
+            margin-left: 40px;
         }
         table, th, td {
             border: 1px solid black;
@@ -18,7 +19,7 @@
 <body>
 <p>Dear IC team</p>
 <p>To please help me prepare for the customer visit</p>
-<p>Total {{len .Data}} visit </p>
+<p>Total {{len .Data}} visit</p>
 {{range $index, $data := .Data}}
     <table >
         <tr>
