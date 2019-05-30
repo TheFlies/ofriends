@@ -145,6 +145,5 @@ func (h *Handler) SendMail(w http.ResponseWriter, r *http.Request) {
 	}
 	respond.JSON(w, http.StatusOK, map[string]string{"status": "success", "message": "the email have been seen to IC department"})
 	return
-	return
 
 }

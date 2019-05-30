@@ -123,7 +123,10 @@ func Init(conns *InfraConns) (http.Handler, error) {
 	visitLogger := logger.WithField("package", "visit")
 	visitSrv := visit.NewService(visitRepo, cusVisitAssocRepo, actVisitAssocRepo, visitLogger)
 	emailLogger := logger.WithField("package", "email")
-	emailService := email.NewSendMailService(visitRepo, customerRepo, cusVisitAssocRepo, emailLogger)
+	emailService, err := email.NewSendMailService(visitRepo, customerRepo, cusVisitAssocRepo, emailLogger)
+	if err != nil {
+		return nil, err
+	}
 	visitHandler := visithandler.New(visitSrv, emailService, visitLogger)
 
 	indexWebHandler := indexhandler.New()
@@ -222,7 +225,7 @@ func Init(conns *InfraConns) (http.Handler, error) {
 		},
 		{
 			path:        "/visits/email/{visitID:[a-z0-9-\\-]+}",
-			method:      get,
+			method:      post,
 			handler:     visitHandler.SendMail,
 			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
@@ -506,7 +509,7 @@ func Init(conns *InfraConns) (http.Handler, error) {
 
 	scheduler := cron.New()
 	//read about cron tab here https://crontab.guru/ and https://en.wikipedia.org/wiki/Cron
-	_, err := scheduler.AddFunc(conf.CronTAB, func() {
+	_, err = scheduler.AddFunc(conf.CronTAB, func() {
 		logger.Infof("sending email")
 		err := emailService.Send(context.Background(), time.Now())
 		if err != nil {

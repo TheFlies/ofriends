@@ -89,7 +89,7 @@ func (r *MongoRepository) FindVisitsByDay(ctx context.Context, startTime, endTim
 	var listVisit []types.Visit
 	err := r.collection(s).Find(bson.M{"arrivedtime": bson.M{"$gt": startTime, "$lt": endTime}}).All(&listVisit)
 	if err != nil {
-		return []types.Visit{}, errors.Wrap(err, "visit not found")
+		return nil, errors.Wrap(err, "visit not found")
 	}
 	return listVisit, nil
 }
