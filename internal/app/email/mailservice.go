@@ -90,7 +90,7 @@ func (m *SendMailService) Send(ctx context.Context, now time.Time) error {
 			m.logger.Errorf("%v", err)
 			return errors.Wrap(err, "can't send email")
 		}
-		data.Note = "currently note for visit isn't exits"
+		data.Note = "no data"
 		listCustomerName := []string{}
 		for _, assoc := range listAssoc {
 			customer, err := m.CustomerRepo.FindByID(ctx, assoc.CustomerID)
