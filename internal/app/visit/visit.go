@@ -86,13 +86,14 @@ func (s *Service) Update(ctx context.Context, visit types.Visit) error {
 
 // Delete a visit
 func (s *Service) Delete(ctx context.Context, id string) error {
-	if err := s.assocActService.DeleteByVisitID(ctx, id); err == nil {
-		if err = s.assocCusService.DeleteByVisitID(ctx, id); err == nil {
-			return s.repo.Delete(ctx, id)
-		} else {
-			return err
-		}
-	} else {
+	if err := s.assocActService.DeleteByVisitID(ctx, id); err != nil {
+		return err		
+	}
+	if err := s.assocCusService.DeleteByVisitID(ctx, id); err != nil {
 		return err
 	}
+	if err := s.repo.Delete(ctx, id); err != nil {
+		return err
+	}
+	return nil
 }

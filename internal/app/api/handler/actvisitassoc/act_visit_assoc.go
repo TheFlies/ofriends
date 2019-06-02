@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
-
+	"errors"
 	"github.com/TheFlies/ofriends/internal/app/types"
 	"github.com/TheFlies/ofriends/internal/pkg/glog"
 	"github.com/TheFlies/ofriends/internal/pkg/respond"
@@ -48,12 +48,12 @@ func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
 	respond.JSON(w, http.StatusOK, actVisitAssoc)
 }
 
-// GetAll handle get all activity associates HTTP Request
-func (h *Handler) GetAll(w http.ResponseWriter, r *http.Request) {
-	queryValues := r.URL.Query()
+// GetActVisitAssocs handle get all activity associates HTTP Request
+func (h *Handler) GetActVisitAssocs(w http.ResponseWriter, r *http.Request) {
+	visitID := r.URL.Query().Get("visitid")
 	var actVisitAssocs []types.ActVisitAssoc
 	var err error
-	if visitID := queryValues.Get("visitid"); visitID != "" {
+	if visitID != "" {
 		actVisitAssocs, err = h.srv.GetByVisitID(r.Context(), visitID)
 	} else {
 		actVisitAssocs, err = h.srv.GetAll(r.Context())
@@ -120,8 +120,12 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 
 // DeleteByVisitID handle delete activity associate HTTP Request
 func (h *Handler) DeleteByVisitID(w http.ResponseWriter, r *http.Request) {
-	queryValues := r.URL.Query()
-	if err := h.srv.DeleteByVisitID(r.Context(), queryValues.Get("visitid")); err != nil {
+	visitID := r.URL.Query().Get("visitid")
+	if visitID == "" {
+		respond.Error(w, errors.New("invalid Request"), http.StatusInternalServerError)
+		return
+	}
+	if err := h.srv.DeleteByVisitID(r.Context(), visitID); err != nil {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
 	}

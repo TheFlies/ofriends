@@ -370,7 +370,7 @@ func Init(conns *InfraConns) (http.Handler, error) {
 		{
 			path:    "/actvisitassocs",
 			method:  get,
-			handler: actVisitAssocHandler.GetAll,
+			handler: actVisitAssocHandler.GetActVisitAssocs,
 		},
 
 		{

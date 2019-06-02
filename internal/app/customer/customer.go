@@ -72,13 +72,20 @@ func (s *Service) Update(ctx context.Context, customer types.Customer) error {
 	); err != nil {
 		return err
 	} // not empty
+	
+	cus, err := s.repo.FindByID(ctx, customer.ID)
+	if err != nil {
+		return err
+	} 
 
-	if cus, err := s.repo.FindByID(ctx, customer.ID); err == nil {
-		error := s.repo.Update(ctx, customer)
-		if error == nil && cus.Name != customer.Name {
-			return s.assocService.UpdateNameByCusID(ctx, customer.Name, customer.ID)
-		}
+	if err := s.repo.Update(ctx, customer); err != nil {
+		return err
 	}
+	
+	if cus.Name != customer.Name {
+		return s.assocService.UpdateNameByCusID(ctx, customer.Name, customer.ID)
+	}
+
 	return nil
 }
 

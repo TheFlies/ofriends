@@ -76,20 +76,21 @@ func (s *Service) Update(ctx context.Context, cusVisitAssoc types.CusVisitAssoc)
 
 // Delete a customer visit associate
 func (s *Service) Delete(ctx context.Context, id string) error {
-	if err := s.assocRepo.DeleteByCusVisitAssocID(ctx, id); err == nil {
-		return s.repo.Delete(ctx, id)
-	} else {
+	if err := s.assocRepo.DeleteByCusVisitAssocID(ctx, id); err != nil {
 		return err
 	}
+
+	return s.repo.Delete(ctx, id)
 }
 
 // DeleteByVisitID a customer visit associate
 func (s *Service) DeleteByVisitID(ctx context.Context, visitID string) error {
-	if err := s.assocRepo.DeleteByCusVisitAssocID(ctx, visitID); err == nil {
-		return s.repo.DeleteByVisitID(ctx, visitID)
-	} else {
+	if err := s.assocRepo.DeleteByCusVisitAssocID(ctx, visitID); err != nil {
 		return err
 	}
+
+	return s.repo.DeleteByVisitID(ctx, visitID)
+
 }
 
 // UpdateNameByCusID update customer name by customer id

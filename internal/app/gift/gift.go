@@ -65,12 +65,20 @@ func (s *Service) Update(ctx context.Context, gift types.Gift) error {
 	); err != nil {
 		return err
 	} // not empty
-	if oldGift, err := s.repo.FindByID(ctx, gift.ID); err == nil {
-		error := s.repo.Update(ctx, gift)
-		if error == nil && oldGift.Name != gift.Name {
-			return s.assocService.UpdateNameByGiftID(ctx, gift.Name, gift.ID)
-		}
+
+	oldGift, err := s.repo.FindByID(ctx, gift.ID); 
+	if err != nil {
+		return err 
 	}
+	
+	if err := s.repo.Update(ctx, gift); err != nil {
+		return err
+	}
+
+	if  oldGift.Name != gift.Name {
+		return s.assocService.UpdateNameByGiftID(ctx, gift.Name, gift.ID)
+	}
+
 	return nil
 }
 

@@ -55,12 +55,19 @@ func (s *Service) Create(ctx context.Context, act types.Activity) (string, error
 
 // Update a activity
 func (s *Service) Update(ctx context.Context, act types.Activity) error {
-	if activity, err := s.repo.FindByID(ctx, act.ID); err == nil {
-		error := s.repo.Update(ctx, act)
-		if error == nil && activity.Name != act.Name {
-			return s.assocService.UpdateNameByActID(ctx, act.Name, act.ID)
-		}
+	activity, err := s.repo.FindByID(ctx, act.ID)
+	if err != nil {
+		return err
 	}
+	
+	if err := s.repo.Update(ctx, act); err != nil {
+		return err
+	}
+
+	if activity.Name != act.Name {
+		return s.assocService.UpdateNameByActID(ctx, act.Name, act.ID)
+	}
+
 	return nil
 }
 
