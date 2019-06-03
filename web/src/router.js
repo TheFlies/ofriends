@@ -31,17 +31,9 @@ export const constantRouterMap = [
       icon: 'dashboard'
     },
     children: [
-      // {
-      //   path: 'home',
-      //   component: Hello,
-      //   meta: {
-      //     title: 'Hello',
-      //     icon: 'form'
-      //   }
-      // },
       {
         path: 'home',
-        component: () => import('./views/home/index.vue'),
+        component: () => import('./views/timeline/Show.vue'),
         meta: {
           title: 'Timeline',
           icon: 'dashboard'

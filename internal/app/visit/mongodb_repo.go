@@ -2,6 +2,7 @@ package visit
 
 import (
 	"context"
+	"time"
 
 	"github.com/TheFlies/ofriends/internal/app/types"
 	"github.com/TheFlies/ofriends/internal/pkg/uuid"
@@ -31,6 +32,29 @@ func (r *MongoRepository) FindByID(ctx context.Context, id string) (*types.Visit
 		return nil, errors.Wrap(err, "failed to find the given visit from database")
 	}
 	return visit, nil
+}
+
+// Find all visits by day
+func (r *MongoRepository) FindInCommingVisit(ctx context.Context, dayTime int64)([]types.Visit, error) {
+	s := r.session.Clone()
+	defer s.Close()
+	var visits []types.Visit
+	if err := r.collection(s).Find(bson.M{"departureTime": bson.M{"$gt": dayTime}}).All(&visits); err != nil {
+		return nil, errors.Wrap(err, "failed to fetch all visit from database")
+	}
+
+	return visits, nil
+}
+
+func (r *MongoRepository) FindVisitsByDay(ctx context.Context, startTime, endTime int64) ([]types.Visit, error) {
+	s := r.session.Clone()
+	defer s.Close()
+	var listVisit []types.Visit
+	err := r.collection(s).Find(bson.M{"arrivedtime": bson.M{"$gt": startTime, "$lt": endTime}}).All(&listVisit)
+	if err != nil {
+		return nil, errors.Wrap(err, "visit not found")
+	}
+	return listVisit, nil
 }
 
 // Find all visits by all customer ID
