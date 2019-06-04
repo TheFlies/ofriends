@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    title=""
+    title="Delete Customer"
     :visible.sync="isVisibleDelete"
     width="30%"
     append-to-body

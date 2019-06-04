@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	"github.com/TheFlies/ofriends/internal/app/actvisitassoc"
 	"github.com/TheFlies/ofriends/internal/app/types"
 	"github.com/TheFlies/ofriends/internal/pkg/glog"
 )
@@ -21,15 +20,20 @@ type Repository interface {
 // Service is an activity service
 type Service struct {
 	repo      Repository
-	assocRepo actvisitassoc.Repository
+	assocService ActVisitAssocService
 	logger    glog.Logger
 }
 
+type ActVisitAssocService interface {
+	UpdateNameByActID(ctx context.Context, activityName string, activityID string) error
+	IsAssignedActivity(ctx context.Context, activityID string, visitID string) bool
+}
+
 // NewService return a new activity service
-func NewService(r Repository, assocRepo actvisitassoc.Repository, l glog.Logger) *Service {
+func NewService(r Repository, assocService ActVisitAssocService, l glog.Logger) *Service {
 	return &Service{
 		repo:      r,
-		assocRepo: assocRepo,
+		assocService: assocService,
 		logger:    l,
 	}
 }
@@ -51,20 +55,27 @@ func (s *Service) Create(ctx context.Context, act types.Activity) (string, error
 
 // Update a activity
 func (s *Service) Update(ctx context.Context, act types.Activity) error {
-	if activity, err := s.repo.FindByID(ctx, act.ID); err == nil {
-		error := s.repo.Update(ctx, act)
-		if error == nil && activity.Name != act.Name {
-			return s.assocRepo.UpdateNameByActID(ctx, act.Name, act.ID)
-		}
+	activity, err := s.repo.FindByID(ctx, act.ID)
+	if err != nil {
+		return err
 	}
+	
+	if err := s.repo.Update(ctx, act); err != nil {
+		return err
+	}
+
+	if activity.Name != act.Name {
+		return s.assocService.UpdateNameByActID(ctx, act.Name, act.ID)
+	}
+
 	return nil
 }
 
 // Delete a activity
 func (s *Service) Delete(ctx context.Context, id string) error {
-	if !s.assocRepo.IsAssignedActivity(ctx, id, "") {
+	if !s.assocService.IsAssignedActivity(ctx, id, "") {
 		return s.repo.Delete(ctx, id)
 	}
-	return errors.New("This activity has assigned with visit")
+	return errors.New("This Activity is assigned in another Visit. You cannot delete it.")
 
 }

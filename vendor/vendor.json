@@ -69,6 +69,14 @@
 			"revisionTime": "2018-10-15T13:59:52Z"
 		},
 		{
+			"checksumSHA1": "B5WpOD+M8fXUT+R3SyZEem+4yYY=",
+			"path": "github.com/go-gomail/gomail",
+			"revision": "81ebce5c23dfd25c6c67194b37d3dd3f338c98b1",
+			"revisionTime": "2016-04-11T21:29:32Z",
+			"version": "=v2",
+			"versionExact": "v2"
+		},
+		{
 			"checksumSHA1": "3D1Hhs5oql4PvDWvksSU/XFW1Ho=",
 			"path": "github.com/go-ozzo/ozzo-validation",
 			"revision": "2f76ea62300c36e72bd56c804484cb6db53b69a5",
@@ -127,6 +135,14 @@
 			"path": "github.com/pmezard/go-difflib/difflib",
 			"revision": "5d4384ee4fb2527b0a1256a821ebfc92f91efefc",
 			"revisionTime": "2018-12-26T10:54:42Z"
+		},
+		{
+			"checksumSHA1": "VswGTVHPFfWfT/NIhfDBQaBoosM=",
+			"path": "github.com/robfig/cron",
+			"revision": "0f01e6b177f4bd77ee0d887fe74ac66da30a6e00",
+			"revisionTime": "2019-05-03T01:55:19Z",
+			"version": "=v3",
+			"versionExact": "v3"
 		},
 		{
 			"checksumSHA1": "pOcKE4dRlJGz/HfQRxmX1W4ukOk=",
@@ -205,10 +221,22 @@
 			"revisionTime": "2019-02-18T14:38:26Z"
 		},
 		{
+			"checksumSHA1": "fM4WdkntKMguuHjBhvk/qACJ3QA=",
+			"path": "gopkg.in/alexcesaro/quotedprintable.v3",
+			"revision": "2caba252f4dc53eaf6b553000885530023f54623",
+			"revisionTime": "2015-07-16T17:19:45Z"
+		},
+		{
 			"checksumSHA1": "eiRlBF3rFjT+8RXEqDXmypNol6U=",
 			"path": "gopkg.in/asn1-ber.v1",
 			"revision": "f715ec2f112d1e4195b827ad68cf44017a3ef2b1",
 			"revisionTime": "2018-10-15T20:05:46Z"
+		},
+		{
+			"checksumSHA1": "avLNreOcKkPxEnkswUbJYnpbeg8=",
+			"path": "gopkg.in/gomail.v2",
+			"revision": "81ebce5c23dfd25c6c67194b37d3dd3f338c98b1",
+			"revisionTime": "2016-04-11T21:29:32Z"
 		},
 		{
 			"checksumSHA1": "ycFPsOXG7Q6DqAT8ySVxlXEIIS4=",

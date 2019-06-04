@@ -1,12 +1,12 @@
 <template>
   <el-dialog
-    title="Tips"
+    title="Delete Customer"
     :visible.sync="isVisibleDelete"
     width="30%"
     append-to-body
     :before-close="handleBackdropClick"
   >
-    <span>Do you want to delete: {{ customerName }}?</span>
+    <span>Deleting {{ customerName }} will lead to delete Gifts in that Customer. <br>Are you sure? </span>
     <span
       slot="footer"
       class="dialog-footer"

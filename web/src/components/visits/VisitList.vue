@@ -26,7 +26,7 @@
         <el-table-column label="Name" width="250" sortable="" prop="name" />
         <el-table-column label="Lab" width="200" sortable prop="lab">
           <template slot-scope="scope">
-            <el-tag v-for="tag in scope.row.lab" :key="tag" :disable-transitions="false">
+            <el-tag v-for="tag in scope.row.lab" :key="tag" size="small" type="success" :disable-transitions="false">
               {{ tag }}
             </el-tag>
           </template>

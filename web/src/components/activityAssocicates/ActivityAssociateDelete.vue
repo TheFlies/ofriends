@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    title="Tips"
+    title="Delete Activity"
     :visible.sync="isVisibleDelete"
     width="30%"
     append-to-body

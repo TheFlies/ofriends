@@ -49,7 +49,15 @@ func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
 
 // GetAll handle get all gift associates HTTP Request
 func (h *Handler) GetAll(w http.ResponseWriter, r *http.Request) {
-	giftAssociates, err := h.srv.GetAll(r.Context())
+	queryValues := r.URL.Query()
+	var giftAssociates []types.GiftAssociate
+	var err error
+	if assignID := queryValues.Get("cusvisitassocid"); assignID != "" {
+		giftAssociates, err = h.srv.GetByCusVisitAssocID(r.Context(), assignID)
+	} else {
+		giftAssociates, err = h.srv.GetAll(r.Context())
+	}
+
 	if err != nil {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
@@ -112,7 +120,8 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 
 // DeleteByCusVisitAssocID handle delete gift associate HTTP Request
 func (h *Handler) DeleteByCusVisitAssocID(w http.ResponseWriter, r *http.Request) {
-	if err := h.srv.DeleteByCusVisitAssocID(r.Context(), mux.Vars(r)["assignID"]); err != nil {
+	queryValues := r.URL.Query()
+	if err := h.srv.DeleteByCusVisitAssocID(r.Context(), queryValues.Get("cusvisitassocid")); err != nil {
 		respond.Error(w, err, http.StatusInternalServerError)
 		return
 	}

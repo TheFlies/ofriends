@@ -1,16 +1,22 @@
 <template>
-  <el-container style="background: #ecf5ff;">
-    <el-main>
+  <el-card class="box-card">
+    <!-- <div slot="header" class="clearfix">
+      <span>Management</span>
+      <el-tooltip class="item" effect="dark" content="Add customer" placement="right-start" >
+        <el-button type="primary" icon="el-icon-plus" plain @click="isVisibleAdd = !isVisibleAdd">
+          | New customer
+        </el-button>
+      </el-tooltip>
+    </div> -->
+    <div class="text item">
       <el-table
         v-loading="loading"
         :data="tableData.filter(data => !search || data.username.toLowerCase().includes(search.toLowerCase()))"
         style="width: 100%; margin:auto"
       >
-        <el-table-column type="index" :index="indexMethod" />
-        <el-table-column label="User Name" width="130" sortable prop="username">
-        </el-table-column>
-        <el-table-column label="Full Name" width="130" sortable prop="fullname">
-        </el-table-column>
+        <!-- <el-table-column type="index" :index="indexMethod" /> -->
+        <el-table-column label="User Name" width="130" sortable prop="username" />
+        <el-table-column label="Full Name" width="130" sortable prop="fullname" />
         <el-table-column label="Email" prop="email" sortable width="150" />
         <el-table-column label="Delivery Center" sortable width="280" prop="delivery_center" />
         <el-table-column label="Current Priority" width="280" sortable prop="priority">
@@ -59,16 +65,16 @@
           </template>
         </el-table-column>
       </el-table>
-    </el-main>
-  </el-container>
+    </div>
+  </el-card>
 </template>
 <script>
-import DeleteUser from "@/components/user/UserDelete.vue";
-import { getAllUsers, updateUser, deleteUser } from "@/api/user";
+import DeleteUser from '@/components/user/UserDelete.vue'
+import { getAllUsers, updateUser, deleteUser } from '@/api/user'
 import { getRoleName } from '@/utils/convert'
 
 export default {
-  name: "ListUsers",
+  name: 'ListUsers',
   components: {
     DeleteUser
   },
@@ -77,77 +83,74 @@ export default {
       tableData: [],
       isVisibleAdd: false,
       isVisibleDelete: false,
-      search: "",
+      search: '',
       loading: true,
       user: {},
-      userName: "",
+      userName: '',
       scopeUser: {}
-    };
+    }
   },
   mounted() {
     getAllUsers()
       .then(resp => {
-        console.log(resp);
         if (resp.data != null) {
-          this.tableData = resp.data;
+          this.tableData = resp.data
         }
-        this.loading = false;
+        this.loading = false
       })
       .catch(err => {
-        console.log(err);
-      });
+        console.log(err)
+      })
   },
   methods: {
     handleUpdate: function(priority) {
-      this.loading = true;
-      this.user.priority=priority;
-      console.log(this.user);
+      this.loading = true
+      this.user.priority = priority
       updateUser(this.user)
         .then(resp => {
-          console.log(resp);
           this.$notify({
-            title: "Success",
-            message: "Update successfully!",
-            type: "success"
-          });
+            title: 'Success',
+            message: 'Update successfully!',
+            type: 'success'
+          })
         })
         .catch(err => {
-          console.log(err);
+          console.log(err)
           this.$notify.error({
-            title: "Error",
+            title: 'Error',
             message: err
-          });
-        });
-      this.loading = false;
-  },
+          })
+        })
+      this.loading = false
+    },
     handleDelete: function(isDeleteUser) {
       if (isDeleteUser) {
-        this.loading = true;
+        this.loading = true
         deleteUser(this.scopeUser.row.id)
           .then(resp => {
-            this.tableData.splice(this.scopeUser.$index, 1);
+            this.tableData.splice(this.scopeUser.$index, 1)
             this.$notify({
-              title: "Success",
-              message: "Delete successfully!",
-              type: "success"
-            });
+              title: 'Success',
+              message: 'Delete successfully!',
+              type: 'success'
+            })
           })
           .catch(err => {
-            console.log(err);
+            console.log(err)
             this.$notify.error({
-              title: "Error",
+              title: 'Error',
               message: err
-            });
-          });
+            })
+          })
       }
-      this.loading = false;
+      this.loading = false
     },
     indexMethod(index) {
-      return index * 1;
+      return index * 1
     },
     getRoleName
   }
-};
+}
 </script>
 <style scoped lang="stylus">
 .link-type {
