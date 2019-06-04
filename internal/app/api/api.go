@@ -22,7 +22,9 @@ import (
 	indexhandler "github.com/TheFlies/ofriends/internal/app/api/handler/index"
 	userhandler "github.com/TheFlies/ofriends/internal/app/api/handler/user"
 	visithandler "github.com/TheFlies/ofriends/internal/app/api/handler/visit"
+	timelinehandler "github.com/TheFlies/ofriends/internal/app/api/handler/timeline"
 	"github.com/TheFlies/ofriends/internal/app/customer"
+	"github.com/TheFlies/ofriends/internal/app/timeline"
 	"github.com/TheFlies/ofriends/internal/app/db"
 	"github.com/TheFlies/ofriends/internal/app/dbauth"
 	"github.com/TheFlies/ofriends/internal/app/gift"
@@ -122,6 +124,11 @@ func Init(conns *InfraConns) (http.Handler, error) {
 	userService := user.NewUserService(userRepo, userLogger)
 	ldapLoginService := ldapauth.New(userService)
 	localLoginService := dbauth.NewDBAuthentication(dbLoginLogger, userService)
+
+	timelineLogger := logger.WithField("package", "timeline")
+	timelineService := timeline.NewService(visitRepo, customerRepo, cusVisitAssocRepo, giftAssociateRepo,
+										  giftRepo, actVisitAssocRepo, actRepo, timelineLogger)
+	timelineHandler := timelinehandler.New(timelineService, timelineLogger)
 
 	loginHandler := login.NewLoginHandler(localLoginService, ldapLoginService, userLogger)
 	userHandler := userhandler.NewUserHandler(userService, localLoginService, ldapLoginService)
@@ -450,6 +457,11 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			path:    "/cusvisitassocs?visitid={visitID:[a-z0-9-\\-]+}",
 			method:  delete,
 			handler: cusVisitAssocHandler.DeleteByVisitID,
+		},
+		{
+			path:    "/timeline?daytime={dayTime:[0-9]+}",
+			method:  get,
+			handler: timelineHandler.FindTimelineByDay,
 		},
 	}
 

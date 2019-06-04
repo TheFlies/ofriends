@@ -2,7 +2,6 @@ package visit
 
 import (
 	"context"
-	"time"
 
 	"github.com/TheFlies/ofriends/internal/app/types"
 	"github.com/TheFlies/ofriends/internal/pkg/uuid"
