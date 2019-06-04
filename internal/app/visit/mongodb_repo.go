@@ -83,3 +83,13 @@ func (r *MongoRepository) Delete(ctx context.Context, id string) error {
 func (r *MongoRepository) collection(s *mgo.Session) *mgo.Collection {
 	return s.DB("ofriends").C("visits")
 }
+func (r *MongoRepository) FindVisitsByDay(ctx context.Context, startTime, endTime int64) ([]types.Visit, error) {
+	s := r.session.Clone()
+	defer s.Close()
+	var listVisit []types.Visit
+	err := r.collection(s).Find(bson.M{"arrivedtime": bson.M{"$gt": startTime, "$lt": endTime}}).All(&listVisit)
+	if err != nil {
+		return nil, errors.Wrap(err, "visit not found")
+	}
+	return listVisit, nil
+}

@@ -1,0 +1,64 @@
+<html>
+<head>
+    <style>
+        table{
+            width: 500px;
+            margin-bottom: 50px;
+            margin-left: 40px;
+        }
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 5px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+<p>Dear IC team</p>
+<p>To please help me prepare for the customer visit</p>
+<p>Total {{len .Data}} visit</p>
+{{range $index, $data := .Data}}
+    <table >
+        <tr>
+            <th>Guest full name</th>
+            <th>{{ range $index , $value := $data.Customers }}
+                    {{ $value }} <br>
+                {{ end }}
+            </th>
+        </tr>
+        <tr>
+            <th>Company name</th>
+            <td>{{$data.CompanyName}}</td>
+        </tr>
+        <tr>
+            <th>Date</th>
+            <td> {{$data.DateCome}} <br>
+                {{$data.DateLeave}}
+            </td>
+        </tr>
+        <tr>
+            <th>Location</th>
+            <td>{{ range $key , $value := $data.Location }}
+                    {{$key}}-{{ $value }} <br>
+                {{ end }}
+            </td>
+        </tr>
+        <tr>
+            <th>Hot time on tv</th>
+            <td>{{$data.HotTime}}</td>
+        </tr>
+        <tr>
+            <th>Frequency</th>
+            <td>{{$data.Req}}</td>
+        </tr>
+        <tr>
+            <th>Note</th>
+            <td>{{$data.Note}}</td>
+        </tr>
+    </table>
+{{end}}
+</body>
+</html>

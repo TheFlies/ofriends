@@ -35,6 +35,12 @@ services:
       # JWT information include private key and token time out :fomat h:m:s
       - PRIVATE_KEY=
       - JWT_DURATION=1h30m
+      - TIME_ZONE_LOCATION=Asia/Bangkok
+      # timer for sending email
+      - SENDING_CONDITION=7
+      - CRON_TAB=* * * * *
+      # the email template location,
+      - EMAIL_TEMPLATE_LOCATION=internal/pkg/mail/emailtemplate.html
     command: [ "start" ]
     volumes:
       # Add Go packages here if needed

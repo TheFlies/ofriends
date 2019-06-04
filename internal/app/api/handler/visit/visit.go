@@ -3,15 +3,16 @@ package visithandler
 import (
 	"context"
 	"encoding/json"
-	"net/http"
-
 	"errors"
 	"io"
+	"net/http"
+	"time"
+
+	"github.com/gorilla/mux"
 
 	"github.com/TheFlies/ofriends/internal/app/types"
 	"github.com/TheFlies/ofriends/internal/pkg/glog"
 	"github.com/TheFlies/ofriends/internal/pkg/respond"
-	"github.com/gorilla/mux"
 )
 
 type (
@@ -23,19 +24,25 @@ type (
 		Update(ctx context.Context, visit types.Visit) error
 		Delete(ctx context.Context, id string) error
 	}
+	MailService interface {
+		Send(ctx context.Context, now time.Time) error
+		SendEmailByVisitID(ctx context.Context, visitID string) error
+	}
 
 	// Handler is visit web handler
 	Handler struct {
-		srv    service
-		logger glog.Logger
+		srv     service
+		logger  glog.Logger
+		mailSrv MailService
 	}
 )
 
 // New return new rest api visit handler
-func New(s service, l glog.Logger) *Handler {
+func New(s service, mSrv MailService, l glog.Logger) *Handler {
 	return &Handler{
-		srv:    s,
-		logger: l,
+		srv:     s,
+		logger:  l,
+		mailSrv: mSrv,
 	}
 }
 
@@ -127,4 +134,16 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	respond.JSON(w, http.StatusOK, map[string]string{"status": "success"})
+}
+
+func (h *Handler) SendMail(w http.ResponseWriter, r *http.Request) {
+	visitID := mux.Vars(r)["visitID"]
+	err := h.mailSrv.SendEmailByVisitID(r.Context(), visitID)
+	if err != nil {
+		respond.Error(w, err, http.StatusInternalServerError)
+		return
+	}
+	respond.JSON(w, http.StatusOK, map[string]string{"status": "success", "message": "the email have been seen to IC department"})
+	return
+
 }
