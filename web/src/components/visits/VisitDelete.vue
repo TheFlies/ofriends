@@ -1,12 +1,12 @@
 <template>
   <el-dialog
-    title=""
+    title="Delete Visit"
     :visible.sync="isVisibleDelete"
     width="30%"
     append-to-body
     :before-close="handleBackdropClick"
   >
-    <span>Do you want to delete: {{ visitName }}?</span>
+    <span>Deleting {{ visitName }} will lead to delete Activities, Customers and Gifts in that Visit. <br>Are you sure? </span>
     <span slot="footer" class="dialog-footer">
       <el-button @click="handleBackdropClick">Cancel</el-button>
       <el-button type="primary" @click="deleteVisit">Confirm</el-button>

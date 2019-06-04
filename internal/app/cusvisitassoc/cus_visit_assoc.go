@@ -2,7 +2,6 @@ package cusvisitassoc
 
 import (
 	"context"
-	"errors"
 
 	"github.com/TheFlies/ofriends/internal/app/giftassociate"
 	"github.com/TheFlies/ofriends/internal/app/types"
@@ -77,15 +76,21 @@ func (s *Service) Update(ctx context.Context, cusVisitAssoc types.CusVisitAssoc)
 
 // Delete a customer visit associate
 func (s *Service) Delete(ctx context.Context, id string) error {
-	if !s.assocRepo.IsAssignedGift(ctx, "", id) {
-		return s.repo.Delete(ctx, id)
+	if err := s.assocRepo.DeleteByCusVisitAssocID(ctx, id); err != nil {
+		return err
 	}
-	return errors.New("Can not delete this customer because it has some assigned gifts.")
+
+	return s.repo.Delete(ctx, id)
 }
 
 // DeleteByVisitID a customer visit associate
 func (s *Service) DeleteByVisitID(ctx context.Context, visitID string) error {
+	if err := s.assocRepo.DeleteByCusVisitAssocID(ctx, visitID); err != nil {
+		return err
+	}
+
 	return s.repo.DeleteByVisitID(ctx, visitID)
+
 }
 
 // UpdateNameByCusID update customer name by customer id

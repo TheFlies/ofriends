@@ -54,7 +54,7 @@ func (r *MongoRepository) FindByCusVisitAssocID(ctx context.Context, assignID st
 	s := r.session.Clone()
 	defer s.Close()
 	var giftAssociates []types.GiftAssociate
-	if err := r.collection(s).Find(bson.M{"_custvisitassoc_id": assignID}).All(&giftAssociates); err != nil {
+	if err := r.collection(s).Find(bson.M{"_cusvisitassoc_id": assignID}).All(&giftAssociates); err != nil {
 		return nil, errors.Wrap(err, "failed to find the given gift from database")
 	}
 	return giftAssociates, nil

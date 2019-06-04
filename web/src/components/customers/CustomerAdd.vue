@@ -41,10 +41,6 @@
         </el-col>
         <el-col :span="12">
           <div class="grid-content bg-purple">
-            <el-form-item label="Pre-approve Visa" prop="preApproveVisa">
-              el-checkbox-group(v-model="customer.preApproveVisa")
-                el-checkbox(name="preApproveVisa")
-            </el-form-item>
             <el-form-item label="Passport info" prop="passportInfo">
                 <el-input v-model="customer.passportInfo" type="textarea" placeholder="Passport info of customer" />
             </el-form-item>
