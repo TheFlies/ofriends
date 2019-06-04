@@ -67,7 +67,6 @@ const (
 )
 
 // Init init all handlers
-// expose the golang cron
 func Init(conns *InfraConns) (http.Handler, error) {
 	logger := glog.New()
 	var conf CronConfig
@@ -109,15 +108,15 @@ func Init(conns *InfraConns) (http.Handler, error) {
 	cusVisitAssocHandler := cusvisitassochandler.New(cusVisitAssocSrv, cusVisitAssocLogger)
 
 	actLogger := logger.WithField("package", "activity")
-	actSrv := activity.NewService(actRepo, actVisitAssocRepo, actLogger)
+	actSrv := activity.NewService(actRepo, actVisitAssocSrv, actLogger)
 	actHandler := activityhandler.New(actSrv, actLogger)
 
 	customerLogger := logger.WithField("package", "customer")
-	customerSrv := customer.NewService(customerRepo, cusVisitAssocRepo, customerLogger)
+	customerSrv := customer.NewService(customerRepo, cusVisitAssocSrv, customerLogger)
 	customerHandler := customerhandler.New(customerSrv, customerLogger)
 
 	giftLogger := logger.WithField("package", "gift")
-	giftSrv := gift.NewService(giftRepo, giftAssociateRepo, giftLogger)
+	giftSrv := gift.NewService(giftRepo, giftAssociateSrv, giftLogger)
 	giftHandler := gifthandler.New(giftSrv, giftLogger)
 
 	visitLogger := logger.WithField("package", "visit")
@@ -128,6 +127,8 @@ func Init(conns *InfraConns) (http.Handler, error) {
 		return nil, err
 	}
 	visitHandler := visithandler.New(visitSrv, emailService, visitLogger)
+	visitSrv := visit.NewService(visitRepo, cusVisitAssocSrv, actVisitAssocSrv, visitLogger)
+	visitHandler := visithandler.New(visitSrv, visitLogger)
 
 	indexWebHandler := indexhandler.New()
 
@@ -198,7 +199,6 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			handler:     visitHandler.Create,
 			middlewares: []middlewareFunc{middleware.Authentication, middleware.Authorization(roleUser)},
 		},
-
 		{
 			path:        "/visits",
 			method:      put,
@@ -351,12 +351,6 @@ func Init(conns *InfraConns) (http.Handler, error) {
 		},
 
 		{
-			path:    "/giftassociates?cusvisitassocid={assignID:[a-z0-9-\\-]+}",
-			method:  get,
-			handler: giftAssociateHandler.GetByCusVisitAssocID,
-		},
-
-		{
 			path:    "/giftassociates",
 			method:  get,
 			handler: giftAssociateHandler.GetAll,
@@ -381,7 +375,7 @@ func Init(conns *InfraConns) (http.Handler, error) {
 		},
 
 		{
-			path:    "/giftassociates?cusvisitassocid={assignID:[a-z0-9-\\-]+}",
+			path:    "/giftassociates",
 			method:  delete,
 			handler: giftAssociateHandler.DeleteByCusVisitAssocID,
 		},
@@ -393,15 +387,9 @@ func Init(conns *InfraConns) (http.Handler, error) {
 		},
 
 		{
-			path:    "/actvisitassocs?visitid={visitID:[a-z0-9-\\-]+}",
-			method:  get,
-			handler: actVisitAssocHandler.GetByVisitID,
-		},
-
-		{
 			path:    "/actvisitassocs",
 			method:  get,
-			handler: actVisitAssocHandler.GetAll,
+			handler: actVisitAssocHandler.GetActVisitAssocs,
 		},
 
 		{
@@ -423,7 +411,7 @@ func Init(conns *InfraConns) (http.Handler, error) {
 		},
 
 		{
-			path:    "/actvisitassocs?visitid={visitID:[a-z0-9-\\-]+}",
+			path:    "/actvisitassocs",
 			method:  delete,
 			handler: actVisitAssocHandler.DeleteByVisitID,
 		},
@@ -432,12 +420,6 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			path:    "/cusvisitassocs/{id:[a-z0-9-\\-]+}",
 			method:  get,
 			handler: cusVisitAssocHandler.Get,
-		},
-
-		{
-			path:    "/cusvisitassocs?visitid={visitID:[a-z0-9-\\-]+}",
-			method:  get,
-			handler: cusVisitAssocHandler.GetByVisitID,
 		},
 
 		{
@@ -465,7 +447,7 @@ func Init(conns *InfraConns) (http.Handler, error) {
 		},
 
 		{
-			path:    "/cusvisitassocs?visitid={visitID:[a-z0-9-\\-]+}",
+			path:    "/cusvisitassocs",
 			method:  delete,
 			handler: cusVisitAssocHandler.DeleteByVisitID,
 		},
@@ -522,7 +504,6 @@ func Init(conns *InfraConns) (http.Handler, error) {
 	}
 	scheduler.Start()
 	return r, nil
-
 }
 
 // Close close all underlying connections

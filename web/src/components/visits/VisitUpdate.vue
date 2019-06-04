@@ -11,13 +11,17 @@
         <el-input v-model="visit.name" type="success" placeholder="Visit name" />
       </el-form-item>
       <el-form-item label="Lab" prop="lab" required>
-        <el-tag v-for="tag in visit.lab" :key="tag" closable :disable-transitions="false" @close="handleClose(tag)">
+        <el-tag v-for="tag in visit.lab" :key="tag" closable size="small" type="success" :disable-transitions="false" @close="handleClose(tag)">
           {{ tag }}
         </el-tag>
-        <el-input v-if="inputVisible" ref="saveTagInput" v-model="inputValue" class="input-new-tag" size="mini" @keyup.enter.native="handleInputConfirm" @blur="handleInputConfirm" />
-        <el-button v-else class="button-new-tag" size="small" @click="showInput">
-          + Add Lab
-        </el-button>
+        <template>
+          <el-select v-if="inputVisible" ref="saveTagInput" v-model="inputValue" placeholder="Select" class="input-new-tag" size="mini" @change="handleInputConfirm">
+            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+          </el-select>
+          <el-button v-else class="button-new-tag" size="small" @click="showInput">
+            + Add Lab
+          </el-button>
+        </template>
       </el-form-item>
       <el-form-item label="Arrival time" required>
         <el-col :span="22">
@@ -89,6 +93,29 @@ export default {
   },
   data() {
     return {
+      options: [{
+        value: 'Lab 1',
+        label: 'Lab 1'
+      }, {
+        value: 'Lab 2',
+        label: 'Lab 2'
+      }, {
+        value: 'Lab 3',
+        label: 'Lab 3'
+      }, {
+        value: 'Lab 4',
+        label: 'Lab 4'
+      }, {
+        value: 'Lab 5',
+        label: 'Lab 5'
+      }, {
+        value: 'Lab 6',
+        label: 'Lab 6'
+      }, {
+        value: 'Lab 8',
+        label: 'Lab 8'
+      }
+      ],
       rules: {},
       inputVisible: false,
       inputValue: ''
@@ -121,7 +148,7 @@ export default {
     showInput() {
       this.inputVisible = true
       this.$nextTick(_ => {
-        this.$refs.saveTagInput.$refs.input.focus()
+        this.$refs.saveTagInput.focus()
       })
     },
 
