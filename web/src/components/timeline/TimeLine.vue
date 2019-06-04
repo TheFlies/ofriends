@@ -36,6 +36,7 @@
 import DeleteUser from "@/components/user/UserDelete.vue";
 import { getAllUsers, updateUser, deleteUser } from "@/api/user";
 import { getRoleName } from '@/utils/convert'
+import { getTimelineByDay } from "@/api/timeline"
 
 export default {
   name: "ListUsers",
@@ -55,11 +56,11 @@ export default {
     };
   },
   mounted() {
-    getAllUsers()
+    getTimelineByDay(Date.now())
       .then(resp => {
         console.log(resp);
         if (resp.data != null) {
-          this.tableData = resp.data;
+          console.log(resp.data);
         }
         this.loading = false;
       })

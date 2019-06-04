@@ -52,6 +52,9 @@ func (m *Service) FindTimelineByDay(ctx context.Context, dayTime int64) ([]types
 		m.logger.Errorf("%v", err)
 		return nil, errors.Wrap(err, "can't get in comming visit")
 	}
+	if (len(visits) == 0){
+		m.logger.Debugf("Dont have any visits")
+	}
 	for _, visit := range visits {
 		var timeline types.Timeline
 		timeline.Visit = visit

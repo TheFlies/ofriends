@@ -108,6 +108,7 @@ export default {
       .then(resp => {
         if (resp.data != null) {
           this.tableData = resp.data
+          console.log(resp.data)
         }
         this.loading = false
       })

@@ -38,7 +38,7 @@ func (r *MongoRepository) FindInCommingVisit(ctx context.Context, dayTime int64)
 	s := r.session.Clone()
 	defer s.Close()
 	var visits []types.Visit
-	if err := r.collection(s).Find(bson.M{"departureTime": bson.M{"$gt": dayTime}}).All(&visits); err != nil {
+	if err := r.collection(s).Find(bson.M{"departuretime": bson.M{"$gte": dayTime}}).All(&visits); err != nil {
 		return nil, errors.Wrap(err, "failed to fetch all visit from database")
 	}
 
