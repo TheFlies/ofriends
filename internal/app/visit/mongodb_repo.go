@@ -45,17 +45,6 @@ func (r *MongoRepository) FindInCommingVisit(ctx context.Context, dayTime int64)
 	return visits, nil
 }
 
-func (r *MongoRepository) FindVisitsByDay(ctx context.Context, startTime, endTime int64) ([]types.Visit, error) {
-	s := r.session.Clone()
-	defer s.Close()
-	var listVisit []types.Visit
-	err := r.collection(s).Find(bson.M{"arrivedtime": bson.M{"$gt": startTime, "$lt": endTime}}).All(&listVisit)
-	if err != nil {
-		return nil, errors.Wrap(err, "visit not found")
-	}
-	return listVisit, nil
-}
-
 // Find all visits by all customer ID
 func (r *MongoRepository) FindByCustomerID(ctx context.Context, customerId string) ([]types.Visit, error) {
 	s := r.session.Clone()

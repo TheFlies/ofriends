@@ -129,8 +129,6 @@ func Init(conns *InfraConns) (http.Handler, error) {
 		return nil, err
 	}
 	visitHandler := visithandler.New(visitSrv, emailService, visitLogger)
-	visitSrv := visit.NewService(visitRepo, cusVisitAssocSrv, actVisitAssocSrv, visitLogger)
-	visitHandler := visithandler.New(visitSrv, visitLogger)
 
 	indexWebHandler := indexhandler.New()
 
