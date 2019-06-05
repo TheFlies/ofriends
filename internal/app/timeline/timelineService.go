@@ -56,35 +56,7 @@ func (m *Service) FindTimelineByDay(ctx context.Context, dayTime int64) ([]types
 		m.logger.Debugf("Dont have any visits")
 	}
 	for _, visit := range visits {
-		var timeline types.Timeline
-		timeline.Visit = visit
-
-		// Get all customer in this visit
-		assList, err := m.CustomerVisitAssRepo.FindByVisitID(ctx, visit.ID)
-		if err != nil {
-			m.logger.Errorf("%v", err)
-			return nil, errors.Wrap(err, "can't get Customer Visit Associating")
-		}
-		for _, ass := range assList {
-			customer, err := m.CustomerRepo.FindByID(ctx, ass.CustomerID)
-			if err != nil {
-				m.logger.Errorf("%v", err)
-				return nil, errors.Wrap(err, "can't get Customer")
-			}
-			timeline.Customers = append(timeline.Customers, customer)
-
-			// Get all gift in this visit
-			giftAssList, err := m.GiftAssRepo.FindByCusVisitAssocID(ctx, ass.ID)
-			for _, giftAss := range giftAssList {
-				gift, err := m.GiftRepo.FindByID(ctx, giftAss.GiftID)
-				if err != nil {
-					m.logger.Errorf("%v", err)
-					return nil, errors.Wrap(err, "can't get gift")
-				}
-				timeline.Gifts = append(timeline.Gifts, gift)
-			}
-		}
-
+		var activities []*types.Activity
 		// Get all activity in this visit
 		actAssList, err := m.ActVisitAssRepo.FindByVisitID(ctx, visit.ID)
 		if err != nil {
@@ -97,9 +69,38 @@ func (m *Service) FindTimelineByDay(ctx context.Context, dayTime int64) ([]types
 				m.logger.Errorf("%v", err)
 				return nil, errors.Wrap(err, "can't get Customer")
 			}
-			timeline.Activitys = append(timeline.Activitys, activity)
+			activities = append(activities, activity)
 		}
-		timelines = append(timelines, timeline)
+
+		// Get all customer in this visit
+		assList, err := m.CustomerVisitAssRepo.FindByVisitID(ctx, visit.ID)
+		if err != nil {
+			m.logger.Errorf("%v", err)
+			return nil, errors.Wrap(err, "can't get Customer Visit Associating")
+		}
+		for _, ass := range assList {
+			var timeline types.Timeline
+			timeline.Visit = visit
+			customer, err := m.CustomerRepo.FindByID(ctx, ass.CustomerID)
+			if err != nil {
+				m.logger.Errorf("%v", err)
+				return nil, errors.Wrap(err, "can't get Customer")
+			}
+			timeline.Customer = customer
+
+			// Get all gift of customer
+			giftAssList, err := m.GiftAssRepo.FindByCusVisitAssocID(ctx, ass.ID)
+			for _, giftAss := range giftAssList {
+				gift, err := m.GiftRepo.FindByID(ctx, giftAss.GiftID)
+				if err != nil {
+					m.logger.Errorf("%v", err)
+					return nil, errors.Wrap(err, "can't get gift")
+				}
+				timeline.Gifts = append(timeline.Gifts, gift)
+			}
+			timeline.Activities = activities
+			timelines = append(timelines, timeline)
+		}
 
 	}
 	
