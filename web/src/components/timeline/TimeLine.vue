@@ -3,22 +3,39 @@
     <el-main>
       <el-table
         v-loading="loading"
-        :data="tableData.filter(data => !search || data.username.toLowerCase().includes(search.toLowerCase()))"
+        :data="tableData.filter(data => !search || data.Customer.name.toLowerCase().includes(search.toLowerCase()))"
         style="width: 100%; margin:auto"
       >
         <el-table-column type="index" :index="indexMethod" />
-        <el-table-column label="Time" width="130" sortable prop="username">
-        </el-table-column>
-        <el-table-column label="Customer Name" width="130" sortable prop="fullname">
-        </el-table-column>
-        <el-table-column label="Title" prop="email" sortable width="150" />
-        <el-table-column label="Project" sortable width="280" prop="delivery_center" />
-        <el-table-column label="Gift" width="280" sortable prop="priority">
+        <el-table-column label="Arrived Time" width="180" sortable prop="Visit.arrivedTime">
           <template slot-scope="scope">
-            {{ getRoleName(scope.row.priority) }}
+            {{ getHumanDate(scope.row.Visit.arrivedTime) }}
           </template>
         </el-table-column>
-        <el-table-column label="Activity" sortable prop="priority" />
+        <el-table-column label="Departure Time" width="180" sortable prop="Visit.departureTime">
+           <template slot-scope="scope">
+            {{ getHumanDate(scope.row.Visit.departureTime) }}
+          </template>
+        </el-table-column>
+        <el-table-column label="Customer Name" width="180" sortable prop="Customer.name">
+        </el-table-column>
+        <el-table-column label="Title" prop="Customer.title" width="120" />
+        <el-table-column label="Position" prop="Customer.position" width="150" />
+        <el-table-column label="Project" sortable width="180" prop="Customer.project" />
+        <el-table-column label="Gift" width="180" sortable prop="priority">
+         <template slot-scope="scope">
+            <el-tag v-for="gift in scope.row.Gifts" :key="gift" size="small" type="success" :disable-transitions="false">
+              {{ gift.name }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="Activity" sortable prop="priority">
+           <template slot-scope="scope">
+            <el-tag v-for="activity in scope.row.Activities" :key="activity" size="small" type="success" :disable-transitions="false">
+              {{ activity.name }}
+            </el-tag>
+          </template>
+        </el-table-column>
         <el-table-column align="right">
           <template slot="header" slot-scope="scope">
             <el-input
@@ -35,8 +52,8 @@
 <script>
 import DeleteUser from "@/components/user/UserDelete.vue";
 import { getAllUsers, updateUser, deleteUser } from "@/api/user";
-import { getRoleName } from '@/utils/convert'
 import { getTimelineByDay } from "@/api/timeline"
+import { getHumanDate } from '@/utils/convert'
 
 export default {
   name: "ListUsers",
@@ -60,6 +77,7 @@ export default {
       .then(resp => {
         console.log(resp);
         if (resp.data != null) {
+          this.tableData = resp.data
           console.log(resp.data);
         }
         this.loading = false;
@@ -116,7 +134,7 @@ export default {
     indexMethod(index) {
       return index * 1;
     },
-    getRoleName
+    getHumanDate,
   }
 };
 </script>
