@@ -19,19 +19,49 @@
         </el-table-column>
         <el-table-column label="Customer Name" width="180" sortable prop="Customer.name">
         </el-table-column>
-        <el-table-column label="Title" prop="Customer.title" width="120" />
+        <el-table-column label="Title" prop="Customer.title" width="80" />
         <el-table-column label="Position" prop="Customer.position" width="150" />
         <el-table-column label="Project" sortable width="180" prop="Customer.project" />
         <el-table-column label="Gift" width="180" sortable prop="priority">
          <template slot-scope="scope">
-            <el-tag v-for="gift in scope.row.Gifts" :key="gift" size="small" type="success" :disable-transitions="false">
-              {{ gift.name }}
-            </el-tag>
+          <el-popover
+            v-for="gift in scope.row.Gifts" :key="gift.id"
+            placement="left"
+            width="400"
+            trigger="click">
+            <el-form 
+            ref="gift"
+            :model="gift"
+            label-width="80px"
+            class="demo-ruleForm">
+              <el-form-item label="Name" style="color: #259dd8;">
+                <span>{{gift.name}}</span>
+              </el-form-item>
+               <el-form-item label="Idea" style="color: #259dd8;">
+                <span>{{gift.idea}}</span>
+              </el-form-item>
+               <el-form-item label="Size" style="color: #259dd8;">
+                <span>{{gift.size}}</span>
+              </el-form-item>
+               <el-form-item label="Price" style="color: #259dd8;">
+                <span>{{gift.price}}</span>
+              </el-form-item>
+               <el-form-item label="Link" style="color: #259dd8;">
+                 <a :href="`${gift.link}`" target="_blank">
+                  {{gift.link}}
+                  </a>
+              </el-form-item>
+              <el-form-item label="Description" style="color: #259dd8;">
+                <span>{{gift.description}}</span>
+              </el-form-item>
+            </el-form>
+            <el-button slot="reference">{{ gift.name }}</el-button>
+          </el-popover>
           </template>
         </el-table-column>
         <el-table-column label="Activity" sortable prop="priority">
            <template slot-scope="scope">
-            <el-tag v-for="activity in scope.row.Activities" :key="activity" size="small" type="success" :disable-transitions="false">
+            <el-tag v-for="activity in scope.row.Activities" :key="activity.id" size="Medium" type="success" :disable-transitions="false">
               {{ activity.name }}
             </el-tag>
           </template>
@@ -87,50 +117,6 @@ export default {
       });
   },
   methods: {
-    handleUpdate: function(priority) {
-      this.loading = true;
-      this.user.priority=priority;
-      console.log(this.user);
-      updateUser(this.user)
-        .then(resp => {
-          console.log(resp);
-          this.$notify({
-            title: "Success",
-            message: "Update successfully!",
-            type: "success"
-          });
-        })
-        .catch(err => {
-          console.log(err);
-          this.$notify.error({
-            title: "Error",
-            message: err
-          });
-        });
-      this.loading = false;
-  },
-    handleDelete: function(isDeleteUser) {
-      if (isDeleteUser) {
-        this.loading = true;
-        deleteUser(this.scopeUser.row.id)
-          .then(resp => {
-            this.tableData.splice(this.scopeUser.$index, 1);
-            this.$notify({
-              title: "Success",
-              message: "Delete successfully!",
-              type: "success"
-            });
-          })
-          .catch(err => {
-            console.log(err);
-            this.$notify.error({
-              title: "Error",
-              message: err
-            });
-          });
-      }
-      this.loading = false;
-    },
     indexMethod(index) {
       return index * 1;
     },
