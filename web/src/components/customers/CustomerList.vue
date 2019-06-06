@@ -1,46 +1,47 @@
 <template lang="pug">
-      <el-card class="box-card">
-        <div slot="header" class="clearfix">
-          //- <span>Customer</span>
-          <el-tooltip class="item" effect="dark" content="Add customer" placement="right-start" >
-            <el-button type="primary" icon="el-icon-plus" plain @click="isVisibleAdd = !isVisibleAdd">
-              | New customer
-            </el-button>
-          </el-tooltip>
-        </div>
-        <div class="text item">
-          <el-table v-loading="loading" :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" style="width: 100%; margin:auto">
-            <el-table-column label="Name" width="250" sortable="" prop="name"/>
-            <el-table-column label="Position" width="120" sortable="" prop="position"/>
-            <el-table-column label="Project" width="120" sortable="" prop="project"/>
-            <el-table-column label="Age" width="120" sortable="" prop="age"/>
-            <el-table-column label="Company" width="120" sortable="" prop="company"/>
-            <el-table-column label="Country" width="120" sortable="" prop="country"/>
-            <el-table-column label="City" width="120" sortable="" prop="city"/>
-            <el-table-column label="Passport Info" width="120" prop="passportInfo"/>
-            <el-table-column label="Food Note" width="120" prop="foodNote"/>
-            <el-table-column label="Family Note" width="120" prop="familyNote"/>
-            <el-table-column label="Next Visit Note" width="120" prop="nextVisitNote"/>
-            <el-table-column align="right">
-              <template slot="header" slot-scope="scope">
-                <el-input v-model="search" size="mini" placeholder="Type to search by name" />
-              </template>
-              <edit-customer :is-visible-update.sync="isVisibleUpdate" :customer.sync="customer" @isUpdateCustomer="handleUpdate"/>
-              <delete-customer :is-visible-delete.sync="isVisibleDelete" :customer-name.sync="customerName" @isDeleteCustomer="handleDelete"/>
-              <add-customer :is-visible-add.sync="isVisibleAdd" @isAddCustomer="handleAdd"/>
-              <template slot-scope="scope">
-                <el-button size="mini" @click="customer = scope.row; isVisibleUpdate = !isVisibleUpdate">
-                  | Edit
-                </el-button>
-                <el-button size="mini" type="danger" @click="isVisibleDelete = !isVisibleDelete; scopeCustomer = scope; customerName = scope.row.name">
-                  | Delete
-                </el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-
-        </div>
-      </el-card>
+  <el-main>
+    <el-card class="box-card">
+      <div slot="header" class="clearfix">
+        <el-tooltip class="item" effect="dark" content="Add customer" placement="right-start" >
+          <el-button type="primary" icon="el-icon-plus" plain @click="isVisibleAdd = !isVisibleAdd">
+            | New customer
+          </el-button>
+        </el-tooltip>
+      </div>
+      <div class="text item">
+        <el-table v-loading="loading" :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" style="width: 100%; margin:auto">
+          <el-table-column type="index" :index="indexMethod" />
+          <el-table-column label="Name" width="200" sortable="" prop="name"/>
+          <el-table-column label="Position" width="120" sortable="" prop="position"/>
+          <el-table-column label="Project" width="120" sortable="" prop="project"/>
+          <el-table-column label="Age" width="120" sortable="" prop="age"/>
+          <el-table-column label="Company" width="120" sortable="" prop="company"/>
+          <el-table-column label="Country" width="120" sortable="" prop="country"/>
+          <el-table-column label="City" width="120" sortable="" prop="city"/>
+          <el-table-column label="Passport Info" width="120" prop="passportInfo"/>
+          <el-table-column label="Food Note" width="120" prop="foodNote"/>
+          <el-table-column label="Family Note" width="120" prop="familyNote"/>
+          <el-table-column label="Next Visit Note" width="120" prop="nextVisitNote"/>
+          <el-table-column align="right">
+            <template slot="header" slot-scope="scope">
+              <el-input v-model="search" size="mini" placeholder="Customer name" />
+            </template>
+            <edit-customer :is-visible-update.sync="isVisibleUpdate" :customer.sync="customer" @isUpdateCustomer="handleUpdate"/>
+            <delete-customer :is-visible-delete.sync="isVisibleDelete" :customer-name.sync="customerName" @isDeleteCustomer="handleDelete"/>
+            <add-customer :is-visible-add.sync="isVisibleAdd" @isAddCustomer="handleAdd"/>
+            <template slot-scope="scope">
+              <el-button size="mini" @click="customer = scope.row; isVisibleUpdate = !isVisibleUpdate">
+                | Edit
+              </el-button>
+              <el-button size="mini" type="danger" @click="isVisibleDelete = !isVisibleDelete; scopeCustomer = scope; customerName = scope.row.name">
+                | Delete
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+    </el-card>
+  </el-main>
 </template>
 
 <script>
@@ -53,6 +54,8 @@ import {
   updateCustomer,
   deleteCustomerByID
 } from '@/api/customer'
+
+import { indexMethod } from '@/utils/convert'
 
 export default {
   name: 'ListCustomers',
@@ -161,9 +164,7 @@ export default {
       }
       this.loading = false
     },
-    indexMethod(index) {
-      return index * 1
-    }
+    indexMethod,
   }
 }
 </script>

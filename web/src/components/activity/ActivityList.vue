@@ -1,58 +1,60 @@
 <template>
-  <el-card class="box-card">
-    <div slot="header">
-      <!-- <span>Activity</span> -->
-      <el-tooltip class="item" effect="dark" content="Add activity" placement="right-start">
-        <el-button type="primary" icon="el-icon-plus" plain @click="isVisibleAdd = !isVisibleAdd">
-          New Activity
-        </el-button>
-      </el-tooltip>
-    </div>
-    <div class="text item">
-      <el-table v-loading="loading" :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" style="width: 100%; margin:auto">
-        <el-table-column label="Name" width="250" prop="name" />
-        <el-table-column label="Detail" prop="detail" />
-        <el-table-column align="right">
-          <template slot="header" slot-scope="scope">
-            <el-input
-              v-model="search"
-              size="mini"
-              placeholder="Type to search by name"
+  <el-main>
+    <el-card class="box-card">
+      <div slot="header">
+        <el-tooltip class="item" effect="dark" content="Add activity" placement="right-start">
+          <el-button type="primary" icon="el-icon-plus" plain @click="isVisibleAdd = !isVisibleAdd">
+            New Activity
+          </el-button>
+        </el-tooltip>
+      </div>
+      <div class="text item">
+        <el-table v-loading="loading" :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" style="width: 100%; margin:auto">
+          <el-table-column type="index" :index="indexMethod" />
+          <el-table-column label="Name" width="250" prop="name" />
+          <el-table-column label="Detail" prop="detail" />
+          <el-table-column align="right">
+            <template slot="header" slot-scope="scope">
+              <el-input
+                v-model="search"
+                size="mini"
+                placeholder="Type to search by name"
+              />
+            </template>
+            <ActivityUpdate
+              :is-visible-update.sync="isVisibleUpdate"
+              :activity.sync="activity"
+              @isUpdateAct="handleUpdate"
             />
-          </template>
-          <ActivityUpdate
-            :is-visible-update.sync="isVisibleUpdate"
-            :activity.sync="activity"
-            @isUpdateAct="handleUpdate"
-          />
-          <ActivityDelete :is-visible-delete.sync="isVisibleDelete" :act-name.sync="actName" @isDeleteAct="handleDelete" />
-          <ActivityAdd :is-visible-add.sync="isVisibleAdd" @isAddAct="handleAdd" />
-          <template slot-scope="scope">
-            <el-button
-              size="mini"
-              @click="activity = scope.row; isVisibleUpdate = !isVisibleUpdate"
-            >
-              Edit
-            </el-button>
-            <el-button
-              size="mini"
-              type="danger"
-              @click="isVisibleDelete = !isVisibleDelete; scopeActivity= scope; actName = scope.row.name"
-            >
-              Delete
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
-  </el-card>
+            <ActivityDelete :is-visible-delete.sync="isVisibleDelete" :act-name.sync="actName" @isDeleteAct="handleDelete" />
+            <ActivityAdd :is-visible-add.sync="isVisibleAdd" @isAddAct="handleAdd" />
+            <template slot-scope="scope">
+              <el-button
+                size="mini"
+                @click="activity = scope.row; isVisibleUpdate = !isVisibleUpdate"
+              >
+                Edit
+              </el-button>
+              <el-button
+                size="mini"
+                type="danger"
+                @click="isVisibleDelete = !isVisibleDelete; scopeActivity= scope; actName = scope.row.name"
+              >
+                Delete
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+    </el-card>
+  </el-main>
 </template>
 
 <script>
 import ActivityUpdate from '@/components/activity/ActivityUpdate.vue'
 import ActivityDelete from '@/components/activity/ActivityDelete.vue'
 import ActivityAdd from '@/components/activity/ActivityAdd.vue'
-import { getHumanDate } from '@/utils/convert'
+import { indexMethod, getHumanDate } from '@/utils/convert'
 
 import {
   getAllActivities,
@@ -171,9 +173,7 @@ export default {
       }
       this.loading = false
     },
-    indexMethod(index) {
-      return index * 1
-    },
+    indexMethod,
     getHumanDate
   }
 }

@@ -23,3 +23,7 @@ export function getRoleName(priority) {
   }
   return rolName
 }
+
+export function indexMethod(index){
+  return index + 1
+}

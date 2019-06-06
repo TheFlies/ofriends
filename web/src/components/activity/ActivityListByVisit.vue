@@ -10,6 +10,7 @@
         </div>
         <div class="text item">
           <el-table v-loading="loading" :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" style="width: 100%; margin:auto">
+            <el-table-column type="index" :index="indexMethod" />
             <el-table-column label="Name" width="250" prop="activityName" sortable />
             <el-table-column label="Start Time" width="200" sortable prop="startTime">
               <template slot-scope="scope">
@@ -55,7 +56,7 @@ import ActivityAssociateAdd from '@/components/activityAssocicates/ActivityAssoc
 import ActivityAssociateDelete from '@/components/activityAssocicates/ActivityAssociateDelete.vue'
 import ActivityAssociateUpdate from '@/components/activityAssocicates/ActivityAssociateUpdate.vue'
 
-import { getHumanDate } from '@/utils/convert'
+import { indexMethod, getHumanDate } from '@/utils/convert'
 import {
   getActVisitAssocsByVisitID,
   createActVisitAssoc,
@@ -242,9 +243,7 @@ export default {
         this.loading = false
       }
     },
-    indexMethod(index) {
-      return index * 1
-    },
+    indexMethod,
     getHumanDate
   }
 }

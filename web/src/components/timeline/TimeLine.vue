@@ -225,7 +225,7 @@
 </template>
 <script>
 import { getTimelineByDay } from '@/api/timeline'
-import { getHumanDate } from '@/utils/convert'
+import { indexMethod, getHumanDate } from '@/utils/convert'
 
 export default {
   name: 'Timeline',
@@ -251,9 +251,7 @@ export default {
       })
   },
   methods: {
-    indexMethod(index) {
-      return index * 1
-    },
+    indexMethod,
     getHumanDate
   }
 }
