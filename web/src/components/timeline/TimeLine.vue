@@ -32,8 +32,8 @@
             <el-form 
             ref="gift"
             :model="gift"
-            label-width="80px"
-            class="demo-ruleForm">
+            label-width="80px">
+              <h3 style="text-align: center; background-color: #FFC0CB; color: #fff; padding: 10px">Gift Info</h3>
               <el-form-item label="Name" style="color: #259dd8;">
                 <span>{{gift.name}}</span>
               </el-form-item>
@@ -61,8 +61,25 @@
         </el-table-column>
         <el-table-column label="Activity" sortable prop="priority">
            <template slot-scope="scope">
-            <el-tag v-for="activity in scope.row.Activities" :key="activity.id" size="Medium" type="success" :disable-transitions="false">
-              {{ activity.name }}
+            <el-popover
+            v-for="activity in scope.row.Activities" :key="activity.id"
+            placement="left"
+            width="400"
+            trigger="click">
+            <el-form 
+            ref="activity"
+            :model="activity"
+            label-width="80px">
+             <h3 style="text-align: center; background-color: #259dd8; color: #fff; padding: 10px">Activity Info</h3>
+              <el-form-item label="Name" style="color: #259dd8;">
+                <span>{{activity.name}}</span>
+              </el-form-item>
+               <el-form-item label="Detail" style="color: #259dd8;">
+                <span>{{activity.detail}}</span>
+              </el-form-item>
+            </el-form>
+            <el-button slot="reference">{{ activity.name }}</el-button>
+          </el-popover>
             </el-tag>
           </template>
         </el-table-column>
