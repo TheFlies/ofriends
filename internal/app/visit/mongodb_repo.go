@@ -33,18 +33,6 @@ func (r *MongoRepository) FindByID(ctx context.Context, id string) (*types.Visit
 	return visit, nil
 }
 
-// Find all visits by day
-func (r *MongoRepository) FindInCommingVisit(ctx context.Context, dayTime int64)([]types.Visit, error) {
-	s := r.session.Clone()
-	defer s.Close()
-	var visits []types.Visit
-	if err := r.collection(s).Find(bson.M{"departuretime": bson.M{"$gte": dayTime}}).All(&visits); err != nil {
-		return nil, errors.Wrap(err, "failed to fetch all visit from database")
-	}
-
-	return visits, nil
-}
-
 // Find all visits by all customer ID
 func (r *MongoRepository) FindByCustomerID(ctx context.Context, customerId string) ([]types.Visit, error) {
 	s := r.session.Clone()
@@ -95,13 +83,26 @@ func (r *MongoRepository) Delete(ctx context.Context, id string) error {
 func (r *MongoRepository) collection(s *mgo.Session) *mgo.Collection {
 	return s.DB("ofriends").C("visits")
 }
+// Find visits from start time to end time
 func (r *MongoRepository) FindVisitsByDay(ctx context.Context, startTime, endTime int64) ([]types.Visit, error) {
 	s := r.session.Clone()
 	defer s.Close()
 	var listVisit []types.Visit
-	err := r.collection(s).Find(bson.M{"arrivedtime": bson.M{"$gt": startTime, "$lt": endTime}}).All(&listVisit)
+	err := r.collection(s).Find(bson.M{"arrivedtime": bson.M{"$gte": startTime, "$lte": endTime}}).All(&listVisit)
 	if err != nil {
 		return nil, errors.Wrap(err, "visit not found")
 	}
 	return listVisit, nil
+}
+
+// Find all imcomming visits by day
+func (r *MongoRepository) FindInCommingVisit(ctx context.Context, dayTime int64)([]types.Visit, error) {
+	s := r.session.Clone()
+	defer s.Close()
+	var visits []types.Visit
+	if err := r.collection(s).Find(bson.M{"departuretime": bson.M{"$gte": dayTime}}).All(&visits); err != nil {
+		return nil, errors.Wrap(err, "failed to fetch all visit from database")
+	}
+
+	return visits, nil
 }

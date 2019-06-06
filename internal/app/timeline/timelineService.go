@@ -44,14 +44,10 @@ func NewService(visitRepo visit.Repository, customerRepo customer.Repository, cu
 		logger:       			l,
 	}
 }
-func (m *Service) FindTimelineByDay(ctx context.Context, dayTime int64) ([]types.Timeline, error) {
-	m.logger.Debugf("Get visit before day %d", dayTime)
+
+func getTimelinesFromVisitList(m *Service, ctx context.Context, visits []types.Visit) ([]types.Timeline, error){
 	var timelines []types.Timeline
-	visits, err := m.VisitRepo.FindInCommingVisit(ctx, dayTime)
-	if err != nil {
-		m.logger.Errorf("%v", err)
-		return nil, errors.Wrap(err, "can't get in comming visit")
-	}
+
 	if (len(visits) == 0){
 		m.logger.Debugf("Dont have any visits")
 	}
@@ -101,8 +97,29 @@ func (m *Service) FindTimelineByDay(ctx context.Context, dayTime int64) ([]types
 			timeline.Activities = activities
 			timelines = append(timelines, timeline)
 		}
+	}
 
+	return timelines, nil
+}
+
+func (m *Service) FindTimelineByDay(ctx context.Context, dayTime int64) ([]types.Timeline, error) {
+	m.logger.Debugf("Get visit before day %d", dayTime)
+	visits, err := m.VisitRepo.FindInCommingVisit(ctx, dayTime)
+	if err != nil {
+		m.logger.Errorf("%v", err)
+		return nil, errors.Wrap(err, "can't get in comming visit")
 	}
 	
-	return timelines, nil
+	return getTimelinesFromVisitList(m, ctx, visits)
+}
+
+func (m *Service) FindTimelineInRange(ctx context.Context, startTime, endTime int64) ([]types.Timeline, error) {
+	m.logger.Debugf("Get visit from %d to %d", startTime, endTime)
+	visits, err := m.VisitRepo.FindVisitsByDay(ctx, startTime, endTime)
+	if err != nil {
+		m.logger.Errorf("%v", err)
+		return nil, errors.Wrap(err, "can't get in comming visit")
+	}
+
+	return getTimelinesFromVisitList(m, ctx, visits)
 }

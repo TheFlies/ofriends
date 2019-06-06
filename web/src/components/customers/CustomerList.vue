@@ -164,7 +164,7 @@ export default {
       }
       this.loading = false
     },
-    indexMethod,
+    indexMethod
   }
 }
 </script>

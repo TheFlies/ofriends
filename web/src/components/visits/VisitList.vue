@@ -187,7 +187,7 @@ export default {
       this.loading = false
     },
     indexMethod,
-    getHumanDate,
+    getHumanDate
   }
 }
 </script>

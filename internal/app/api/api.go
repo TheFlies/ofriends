@@ -456,8 +456,9 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			method:  delete,
 			handler: cusVisitAssocHandler.DeleteByVisitID,
 		},
+		// time line serivce
 		{
-			path:    "/timeline/{daytime:[0-9]+}",
+			path:    "/timeline",
 			method:  get,
 			handler: timelineHandler.FindTimelineByDay,
 		},
@@ -475,9 +476,9 @@ func Init(conns *InfraConns) (http.Handler, error) {
 
 	for _, rt := range routes {
 		h := rt.handler
-		// for i := len(rt.middlewares) - 1; i >= 0; i-- {
-		// 	h = rt.middlewares[i](h)
-		// }
+		for i := len(rt.middlewares) - 1; i >= 0; i-- {
+			h = rt.middlewares[i](h)
+		}
 		subRouter.Path(rt.path).Methods(rt.method).HandlerFunc(h)
 	}
 
