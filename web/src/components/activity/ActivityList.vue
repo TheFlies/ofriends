@@ -129,7 +129,6 @@ export default {
         this.loading = true
         updateActivity(this.activity)
           .then(resp => {
-            console.log(resp.data)
             this.$notify({
               title: 'Success',
               message: 'Update successfully!',

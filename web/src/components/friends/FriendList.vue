@@ -112,7 +112,6 @@ export default {
         this.friend.age = parseInt(this.friend.age, 10)
         updateFriend(this.friend)
           .then(resp => {
-            console.log(resp.data)
             this.$notify({
               title: 'Success',
               message: 'Update successfully!',

@@ -29,7 +29,7 @@
                 :model="scope.row.Visit"
                 label-width="120px"
               >
-                <h3 style="text-align: center; background-color: #259dd8; color: #fff; padding: 10px">
+                <h3 class="header-popover">
                   Visit Info
                 </h3>
                 <el-form-item label="Name" class="label">
@@ -78,7 +78,7 @@
                 :model="scope.row.Customer"
                 label-width="120px"
               >
-                <h3 style="text-align: center; background-color: #259dd8; color: #fff; padding: 10px">
+                <h3 class="header-popover">
                   Customer Info
                 </h3>
                 <el-row :gutter="20">
@@ -150,7 +150,7 @@
                 :model="gift"
                 label-width="80px"
               >
-                <h3 style="text-align: center; background-color: #259dd8; color: #fff; padding: 10px">
+                <h3 class="header-popover">
                   Gift Info
                 </h3>
                 <el-form-item label="Name" class="label">
@@ -194,7 +194,7 @@
                 :model="activity"
                 label-width="80px"
               >
-                <h3 style="text-align: center; background-color: #259dd8; color: #fff; padding: 10px">
+                <h3 class="header-popover">
                   Activity Info
                 </h3>
                 <el-form-item label="Name" class="label">
@@ -208,7 +208,6 @@
                 {{ activity.name }}
               </el-button>
             </el-popover>
-            </el-tag>
           </template>
         </el-table-column>
         <el-table-column align="right">
@@ -225,7 +224,6 @@
   </el-container>
 </template>
 <script>
-import { getAllUsers, updateUser, deleteUser } from '@/api/user'
 import { getTimelineByDay } from '@/api/timeline'
 import { getHumanDate } from '@/utils/convert'
 
@@ -236,22 +234,15 @@ export default {
   data() {
     return {
       tableData: [],
-      isVisibleAdd: false,
-      isVisibleDelete: false,
       search: '',
-      loading: true,
-      user: {},
-      userName: '',
-      scopeUser: {}
+      loading: true
     }
   },
   mounted() {
     getTimelineByDay(Date.now())
       .then(resp => {
-        console.log(resp)
         if (resp.data != null) {
           this.tableData = resp.data
-          console.log(resp.data)
         }
         this.loading = false
       })
@@ -270,5 +261,11 @@ export default {
 <style scoped lang="stylus">
 .label {
   color: #259dd8;
+}
+.header-popover{
+  text-align: center;
+  background-color: #259dd8;
+  color: #fff;
+  padding: 10px;
 }
 </style>
