@@ -9,7 +9,7 @@
         </el-tooltip>
       </div>
       <div class="text item">
-        <el-table v-loading="loading" :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" style="width: 100%">
+        <el-table stripe v-loading="loading" :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" style="width: 100%">
           <el-table-column type="index" :index="indexMethod" />
           <el-table-column label="Name" width="250" prop="name" sortable />
           <el-table-column label="Idea" prop="idea" sortable />

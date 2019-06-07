@@ -36,6 +36,7 @@
             v-loading="loading"
             :data="tableData.filter(data => !search || data.Customer.name.toLowerCase().includes(search.toLowerCase()))"
             style="width: 100%; margin:auto"
+            stripe
           >
             <el-table-column type="index" :index="indexMethod" />
             <el-table-column label="Arrived Time" width="180" sortable prop="Visit.arrivedTime">
@@ -46,6 +47,12 @@
             <el-table-column label="Departure Time" width="180" sortable prop="Visit.departureTime">
               <template slot-scope="scope">
                 {{ getHumanDate(scope.row.Visit.departureTime) }}
+              </template>
+            </el-table-column>
+            <el-table-column label="Status" width="100" sortable>
+              <template slot-scope="scope" >
+                <el-tag v-if="scope.row.Visit.departureTime <= Date.now()" size="small" type="primary" :disable-transitions="false">Served</el-tag>
+                <el-tag v-else size="small" type="success" :disable-transitions="false">In Progress</el-tag>
               </template>
             </el-table-column>
             <el-table-column label="Visit Name" prop="Visit.name" sortable width="180">
@@ -67,7 +74,7 @@
                       <span>{{ scope.row.Visit.name }}</span>
                     </el-form-item>
                     <el-form-item label="Arrived Time" class="label">
-                      <el-tag v-for="tag in scope.row.Visit.lab" :key="tag" size="small" type="success" :disable-transitions="false">
+                      <el-tag v-for="tag in scope.row.Visit.lab" :key="tag" size="small" type="warning" :disable-transitions="false">
                         {{ tag }}
                       </el-tag>
                     </el-form-item>
@@ -92,7 +99,7 @@
             </el-table-column>
             <el-table-column label="Visit Lab" width="130" prop="Visit.lab">
               <template slot-scope="scope">
-                <el-tag v-for="tag in scope.row.Visit.lab" :key="tag" size="small" type="success" :disable-transitions="false">
+                <el-tag v-for="tag in scope.row.Visit.lab" :key="tag" size="small" type="warning" :disable-transitions="false">
                   {{ tag }}
                 </el-tag>
               </template>
@@ -323,6 +330,12 @@ export default {
           return false
         }
       })
+    },
+    getStatus(departureTime){
+      if (departureTime <= Date.now()) {
+        return createElement('<el-button type="info" plain disabled>Done</el-button>')
+      }
+      return createElement('<el-button type="success" disabled>In Progress</el-button>')
     },
     indexMethod,
     getHumanDate

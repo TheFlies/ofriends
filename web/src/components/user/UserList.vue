@@ -4,6 +4,7 @@
       <div class="text item">
         <el-table
           v-loading="loading"
+          stripe
           :data="tableData.filter(data => !search || data.username.toLowerCase().includes(search.toLowerCase()))"
           style="width: 100%; margin:auto"
         >
