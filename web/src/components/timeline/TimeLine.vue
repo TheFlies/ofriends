@@ -74,7 +74,7 @@
                       <span>{{ scope.row.Visit.name }}</span>
                     </el-form-item>
                     <el-form-item label="Arrived Time" class="label">
-                      <el-tag v-for="tag in scope.row.Visit.lab" :key="tag" size="small" type="warning" :disable-transitions="false">
+                      <el-tag v-for="tag in scope.row.Visit.lab" :key="tag" size="small" type="info" :disable-transitions="false">
                         {{ tag }}
                       </el-tag>
                     </el-form-item>
@@ -99,7 +99,7 @@
             </el-table-column>
             <el-table-column label="Visit Lab" width="130" prop="Visit.lab">
               <template slot-scope="scope">
-                <el-tag v-for="tag in scope.row.Visit.lab" :key="tag" size="small" type="warning" :disable-transitions="false">
+                <el-tag v-for="tag in scope.row.Visit.lab" :key="tag" size="small" type="info" :disable-transitions="false">
                   {{ tag }}
                 </el-tag>
               </template>
