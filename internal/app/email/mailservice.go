@@ -75,6 +75,10 @@ func (m *SendMailService) Send(ctx context.Context, now time.Time) error {
 		m.logger.Errorf("%v", err)
 		return errors.Wrap(err, "can't send email")
 	}
+	if len(listVisits) == 0 {
+		m.logger.Infof("%v", "no data")
+		return errors.New("no data")
+	}
 	var totalVisits []types.NotificationData
 	for _, visit := range listVisits {
 		data := types.NotificationData{}
