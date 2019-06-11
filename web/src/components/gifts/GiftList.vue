@@ -1,40 +1,42 @@
 <template>
-  <el-card class="box-card">
-    <div slot="header" class="clearfix">
-      <!-- <span>Gift</span> -->
-      <el-tooltip class="item" effect="dark" content="Add gift" placement="right-start">
-        <el-button type="primary" icon="el-icon-plus" plain @click="isVisibleAdd = !isVisibleAdd">
-          New Gift
-        </el-button>
-      </el-tooltip>
-    </div>
-    <div class="text item">
-      <el-table v-loading="loading" :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" style="width: 100%">
-        <el-table-column label="Name" width="250" prop="name" sortable />
-        <el-table-column label="Idea" prop="idea" sortable />
-        <el-table-column label="Size" prop="size" sortable />
-        <el-table-column label="Price" prop="price" sortable />
-        <el-table-column label="Link" prop="link" />
-        <el-table-column label="Description" prop="description" />
-        <el-table-column align="right" width="320">
-          <template slot="header" slot-scope="scope">
-            <el-input v-model="search" size="mini" placeholder="Type to search by name" />
-          </template>
-          <GiftUpdate :is-visible-update.sync="isVisibleUpdate" :gift.sync="gift" @isUpdateGift="handleUpdate" />
-          <GiftDelete :is-visible-delete.sync="isVisibleDelete" :gift-name.sync="giftName" @isDeleteGift="handleDelete" />
-          <GiftAdd :is-visible-add.sync="isVisibleAdd" @isAddGift="handleAdd" />
-          <template slot-scope="scope">
-            <el-button size="mini" @click="gift = scope.row; isVisibleUpdate = !isVisibleUpdate">
-              Edit
-            </el-button>
-            <el-button size="mini" type="danger" @click="isVisibleDelete = !isVisibleDelete; scopeGift = scope; giftName = scope.row.name">
-              Delete
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
-  </el-card>
+  <el-main>
+    <el-card class="box-card">
+      <div slot="header" class="clearfix">
+        <el-tooltip class="item" effect="dark" content="Add gift" placement="right-start">
+          <el-button type="primary" icon="el-icon-plus" plain @click="isVisibleAdd = !isVisibleAdd">
+            New Gift
+          </el-button>
+        </el-tooltip>
+      </div>
+      <div class="text item">
+        <el-table stripe v-loading="loading" :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" style="width: 100%">
+          <el-table-column type="index" :index="indexMethod" />
+          <el-table-column label="Name" width="250" prop="name" sortable />
+          <el-table-column label="Idea" prop="idea" sortable />
+          <el-table-column label="Size" prop="size" sortable />
+          <el-table-column label="Price" prop="price" sortable />
+          <el-table-column label="Link" prop="link" />
+          <el-table-column label="Description" prop="description" />
+          <el-table-column align="right" width="320">
+            <template slot="header" slot-scope="scope">
+              <el-input v-model="search" size="mini" placeholder="Type to search by name" />
+            </template>
+            <GiftUpdate :is-visible-update.sync="isVisibleUpdate" :gift.sync="gift" @isUpdateGift="handleUpdate" />
+            <GiftDelete :is-visible-delete.sync="isVisibleDelete" :gift-name.sync="giftName" @isDeleteGift="handleDelete" />
+            <GiftAdd :is-visible-add.sync="isVisibleAdd" @isAddGift="handleAdd" />
+            <template slot-scope="scope">
+              <el-button size="mini" @click="gift = scope.row; isVisibleUpdate = !isVisibleUpdate">
+                Edit
+              </el-button>
+              <el-button size="mini" type="danger" @click="isVisibleDelete = !isVisibleDelete; scopeGift = scope; giftName = scope.row.name">
+                Delete
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+    </el-card>
+  </el-main>
 </template>
 
 <script>
@@ -42,6 +44,7 @@ import GiftUpdate from '@/components/gifts/GiftUpdate.vue'
 import GiftDelete from '@/components/gifts/GiftDelete.vue'
 import GiftAdd from '@/components/gifts/GiftAdd.vue'
 import { getAllGifts, createGifts, modifyGifts, deleteGiftById } from '@/api/gift'
+import { indexMethod } from '@/utils/convert'
 
 export default {
   name: 'ListGift',
@@ -146,7 +149,8 @@ export default {
           })
       }
       this.loading = false
-    }
+    },
+    indexMethod
   }
 }
 </script>

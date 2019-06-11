@@ -16,6 +16,7 @@ type Repository interface {
 	Create(ctx context.Context, visit types.Visit) (string, error)
 	Update(ctx context.Context, visit types.Visit) error
 	Delete(ctx context.Context, id string) error
+	FindInCommingVisit(ctx context.Context, dayTime int64)([]types.Visit, error)
 	FindVisitsByDay(ctx context.Context, startTime, endTime int64) ([]types.Visit, error)
 }
 

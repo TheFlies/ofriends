@@ -22,8 +22,10 @@ import (
 	"github.com/TheFlies/ofriends/internal/app/api/handler/login"
 	userhandler "github.com/TheFlies/ofriends/internal/app/api/handler/user"
 	visithandler "github.com/TheFlies/ofriends/internal/app/api/handler/visit"
+	timelinehandler "github.com/TheFlies/ofriends/internal/app/api/handler/timeline"
 	"github.com/TheFlies/ofriends/internal/app/customer"
 	"github.com/TheFlies/ofriends/internal/app/cusvisitassoc"
+	"github.com/TheFlies/ofriends/internal/app/timeline"
 	"github.com/TheFlies/ofriends/internal/app/db"
 	"github.com/TheFlies/ofriends/internal/app/dbauth"
 	"github.com/TheFlies/ofriends/internal/app/email"
@@ -127,8 +129,6 @@ func Init(conns *InfraConns) (http.Handler, error) {
 		return nil, err
 	}
 	visitHandler := visithandler.New(visitSrv, emailService, visitLogger)
-	visitSrv := visit.NewService(visitRepo, cusVisitAssocSrv, actVisitAssocSrv, visitLogger)
-	visitHandler := visithandler.New(visitSrv, visitLogger)
 
 	indexWebHandler := indexhandler.New()
 
@@ -137,6 +137,11 @@ func Init(conns *InfraConns) (http.Handler, error) {
 	userService := user.NewUserService(userRepo, userLogger)
 	ldapLoginService := ldapauth.New(userService)
 	localLoginService := dbauth.NewDBAuthentication(dbLoginLogger, userService)
+
+	timelineLogger := logger.WithField("package", "timeline")
+	timelineService := timeline.NewService(visitRepo, customerRepo, cusVisitAssocRepo, giftAssociateRepo,
+										  giftRepo, actVisitAssocRepo, actRepo, timelineLogger)
+	timelineHandler := timelinehandler.New(timelineService, timelineLogger)
 
 	loginHandler := login.NewLoginHandler(localLoginService, ldapLoginService, userLogger)
 	userHandler := userhandler.NewUserHandler(userService, localLoginService, ldapLoginService)
@@ -450,6 +455,12 @@ func Init(conns *InfraConns) (http.Handler, error) {
 			path:    "/cusvisitassocs",
 			method:  delete,
 			handler: cusVisitAssocHandler.DeleteByVisitID,
+		},
+		// time line serivce
+		{
+			path:    "/timeline",
+			method:  get,
+			handler: timelineHandler.FindTimelineByDay,
 		},
 	}
 

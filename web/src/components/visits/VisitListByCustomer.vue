@@ -73,7 +73,7 @@ import VisitDelete from '@/components/visits/VisitDelete.vue'
 import VisitAdd from '@/components/visits/VisitAdd.vue'
 import ActivityListByVisit from '@/components/activity/ActivityListByVisit.vue'
 import GiftListByVisit from '@/components/gifts/GiftListByVisit.vue'
-import { getHumanDate } from '@/utils/convert'
+import { indexMethod, getHumanDate } from '@/utils/convert'
 import {
   getAllVisitsByCustomerID,
   createVisit,
@@ -192,9 +192,7 @@ export default {
       }
       this.loading = false
     },
-    indexMethod(index) {
-      return index * 1
-    },
+    indexMethod,
     getHumanDate
   }
 }

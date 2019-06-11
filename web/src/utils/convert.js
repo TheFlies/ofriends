@@ -14,12 +14,16 @@ export function todayIsAfter(timestamp) {
 
 export function getRoleName(priority) {
   let rolName
-  if (priority === 2){
-    rolName = "User"
-  } else if (priority === 3){
-    rolName = "Admin"
+  if (priority === 2) {
+    rolName = 'User'
+  } else if (priority === 3) {
+    rolName = 'Admin'
   } else {
-    rolName = "None"
+    rolName = 'None'
   }
   return rolName
+}
+
+export function indexMethod(index) {
+  return index + 1
 }
