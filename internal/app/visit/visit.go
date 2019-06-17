@@ -2,6 +2,7 @@ package visit
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/TheFlies/ofriends/internal/app/types"
 	"github.com/TheFlies/ofriends/internal/pkg/glog"
@@ -16,7 +17,7 @@ type Repository interface {
 	Create(ctx context.Context, visit types.Visit) (string, error)
 	Update(ctx context.Context, visit types.Visit) error
 	Delete(ctx context.Context, id string) error
-	FindInCommingVisit(ctx context.Context, dayTime int64)([]types.Visit, error)
+	FindInCommingVisit(ctx context.Context, dayTime int64) ([]types.Visit, error)
 	FindVisitsByDay(ctx context.Context, startTime, endTime int64) ([]types.Visit, error)
 }
 
@@ -30,19 +31,19 @@ type CusVisitAssocService interface {
 
 // Service is an visit service
 type Service struct {
-	repo         Repository
+	repo            Repository
 	assocCusService CusVisitAssocService
 	assocActService ActVisitAssocService
-	logger       glog.Logger
+	logger          glog.Logger
 }
 
 // NewService return a new visit service
 func NewService(r Repository, assocCusService CusVisitAssocService, assocActService ActVisitAssocService, l glog.Logger) *Service {
 	return &Service{
-		repo:         r,
+		repo:            r,
 		assocCusService: assocCusService,
 		assocActService: assocActService,
-		logger:       l,
+		logger:          l,
 	}
 }
 
@@ -88,10 +89,13 @@ func (s *Service) Update(ctx context.Context, visit types.Visit) error {
 
 // Delete a visit
 func (s *Service) Delete(ctx context.Context, id string) error {
-	if err := s.assocActService.DeleteByVisitID(ctx, id); err != nil {
-		return err		
+	if err := s.assocActService.DeleteByVisitID(ctx, id); err != nil && err.Error() != "not found" {
+		fmt.Println(err)
+		fmt.Println(err.Error())
+		return err
 	}
-	if err := s.assocCusService.DeleteByVisitID(ctx, id); err != nil {
+	if err := s.assocCusService.DeleteByVisitID(ctx, id); err != nil && err.Error() != "not found" {
+		fmt.Println(err)
 		return err
 	}
 	if err := s.repo.Delete(ctx, id); err != nil {
